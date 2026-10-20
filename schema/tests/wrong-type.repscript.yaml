@@ -1,6 +1,9 @@
 repscript: "0"
 id: home-strength
+revision: 1
 title: 5
+notes: [warm up, stretch]
 workouts:
   id: A
   title: Heavy
+  blocks: [{exercise: pushup, sets: 3, reps: 10}]

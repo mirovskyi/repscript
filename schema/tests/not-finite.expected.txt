@@ -3,7 +3,7 @@ warning: repscript (line 1) = 0
 error: id (line 2) = NaN
   Expected a string, found a number.
   Hint: The program's id, a short string that identifies it. Example: id: home-strength
-error: title (line 3) = Infinity
+error: title (line 4) = Infinity
   Expected a string, found a number.
   Hint: The program's title shown to the user, a string. Example: title: Home strength
 errors: 2, warnings: 1

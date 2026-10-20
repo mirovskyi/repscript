@@ -1,0 +1,14 @@
+# Body weight first, then kilograms; the first load in pounds gets the only warning.
+repscript: 0
+id: home-strength
+revision: 1
+title: Home strength
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pullup, sets: 3, reps: 5, load: {bw: true}}
+      - {exercise: goblet.squat, sets: 3, reps: 10, load: {kg: 16}}
+  - id: B
+    blocks:
+      - {exercise: dumbbell.row, sets: 3, reps: 10, load: {lb: 40}}
+      - {exercise: dumbbell.press, sets: 3, reps: 10, load: {lb: 35}}

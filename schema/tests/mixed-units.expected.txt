@@ -1,0 +1,6 @@
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+warning: workouts[1].blocks[0].load (line 13)
+  The program mixes kg and lb: this load is in lb, earlier loads are in kg.
+  Hint: Use one unit throughout, unless the equipment really is marked in both.
+errors: 0, warnings: 2

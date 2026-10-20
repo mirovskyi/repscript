@@ -1,0 +1,30 @@
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].blocks[0] (line 9)
+  The block has reps and time together.
+  Hint: Keep reps for sets counted in repetitions, or time for timed sets such as a plank.
+error: workouts[0].blocks[1] (line 10)
+  The block has neither reps nor time.
+  Hint: Add reps for sets counted in repetitions (reps: 8-12), or time for timed sets such as a plank (time: 30s).
+error: workouts[0].blocks[2].load (line 11)
+  The load has kg and lb together.
+  Hint: Keep one: kg or lb for an external weight, or bw: true for body weight with add_kg or add_lb for extra weight.
+error: workouts[0].blocks[3].load (line 12)
+  The load has kg and bw together.
+  Hint: Keep one: kg or lb for an external weight, or bw: true for body weight with add_kg or add_lb for extra weight.
+error: workouts[0].blocks[4].load.add_kg (line 13)
+  add_kg is extra weight on top of body weight and needs bw: true.
+  Hint: Write the whole weight in kg, or use load: {bw: true, add_kg: 5}.
+error: workouts[0].blocks[5].load (line 14)
+  The load has no kg, lb or bw.
+  Hint: Write load: {kg: 18} or load: {lb: 40} for an external weight, or load: {bw: true} for body weight, with add_kg or add_lb for extra weight.
+error: workouts[0].blocks[6].load (line 15)
+  The load has add_kg and add_lb together.
+  Hint: Keep one unit.
+error: workouts[0].blocks[7].load (line 16) = 18
+  Expected a mapping, found an integer.
+  Hint: The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}
+error: workouts[0].blocks[8].load.bw (line 17) = false
+  Expected one of: true.
+  Hint: Body weight: bw: true means the exercise is done with body weight. Example: bw: true
+errors: 9, warnings: 1

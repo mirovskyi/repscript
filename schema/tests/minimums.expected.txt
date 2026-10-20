@@ -1,0 +1,9 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: revision (line 3) = 0
+  Expected at least 1.
+  Hint: The program's version number, a whole number starting at 1. Example: revision: 1
+error: workouts[0].blocks (line 7)
+  Expected at least 1 item.
+  Hint: The workout's exercises in order, a list of at least one block. Example: blocks: [{exercise: pushup, sets: 3, reps: 10}]
+errors: 2, warnings: 1

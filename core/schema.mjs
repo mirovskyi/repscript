@@ -1,10 +1,13 @@
 // Interpreter for the JSON Schema subset that schema/repscript.schema.json uses.
 // Works on plain values (the output of YAML toJS or JSON.parse) and returns issues with path arrays.
 
+import { FORMATS } from './formats.mjs';
+
 /** Keywords the interpreter understands. The schema lint test rejects any other. */
 export const KEYWORDS = [
   '$schema', 'title', 'description',
-  'type', 'enum', 'properties', 'required', 'patternProperties', 'items', 'additionalProperties',
+  'type', 'enum', 'minimum', 'format', 'properties', 'required', 'patternProperties', 'additionalProperties',
+  'minItems', 'items',
 ];
 
 /**
@@ -12,9 +15,12 @@ export const KEYWORDS = [
  * @property {string} [description]
  * @property {string} [type]
  * @property {unknown[]} [enum]
+ * @property {number} [minimum]
+ * @property {string} [format] a key of FORMATS
  * @property {Record<string, Schema>} [properties]
  * @property {string[]} [required]
  * @property {Record<string, Schema>} [patternProperties]
+ * @property {number} [minItems]
  * @property {Schema} [items]
  * @property {false} [additionalProperties]
  */
@@ -32,6 +38,9 @@ const TYPE_NAMES = {
   object: 'a mapping', array: 'a list', string: 'a string', integer: 'an integer',
   number: 'a number', boolean: 'a boolean', null: 'an empty value',
 };
+
+/** For {kg: 2,5}, which YAML reads as kg: 2 plus an empty field 5. */
+const FLOW_COMMA_HINT = 'A comma inside { } separates fields, so a value such as 2,5 is read as 2 plus a field 5. Write decimals with a dot (kg: 2.5) and ranges with a hyphen (reps: 8-12).';
 
 /** @param {unknown} value */
 function typeOf(value) {
@@ -60,6 +69,16 @@ export function check(value, schema, path = [], issues = []) {
     const allowed = schema.enum.map(v => JSON.stringify(v)).join(', ');
     issues.push({ path, value, message: `Expected one of: ${allowed}.`, hint: schema.description });
   }
+  if (schema.minimum !== undefined && typeof value === 'number' && value < schema.minimum) {
+    issues.push({ path, value, message: `Expected at least ${schema.minimum}.`, hint: schema.description });
+  }
+  if (schema.format) {
+    const { expected, parse } = FORMATS[schema.format];
+    const result = typeof value === 'number' || typeof value === 'string' ? parse(value)
+      : { message: `Expected ${expected}, found ${TYPE_NAMES[type]}.` };
+    if ('message' in result) issues.push({ path, value, message: result.message, hint: result.hint ?? schema.description });
+    return issues;
+  }
   if (type === 'object') {
     const fields = /** @type {Record<string, unknown>} */ (value);
     const properties = schema.properties ?? {};
@@ -73,13 +92,19 @@ export function check(value, schema, path = [], issues = []) {
         : Object.entries(schema.patternProperties ?? {}).find(([pattern]) => new RegExp(pattern, 'u').test(name))?.[1];
       if (fieldSchema) check(field, fieldSchema, [...path, name], issues);
       else if (schema.additionalProperties === false) {
-        issues.push({ path: [...path, name], message: 'Unknown field.', hint: unknownFieldHint(name, Object.keys(properties)) });
+        const hint = field === null && /^\d+$/.test(name) ? FLOW_COMMA_HINT : unknownFieldHint(name, Object.keys(properties));
+        issues.push({ path: [...path, name], message: 'Unknown field.', hint });
       }
     }
   }
-  if (type === 'array' && schema.items) {
+  if (type === 'array') {
+    const list = /** @type {unknown[]} */ (value);
+    const min = schema.minItems;
+    if (min !== undefined && list.length < min) {
+      issues.push({ path, value, message: `Expected at least ${min} item${min === 1 ? '' : 's'}.`, hint: schema.description });
+    }
     const items = schema.items;
-    /** @type {unknown[]} */ (value).forEach((item, i) => check(item, items, [...path, i], issues));
+    if (items) list.forEach((item, i) => check(item, items, [...path, i], issues));
   }
   return issues;
 }

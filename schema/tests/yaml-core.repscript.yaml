@@ -3,6 +3,8 @@
 # YAML 1.1 lookalikes stay strings: the core schema applies even under a %YAML 1.1 directive.
 repscript: 0
 id: 2026-10-19
+revision: 1
 title: no
 workouts:
   - id: on
+    blocks: [{exercise: pushup, sets: 3, reps: 10, rest: 1:30}]

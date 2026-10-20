@@ -2,6 +2,7 @@
 // No I/O: the caller passes the decoded text and the schema.
 
 import { Alias, LineCounter, Scalar, YAMLMap, YAMLSeq, parseDocument, visit } from '../vendor/yaml.mjs';
+import { checkRules } from './rules.mjs';
 import { check } from './schema.mjs';
 
 /**
@@ -32,7 +33,6 @@ const SYNTAX_HINTS = {
 const SYNTAX_HINT = 'Fix the YAML at this line. The rest of the file was not checked.';
 const ALIAS_HINT = 'A value starting with * is read as a YAML alias, and one starting with & as an anchor. Put the value in quotes, e.g. title: "**Heavy**".';
 const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YAML aliases (*name).';
-const DRAFT = 'Format version 0 is a draft: the format may still change before the first release.';
 
 /**
  * @param {string} source the file's text, already decoded
@@ -88,10 +88,10 @@ export function validate(source, schema) {
     const offset = locate(doc.contents, path);
     return offset === undefined ? undefined : lineCounter.linePos(offset).line;
   };
-  /** @type {Issue[]} */
-  const issues = check(data, schema).map(issue => ({ ...issue, severity: 'error', path: formatPath(issue.path), line: lineOf(issue.path) }));
-  if (data?.repscript === 0) issues.push({ severity: 'warning', path: 'repscript', line: lineOf(['repscript']), value: 0, message: DRAFT });
-  return sortByLine(issues);
+  // Schema issues first: the stable sort keeps them before rule issues on a shared line.
+  /** @type {import('./rules.mjs').RuleIssue[]} */
+  const found = check(data, schema).map(issue => ({ ...issue, severity: 'error' }));
+  return sortByLine(found.concat(checkRules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })));
 }
 
 /**

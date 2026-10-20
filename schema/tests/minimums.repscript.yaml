@@ -1,0 +1,7 @@
+repscript: 0
+id: home-strength
+revision: 0
+title: Home strength
+workouts:
+  - id: A
+    blocks: []

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Repscript program",
-  "description": "A Repscript training program: a mapping with the fields repscript, id, title and workouts. Example: repscript: 0, id: home-strength, title: Home strength, workouts: [{id: A}].",
+  "description": "A Repscript training program: a mapping with the fields repscript, id, revision, title and workouts. Example: repscript: 0, id: home-strength, revision: 1, title: Home strength, workouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}].",
   "type": "object",
-  "required": ["repscript", "id", "title", "workouts"],
+  "required": ["repscript", "id", "revision", "title", "workouts"],
   "properties": {
     "repscript": {
       "description": "The format version, an integer. 0 is the draft version used until the first release. Example: repscript: 0",
@@ -14,21 +14,114 @@
       "description": "The program's id, a short string that identifies it. Example: id: home-strength",
       "type": "string"
     },
+    "revision": {
+      "description": "The program's version number, a whole number starting at 1. Example: revision: 1",
+      "type": "integer",
+      "minimum": 1
+    },
     "title": {
       "description": "The program's title shown to the user, a string. Example: title: Home strength",
       "type": "string"
     },
+    "notes": {
+      "description": "Notes on the program for the person training, a string. Example: notes: Add weight when every set reaches the top of the range.",
+      "type": "string"
+    },
+    "source": {
+      "description": "Where the program comes from, a string. Example: source: Coach's sheet, October 2026",
+      "type": "string"
+    },
+    "author": {
+      "description": "Who wrote the program, a string. Example: author: Alex",
+      "type": "string"
+    },
+    "language": {
+      "description": "The language of the program's texts, a code such as en or ru. Example: language: en",
+      "type": "string"
+    },
     "workouts": {
-      "description": "The program's workouts, a list of mappings, each with an id. Example: workouts: [{id: A}, {id: B}]",
+      "description": "The program's workouts, a list of at least one mapping, each with an id and blocks. Example: workouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}]",
       "type": "array",
+      "minItems": 1,
       "items": {
-        "description": "A workout, a mapping with an id field. Example: - id: A",
+        "description": "A workout, a mapping with an id and a list of blocks. Example: {id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}",
         "type": "object",
-        "required": ["id"],
+        "required": ["id", "blocks"],
         "properties": {
           "id": {
             "description": "The workout's id, a short string that names it within the program. Example: id: A",
             "type": "string"
+          },
+          "title": {
+            "description": "The workout's title shown to the user, a string. Example: title: Heavy upper body",
+            "type": "string"
+          },
+          "notes": {
+            "description": "Notes on the workout, a string. Example: notes: Warm up the shoulders first.",
+            "type": "string"
+          },
+          "blocks": {
+            "description": "The workout's exercises in order, a list of at least one block. Example: blocks: [{exercise: pushup, sets: 3, reps: 10}]",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "description": "A block, all sets of one exercise: a mapping with exercise, sets, and reps or time. Example: {exercise: pushup, sets: 3, reps: 8-12, rest: 90s}",
+              "type": "object",
+              "required": ["exercise", "sets"],
+              "properties": {
+                "exercise": {
+                  "description": "The exercise's id, a string. Example: exercise: pullup.wide",
+                  "type": "string"
+                },
+                "sets": {
+                  "description": "The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4",
+                  "format": "count"
+                },
+                "reps": {
+                  "description": "The repetitions in each set: a whole number, a range, a minimum followed by + (then as many as possible), or max (as many as possible). Examples: reps: 10, reps: 8-12, reps: 5+, reps: max",
+                  "format": "reps"
+                },
+                "time": {
+                  "description": "The duration of each set, for timed exercises such as a plank: a whole number with the unit s, m or h, minutes:seconds, or a range. Examples: time: 30s, time: 1:30, time: 30-45s",
+                  "format": "duration"
+                },
+                "rest": {
+                  "description": "The rest after each set: a whole number with the unit s, m or h, minutes:seconds, or a range. Examples: rest: 90s, rest: 1:30, rest: 2-3m",
+                  "format": "duration"
+                },
+                "load": {
+                  "description": "The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}",
+                  "type": "object",
+                  "properties": {
+                    "kg": {
+                      "description": "An external weight in kilograms: a number with a dot for decimals, or a range. Examples: kg: 18, kg: 2.5, kg: 16-20",
+                      "format": "weight"
+                    },
+                    "lb": {
+                      "description": "An external weight in pounds: a number with a dot for decimals, or a range. Examples: lb: 40, lb: 35-45",
+                      "format": "weight"
+                    },
+                    "bw": {
+                      "description": "Body weight: bw: true means the exercise is done with body weight. Example: bw: true",
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "add_kg": {
+                      "description": "Extra weight in kilograms on top of body weight (a vest, a belt): a number or a range, together with bw: true. Example: add_kg: 2-5",
+                      "format": "weight"
+                    },
+                    "add_lb": {
+                      "description": "Extra weight in pounds on top of body weight (a vest, a belt): a number or a range, together with bw: true. Example: add_lb: 10",
+                      "format": "weight"
+                    }
+                  },
+                  "patternProperties": { "^x-": {} },
+                  "additionalProperties": false
+                }
+              },
+              "patternProperties": { "^x-": {} },
+              "additionalProperties": false
+            }
           }
         },
         "patternProperties": { "^x-": {} },

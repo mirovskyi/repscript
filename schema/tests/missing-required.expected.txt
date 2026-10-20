@@ -1,9 +1,21 @@
-error: title (line 2)
+error: revision (line 3)
+  Missing required field.
+  Hint: The program's version number, a whole number starting at 1. Example: revision: 1
+error: title (line 3)
   Missing required field.
   Hint: The program's title shown to the user, a string. Example: title: Home strength
-warning: repscript (line 2) = 0
+warning: repscript (line 3) = 0
   Format version 0 is a draft: the format may still change before the first release.
-error: workouts[0].id (line 5)
+error: workouts[0].id (line 6)
   Missing required field.
   Hint: The workout's id, a short string that names it within the program. Example: id: A
-errors: 2, warnings: 1
+error: workouts[1].blocks[1].exercise (line 9)
+  Missing required field.
+  Hint: The exercise's id, a string. Example: exercise: pullup.wide
+error: workouts[1].blocks[1].sets (line 9)
+  Missing required field.
+  Hint: The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4
+error: workouts[2].blocks (line 10)
+  Missing required field.
+  Hint: The workout's exercises in order, a list of at least one block. Example: blocks: [{exercise: pushup, sets: 3, reps: 10}]
+errors: 6, warnings: 1

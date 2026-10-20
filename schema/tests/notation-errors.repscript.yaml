@@ -1,0 +1,28 @@
+# Values that break their notation and match no known slip.
+repscript: 0
+id: errors
+revision: 1
+title: Errors
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: lots}
+      - {exercise: pushup, sets: 0, reps: 10}
+      - {exercise: pushup, sets: 3-0, reps: 10}
+      - {exercise: pushup, sets: 2.5, reps: 10}
+      - {exercise: plank, sets: 3, time: [30s]}
+      - exercise: pushup
+        sets: 3
+        reps: 10
+        rest:
+      - {exercise: pushup, sets: 3, reps: 10, rest: 1:75}
+      - {exercise: pushup, sets: 3, reps: 10, rest: 90}
+      - {exercise: pushup, sets: 3, reps: 10, rest: 2-3}
+      - {exercise: pushup, sets: 3, reps: 10, rest: 1.5}
+      - {exercise: pushup, sets: 3, reps: 10, load: {kg: 0}}
+      - {exercise: pushup, sets: 3, reps: 10, load: {kg: -5}}
+      - exercise: pushup
+        sets: 3
+        reps: 10
+        load:
+          kg: 16, 20

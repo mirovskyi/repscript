@@ -1,5 +1,7 @@
 repscript: 1
 id: home-strength
+revision: 1
 title: Home strength
 workouts:
   - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

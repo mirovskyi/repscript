@@ -1,0 +1,42 @@
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].blocks[0].reps (line 9) = "8–12"
+  The range is joined with U+2013 instead of a hyphen (-).
+  Hint: Write 8-12.
+error: workouts[0].blocks[1].reps (line 10) = "8 - 12"
+  The value has spaces in it.
+  Hint: Write 8-12.
+error: workouts[0].blocks[2].reps (line 11) = "12 – 8"
+  The range is joined with U+2013 instead of a hyphen (-). The value has spaces in it. The range starts with the larger number.
+  Hint: Write 8-12.
+error: workouts[0].blocks[3].reps (line 12) = "failure"
+  A set to failure is written as max.
+  Hint: Write max.
+error: workouts[0].blocks[4].reps (line 13) = "AMRAP"
+  A set to failure is written as max.
+  Hint: Write max.
+error: workouts[0].blocks[5].sets (line 14) = "4-3"
+  The range starts with the larger number.
+  Hint: Write 3-4.
+error: workouts[0].blocks[6].sets (line 15) = "3-3"
+  The range has the same number at both ends.
+  Hint: Write 3.
+error: workouts[0].blocks[7].rest (line 16) = "2 min"
+  The value has spaces in it. Duration units are written as s, m or h.
+  Hint: Write 2m.
+error: workouts[0].blocks[8].rest (line 17) = "2m-3m"
+  A range has its unit once, at the end.
+  Hint: Write 2-3m.
+error: workouts[0].blocks[9].time (line 18) = "30 сек"
+  The value has spaces in it. Duration units are written as s, m or h.
+  Hint: Write 30s.
+error: workouts[0].blocks[10].time (line 19) = "45−60s"
+  The range is joined with U+2212 instead of a hyphen (-).
+  Hint: Write 45-60s.
+error: workouts[0].blocks[11].load.kg (line 24) = "2,5"
+  The number has a decimal comma instead of a dot.
+  Hint: Write 2.5.
+error: workouts[0].blocks[12].load.5 (line 25)
+  Unknown field.
+  Hint: A comma inside { } separates fields, so a value such as 2,5 is read as 2 plus a field 5. Write decimals with a dot (kg: 2.5) and ranges with a hyphen (reps: 8-12).
+errors: 13, warnings: 1

@@ -1,4 +1,4 @@
 error: (top level)
   Expected a mapping, found an empty value.
-  Hint: A Repscript training program: a mapping with the fields repscript, id, title and workouts. Example: repscript: 0, id: home-strength, title: Home strength, workouts: [{id: A}].
+  Hint: A Repscript training program: a mapping with the fields repscript, id, revision, title and workouts. Example: repscript: 0, id: home-strength, revision: 1, title: Home strength, workouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}].
 errors: 1, warnings: 0

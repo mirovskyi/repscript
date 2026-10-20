@@ -1,0 +1,6 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[1].id (line 8) = "A"
+  workouts[0] already has this id.
+  Hint: Give each workout its own id.
+errors: 1, warnings: 1

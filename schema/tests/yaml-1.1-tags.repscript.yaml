@@ -1,7 +1,9 @@
 # YAML 1.1 tags outside the core schema are read as the plain values they are written as.
 repscript: 0
 id: !!timestamp 2026-10-19
+revision: 1
 title: Home strength
 x-days: !!set {mon, wed}
 workouts:
   - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

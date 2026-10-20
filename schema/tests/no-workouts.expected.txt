@@ -1,0 +1,6 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts (line 5)
+  Expected at least 1 item.
+  Hint: The program's workouts, a list of at least one mapping, each with an id and blocks. Example: workouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}]
+errors: 1, warnings: 1

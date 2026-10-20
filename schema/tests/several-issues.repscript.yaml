@@ -1,5 +1,7 @@
 repscript: 0
 id: home-strength
+revision: 1
 foo: bar
 workouts:
   - id: 7
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

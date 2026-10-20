@@ -1,6 +1,10 @@
 {
   "repscript": 0,
   "id": "home-strength",
+  "revision": 1,
   "title": "Home strength",
-  "workouts": [{ "id": "A" }, { "id": "B" }]
+  "workouts": [
+    { "id": "A", "blocks": [{ "exercise": "pushup", "sets": 3, "reps": 10 }] },
+    { "id": "B", "blocks": [{ "exercise": "pushup", "sets": 3, "reps": 10 }] }
+  ]
 }

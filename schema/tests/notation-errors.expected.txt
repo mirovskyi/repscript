@@ -1,0 +1,42 @@
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].blocks[0].reps (line 9) = "lots"
+  Expected a whole number such as 10, a range such as 8-12, a minimum such as 5+, or max.
+  Hint: The repetitions in each set: a whole number, a range, a minimum followed by + (then as many as possible), or max (as many as possible). Examples: reps: 10, reps: 8-12, reps: 5+, reps: max
+error: workouts[0].blocks[1].sets (line 10) = 0
+  Expected at least 1.
+  Hint: The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4
+error: workouts[0].blocks[2].sets (line 11) = "3-0"
+  Expected at least 1.
+  Hint: The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4
+error: workouts[0].blocks[3].sets (line 12) = 2.5
+  Expected a whole number such as 3, or a range such as 3-4.
+  Hint: The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4
+error: workouts[0].blocks[4].time (line 13)
+  Expected a duration such as 30s, 2m, 1h or 1:30, or a range such as 2-3m, found a list.
+  Hint: The duration of each set, for timed exercises such as a plank: a whole number with the unit s, m or h, minutes:seconds, or a range. Examples: time: 30s, time: 1:30, time: 30-45s
+error: workouts[0].blocks[5].rest (line 17)
+  Expected a duration such as 30s, 2m, 1h or 1:30, or a range such as 2-3m, found an empty value.
+  Hint: The rest after each set: a whole number with the unit s, m or h, minutes:seconds, or a range. Examples: rest: 90s, rest: 1:30, rest: 2-3m
+error: workouts[0].blocks[6].rest (line 18) = "1:75"
+  Expected a duration such as 30s, 2m, 1h or 1:30, or a range such as 2-3m.
+  Hint: The rest after each set: a whole number with the unit s, m or h, minutes:seconds, or a range. Examples: rest: 90s, rest: 1:30, rest: 2-3m
+error: workouts[0].blocks[7].rest (line 19) = 90
+  The duration has no unit.
+  Hint: Write a whole number with a unit: s for seconds, m for minutes, h for hours. Example: rest: 90s
+error: workouts[0].blocks[8].rest (line 20) = "2-3"
+  The duration has no unit.
+  Hint: Write a whole number with a unit: s for seconds, m for minutes, h for hours. Example: rest: 90s
+error: workouts[0].blocks[9].rest (line 21) = 1.5
+  The duration has no unit.
+  Hint: Write a whole number with a unit: s for seconds, m for minutes, h for hours. Example: rest: 90s
+error: workouts[0].blocks[10].load.kg (line 22) = 0
+  Expected more than 0.
+  Hint: An external weight in kilograms: a number with a dot for decimals, or a range. Examples: kg: 18, kg: 2.5, kg: 16-20
+error: workouts[0].blocks[11].load.kg (line 23) = -5
+  Expected more than 0.
+  Hint: An external weight in kilograms: a number with a dot for decimals, or a range. Examples: kg: 18, kg: 2.5, kg: 16-20
+error: workouts[0].blocks[12].load.kg (line 28) = "16, 20"
+  Expected a number such as 18 or 2.5, or a range such as 2-5.
+  Hint: An external weight in kilograms: a number with a dot for decimals, or a range. Examples: kg: 18, kg: 2.5, kg: 16-20
+errors: 13, warnings: 1

@@ -1,0 +1,17 @@
+# Blocks and loads whose fields do not combine: one error each.
+repscript: 0
+id: rules
+revision: 1
+title: Rules
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 10, time: 30s}
+      - {exercise: pushup, sets: 3}
+      - {exercise: row, sets: 3, reps: 10, load: {kg: 18, lb: 40}}
+      - {exercise: row, sets: 3, reps: 10, load: {kg: 18, bw: true}}
+      - {exercise: dip, sets: 3, reps: 10, load: {kg: 18, add_kg: 5}}
+      - {exercise: dip, sets: 3, reps: 10, load: {add_kg: 5}}
+      - {exercise: dip, sets: 3, reps: 10, load: {bw: true, add_kg: 5, add_lb: 10}}
+      - {exercise: row, sets: 3, reps: 10, load: 18}
+      - {exercise: pushup, sets: 3, reps: 10, load: {bw: false}}

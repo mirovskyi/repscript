@@ -1,0 +1,25 @@
+# One slip per value: each error names it and gives the corrected value.
+repscript: 0
+id: slips
+revision: 1
+title: Slips
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 8–12}
+      - {exercise: pushup, sets: 3, reps: 8 - 12}
+      - {exercise: pushup, sets: 3, reps: 12 – 8}
+      - {exercise: pushup, sets: 3, reps: failure}
+      - {exercise: pushup, sets: 3, reps: AMRAP}
+      - {exercise: pushup, sets: 4-3, reps: 10}
+      - {exercise: pushup, sets: 3-3, reps: 10}
+      - {exercise: pushup, sets: 3, reps: 10, rest: 2 min}
+      - {exercise: pushup, sets: 3, reps: 10, rest: 2m-3m}
+      - {exercise: plank, sets: 3, time: 30 сек}
+      - {exercise: plank, sets: 3, time: 45−60s}
+      - exercise: lateral.raise
+        sets: 3
+        reps: 12
+        load:
+          kg: 2,5
+      - {exercise: lateral.raise, sets: 3, reps: 12, load: {kg: 2,5}}

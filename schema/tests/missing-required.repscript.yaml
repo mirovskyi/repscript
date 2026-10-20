@@ -1,6 +1,10 @@
-# Program without a title; the first workout has no id.
+# Program without a revision and a title; the first workout has no id, the third no blocks, and a
+# block of the second has no exercise and sets.
 repscript: 0
 id: home-strength
 workouts:
   - x-note: heavy day
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]
   - id: B
+    blocks: [{exercise: pushup, sets: 3, reps: 10}, {reps: 10}]
+  - id: C

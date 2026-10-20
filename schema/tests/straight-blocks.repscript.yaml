@@ -1,0 +1,47 @@
+# Every accepted form of each notation, in counted and timed blocks, with every descriptive field.
+repscript: 0
+id: home-strength
+revision: 1
+title: Home strength
+notes: Add weight when every set reaches the top of the range.
+source: Coach's sheet, October 2026
+author: Alex
+language: en
+workouts:
+  - id: A
+    title: Heavy upper body
+    notes: Warm up the shoulders first.
+    blocks:
+      - exercise: pullup.wide
+        sets: 3-4
+        reps: 5+
+        rest: 2-3m
+        load: {bw: true, add_kg: 2-5}
+      - exercise: dumbbell.press
+        sets: "3"
+        reps: 8-12
+        rest: 90s
+        load: {kg: 16-20}
+      - exercise: pushup
+        sets: 3
+        reps: max
+        rest: 1:30
+        load: {bw: true}
+  - id: B
+    blocks:
+      - exercise: kettlebell.swing
+        sets: 5
+        reps: 10
+        rest: 2m
+        load: {kg: 18}
+      - exercise: lateral.raise
+        sets: 3
+        reps: 12
+        load: {kg: 2.5}
+      - exercise: plank
+        sets: 3
+        time: 30s
+        rest: 30-45s
+      - exercise: walk
+        sets: 1
+        time: 1h

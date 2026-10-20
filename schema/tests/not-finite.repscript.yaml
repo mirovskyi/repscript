@@ -1,5 +1,7 @@
 repscript: 0
 id: .nan
+revision: 1
 title: .inf
 workouts:
   - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

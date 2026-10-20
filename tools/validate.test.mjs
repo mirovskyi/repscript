@@ -36,7 +36,7 @@ test('invalid file among several: both reports, exit 1', () => {
   const [first, second] = reports(stdout);
   assert.ok(first.startsWith(`${valid}\n`), first);
   assert.ok(second.startsWith(`${invalid}\n`), second);
-  assert.match(second, /errors: 6, warnings: 1\n$/);
+  assert.match(second, /errors: 7, warnings: 1\n$/);
 });
 
 test('missing file: cannot-read error, other files still checked, exit 1', () => {

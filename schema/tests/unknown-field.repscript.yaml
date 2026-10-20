@@ -1,5 +1,6 @@
 repscript: 0
 id: home-strength
+revision: 1
 titel: Home strength
 foo: bar
 1: one
@@ -7,3 +8,6 @@ x-note: written by an AI agent
 workouts:
   - di: A
     x-note: heavy day
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 10}
+      - {exercise: pullup, sets: 3, reps: 5, type: superset}
