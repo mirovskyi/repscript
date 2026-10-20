@@ -1,0 +1,5 @@
+repscript: 0
+id: home-strength
+foo: bar
+workouts:
+  - id: 7

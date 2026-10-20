@@ -1,0 +1,3 @@
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+errors: 0, warnings: 1

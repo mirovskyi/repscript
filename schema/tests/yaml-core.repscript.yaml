@@ -1,0 +1,8 @@
+%YAML 1.1
+---
+# YAML 1.1 lookalikes stay strings: the core schema applies even under a %YAML 1.1 directive.
+repscript: 0
+id: 2026-10-19
+title: no
+workouts:
+  - id: on

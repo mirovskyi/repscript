@@ -1,0 +1,4 @@
+error: (line 3, column 8)
+  Plain value cannot start with reserved character @
+  Hint: A value cannot start with this character (for example @ or a backtick). Put the value in quotes, e.g. title: "@home".
+errors: 1, warnings: 0

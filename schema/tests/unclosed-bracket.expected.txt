@@ -1,0 +1,4 @@
+error: (line 5, column 1)
+  Flow sequence in block collection must be sufficiently indented and end with a ]
+  Hint: Indent nested fields with spaces, the same amount at each level. If a [ or { above is not closed, close it.
+errors: 1, warnings: 0

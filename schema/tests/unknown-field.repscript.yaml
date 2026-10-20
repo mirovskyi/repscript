@@ -1,0 +1,9 @@
+repscript: 0
+id: home-strength
+titel: Home strength
+foo: bar
+1: one
+x-note: written by an AI agent
+workouts:
+  - di: A
+    x-note: heavy day

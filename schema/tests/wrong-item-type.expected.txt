@@ -1,0 +1,6 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0] (line 5) = "Workout A: pull-ups, 4 sets of 5-8 reps.\nPush-ups, 4 sets ...
+  Expected a mapping, found a string.
+  Hint: A workout, a mapping with an id field. Example: - id: A
+errors: 1, warnings: 1

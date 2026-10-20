@@ -1,0 +1,10 @@
+error: repscript (line 1) = "0"
+  Expected an integer, found a string.
+  Hint: The format version, an integer. 0 is the draft version used until the first release. Example: repscript: 0
+error: title (line 3) = 5
+  Expected a string, found an integer.
+  Hint: The program's title shown to the user, a string. Example: title: Home strength
+error: workouts (line 4)
+  Expected a list, found a mapping.
+  Hint: The program's workouts, a list of mappings, each with an id. Example: workouts: [{id: A}, {id: B}]
+errors: 3, warnings: 0

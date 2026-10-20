@@ -1,0 +1,4 @@
+error: (line 6, column 1)
+  Source contains multiple documents; please use YAML.parseAllDocuments()
+  Hint: Put one program per file. Remove this --- line and what follows it, or move that part to its own file.
+errors: 1, warnings: 0

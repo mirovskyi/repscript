@@ -1,0 +1,8 @@
+repscript: 0
+id: home-strength
+title: Home strength
+workouts:
+  - id: A
+x-a: &a [x, x, x, x, x, x, x, x, x, x]
+x-b: &b [*a, *a, *a, *a, *a, *a, *a, *a, *a, *a]
+x-c: [*b, *b, *b, *b, *b, *b, *b, *b, *b, *b]

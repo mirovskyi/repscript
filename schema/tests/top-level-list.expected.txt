@@ -1,0 +1,4 @@
+error: (top level) (line 1)
+  Expected a mapping, found a list.
+  Hint: A Repscript training program: a mapping with the fields repscript, id, title and workouts. Example: repscript: 0, id: home-strength, title: Home strength, workouts: [{id: A}].
+errors: 1, warnings: 0

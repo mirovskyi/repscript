@@ -1,0 +1,8 @@
+repscript: 0
+x-source:
+  author: Ann
+ book: Home training
+id: home-strength
+title: Home strength
+workouts:
+  - id: A

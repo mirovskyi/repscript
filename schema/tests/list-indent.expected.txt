@@ -1,0 +1,4 @@
+error: (line 6, column 1)
+  Sequence item without - indicator
+  Hint: Check the indentation and that every bracket and quote is closed. An unclosed one may start well above this line.
+errors: 1, warnings: 0

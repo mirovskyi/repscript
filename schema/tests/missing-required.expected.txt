@@ -1,0 +1,9 @@
+error: title (line 2)
+  Missing required field.
+  Hint: The program's title shown to the user, a string. Example: title: Home strength
+warning: repscript (line 2) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].id (line 5)
+  Missing required field.
+  Hint: The workout's id, a short string that names it within the program. Example: id: A
+errors: 2, warnings: 1

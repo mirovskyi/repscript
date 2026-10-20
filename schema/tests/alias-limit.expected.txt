@@ -1,0 +1,4 @@
+error: (top level)
+  Excessive alias count indicates a resource exhaustion attack
+  Hint: Write the values out instead of repeating them with YAML aliases (*name).
+errors: 1, warnings: 0

@@ -1,0 +1,4 @@
+error: (line 2, column 8)
+  Alias **Heavy** has no anchor.
+  Hint: A value starting with * is read as a YAML alias, and one starting with & as an anchor. Put the value in quotes, e.g. title: "**Heavy**".
+errors: 1, warnings: 0

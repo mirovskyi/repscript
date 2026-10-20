@@ -1,0 +1,4 @@
+error: (line 6, column 5)
+  Map keys must be unique
+  Hint: Each field may appear only once in a mapping. Remove or rename this one.
+errors: 1, warnings: 0

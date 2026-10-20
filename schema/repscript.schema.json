@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Repscript program",
+  "description": "A Repscript training program: a mapping with the fields repscript, id, title and workouts. Example: repscript: 0, id: home-strength, title: Home strength, workouts: [{id: A}].",
+  "type": "object",
+  "required": ["repscript", "id", "title", "workouts"],
+  "properties": {
+    "repscript": {
+      "description": "The format version, an integer. 0 is the draft version used until the first release. Example: repscript: 0",
+      "type": "integer",
+      "enum": [0]
+    },
+    "id": {
+      "description": "The program's id, a short string that identifies it. Example: id: home-strength",
+      "type": "string"
+    },
+    "title": {
+      "description": "The program's title shown to the user, a string. Example: title: Home strength",
+      "type": "string"
+    },
+    "workouts": {
+      "description": "The program's workouts, a list of mappings, each with an id. Example: workouts: [{id: A}, {id: B}]",
+      "type": "array",
+      "items": {
+        "description": "A workout, a mapping with an id field. Example: - id: A",
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "description": "The workout's id, a short string that names it within the program. Example: id: A",
+            "type": "string"
+          }
+        },
+        "patternProperties": { "^x-": {} },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": { "^x-": {} },
+  "additionalProperties": false
+}

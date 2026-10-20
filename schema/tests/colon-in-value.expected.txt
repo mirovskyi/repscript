@@ -1,0 +1,4 @@
+error: (line 3, column 8)
+  Nested mappings are not allowed in compact mappings
+  Hint: A value containing ": " must be in quotes, e.g. title: "Week 1: Strength". Otherwise check the indentation of this line and the next one.
+errors: 1, warnings: 0

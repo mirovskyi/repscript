@@ -1,0 +1,21 @@
+error: title (line 1)
+  Missing required field.
+  Hint: The program's title shown to the user, a string. Example: title: Home strength
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: titel (line 3)
+  Unknown field.
+  Hint: Did you mean title?
+error: foo (line 4)
+  Unknown field.
+  Hint: Allowed fields here: repscript, id, title, workouts. Extension fields start with x-.
+error: 1 (line 5)
+  Unknown field.
+  Hint: Allowed fields here: repscript, id, title, workouts. Extension fields start with x-.
+error: workouts[0].id (line 8)
+  Missing required field.
+  Hint: The workout's id, a short string that names it within the program. Example: id: A
+error: workouts[0].di (line 8)
+  Unknown field.
+  Hint: Did you mean id?
+errors: 6, warnings: 1

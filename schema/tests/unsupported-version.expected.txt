@@ -1,0 +1,4 @@
+error: repscript (line 1) = 1
+  Expected one of: 0.
+  Hint: The format version, an integer. 0 is the draft version used until the first release. Example: repscript: 0
+errors: 1, warnings: 0

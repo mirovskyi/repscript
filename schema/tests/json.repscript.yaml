@@ -1,0 +1,6 @@
+{
+  "repscript": 0,
+  "id": "home-strength",
+  "title": "Home strength",
+  "workouts": [{ "id": "A" }, { "id": "B" }]
+}

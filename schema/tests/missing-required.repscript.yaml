@@ -1,0 +1,6 @@
+# Program without a title; the first workout has no id.
+repscript: 0
+id: home-strength
+workouts:
+  - x-note: heavy day
+  - id: B
