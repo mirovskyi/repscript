@@ -26,7 +26,14 @@ function checkFile(file) {
     source = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     if (source.includes('\0')) throw new Error('NUL in text');
   } catch {
-    return [{ severity: 'error', path: '(top level)', message: 'The file is not UTF-8 text.', hint: 'Save the file as UTF-8.' }];
+    return [
+      {
+        severity: 'error',
+        path: '(top level)',
+        message: 'The file is not UTF-8 text.',
+        hint: 'Save the file as UTF-8.',
+      },
+    ];
   }
   return validate(source, schema);
 }

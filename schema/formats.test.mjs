@@ -51,10 +51,18 @@ test('text corrections name the slip and give the corrected value', () => {
   fails('duration', '2 min', 'The value has spaces in it. Duration units are written as s, m or h.', 'Write 2m.');
   fails('duration', '30 Сек', 'The value has spaces in it. Duration units are written as s, m or h.', 'Write 30s.');
   fails('duration', '2m-3m', 'A range has its unit once, at the end.', 'Write 2-3m.');
-  fails('duration', '2min-3min', 'Duration units are written as s, m or h. A range has its unit once, at the end.', 'Write 2-3m.');
-  fails('reps', '12 \u2013 8',
+  fails(
+    'duration',
+    '2min-3min',
+    'Duration units are written as s, m or h. A range has its unit once, at the end.',
+    'Write 2-3m.',
+  );
+  fails(
+    'reps',
+    '12 \u2013 8',
     'The range is joined with U+2013 instead of a hyphen (-). The value has spaces in it. The range starts with the larger number.',
-    'Write 8-12.');
+    'Write 8-12.',
+  );
 });
 
 test('range order and a missing unit have their own hints', () => {

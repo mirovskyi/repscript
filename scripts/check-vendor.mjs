@@ -20,7 +20,13 @@ const vendored = readFileSync(new URL(VENDOR, ROOT), 'utf8');
 // The header is the leading comment lines and one blank line after them.
 const header = vendored.match(/^(?:\/\/.*\n)+\n/)?.[0] ?? '';
 // absWorkingDir: the bundle's // path comments are relative to it.
-const built = buildSync({ entryPoints: [ENTRY], absWorkingDir: fileURLToPath(ROOT), bundle: true, format: 'esm', write: false }).outputFiles[0].text;
+const built = buildSync({
+  entryPoints: [ENTRY],
+  absWorkingDir: fileURLToPath(ROOT),
+  bundle: true,
+  format: 'esm',
+  write: false,
+}).outputFiles[0].text;
 
 const problems = [];
 if (vendored.includes('\r')) problems.push('it has CRLF line endings');
@@ -32,7 +38,9 @@ else {
 
 if (problems.length) {
   console.error(`${VENDOR}: ${problems.join('; ')}.`);
-  console.error(`Rebuild it: npx esbuild ${ENTRY} --bundle --format=esm --outfile=${VENDOR}, then restore the header with the new versions.`);
+  console.error(
+    `Rebuild it: npx esbuild ${ENTRY} --bundle --format=esm --outfile=${VENDOR}, then restore the header with the new versions.`,
+  );
   process.exitCode = 1;
 } else {
   console.log(`${VENDOR} matches yaml ${yaml} built with esbuild ${esbuild}.`);

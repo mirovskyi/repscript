@@ -5,9 +5,19 @@ import { FORMATS } from './formats.mjs';
 
 /** Keywords the interpreter understands. The schema lint test rejects any other. */
 export const KEYWORDS = [
-  '$schema', 'title', 'description',
-  'type', 'enum', 'minimum', 'format', 'properties', 'required', 'patternProperties', 'additionalProperties',
-  'minItems', 'items',
+  '$schema',
+  'title',
+  'description',
+  'type',
+  'enum',
+  'minimum',
+  'format',
+  'properties',
+  'required',
+  'patternProperties',
+  'additionalProperties',
+  'minItems',
+  'items',
 ];
 
 /**
@@ -35,12 +45,18 @@ export const KEYWORDS = [
 
 /** JSON type names as the reader of a YAML file knows them. @type {Record<string, string>} */
 const TYPE_NAMES = {
-  object: 'a mapping', array: 'a list', string: 'a string', integer: 'an integer',
-  number: 'a number', boolean: 'a boolean', null: 'an empty value',
+  object: 'a mapping',
+  array: 'a list',
+  string: 'a string',
+  integer: 'an integer',
+  number: 'a number',
+  boolean: 'a boolean',
+  null: 'an empty value',
 };
 
 /** For {kg: 2,5}, which YAML reads as kg: 2 plus an empty field 5. */
-const FLOW_COMMA_HINT = 'A comma inside { } separates fields, so a value such as 2,5 is read as 2 plus a field 5. Write decimals with a dot (kg: 2.5) and ranges with a hyphen (reps: 8-12).';
+const FLOW_COMMA_HINT =
+  'A comma inside { } separates fields, so a value such as 2,5 is read as 2 plus a field 5. Write decimals with a dot (kg: 2.5) and ranges with a hyphen (reps: 8-12).';
 
 /** @param {unknown} value */
 function typeOf(value) {
@@ -62,7 +78,12 @@ function typeOf(value) {
 export function check(value, schema, path = [], issues = []) {
   const type = typeOf(value);
   if (schema.type && type !== schema.type && !(schema.type === 'number' && type === 'integer')) {
-    issues.push({ path, value, message: `Expected ${TYPE_NAMES[schema.type]}, found ${TYPE_NAMES[type]}.`, hint: schema.description });
+    issues.push({
+      path,
+      value,
+      message: `Expected ${TYPE_NAMES[schema.type]}, found ${TYPE_NAMES[type]}.`,
+      hint: schema.description,
+    });
     return issues;
   }
   if (schema.enum && !schema.enum.includes(value)) {
@@ -74,9 +95,12 @@ export function check(value, schema, path = [], issues = []) {
   }
   if (schema.format) {
     const { expected, parse } = FORMATS[schema.format];
-    const result = typeof value === 'number' || typeof value === 'string' ? parse(value)
-      : { message: `Expected ${expected}, found ${TYPE_NAMES[type]}.` };
-    if ('message' in result) issues.push({ path, value, message: result.message, hint: result.hint ?? schema.description });
+    const result =
+      typeof value === 'number' || typeof value === 'string'
+        ? parse(value)
+        : { message: `Expected ${expected}, found ${TYPE_NAMES[type]}.` };
+    if ('message' in result)
+      issues.push({ path, value, message: result.message, hint: result.hint ?? schema.description });
     return issues;
   }
   if (type === 'object') {
@@ -88,11 +112,13 @@ export function check(value, schema, path = [], issues = []) {
       }
     }
     for (const [name, field] of Object.entries(fields)) {
-      const fieldSchema = Object.hasOwn(properties, name) ? properties[name]
+      const fieldSchema = Object.hasOwn(properties, name)
+        ? properties[name]
         : Object.entries(schema.patternProperties ?? {}).find(([pattern]) => new RegExp(pattern, 'u').test(name))?.[1];
       if (fieldSchema) check(field, fieldSchema, [...path, name], issues);
       else if (schema.additionalProperties === false) {
-        const hint = field === null && /^\d+$/.test(name) ? FLOW_COMMA_HINT : unknownFieldHint(name, Object.keys(properties));
+        const hint =
+          field === null && /^\d+$/.test(name) ? FLOW_COMMA_HINT : unknownFieldHint(name, Object.keys(properties));
         issues.push({ path: [...path, name], message: 'Unknown field.', hint });
       }
     }
@@ -101,7 +127,12 @@ export function check(value, schema, path = [], issues = []) {
     const list = /** @type {unknown[]} */ (value);
     const min = schema.minItems;
     if (min !== undefined && list.length < min) {
-      issues.push({ path, value, message: `Expected at least ${min} item${min === 1 ? '' : 's'}.`, hint: schema.description });
+      issues.push({
+        path,
+        value,
+        message: `Expected at least ${min} item${min === 1 ? '' : 's'}.`,
+        hint: schema.description,
+      });
     }
     const items = schema.items;
     if (items) for (const [i, item] of list.entries()) check(item, items, [...path, i], issues);
@@ -134,7 +165,8 @@ function distance(a, b) {
   for (let i = 1; i <= a.length; i++) {
     for (let j = 1; j <= b.length; j++) {
       d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
-      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1])
+        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
     }
   }
   return d[a.length][b.length];

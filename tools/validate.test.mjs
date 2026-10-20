@@ -50,7 +50,10 @@ test('missing file: cannot-read error, other files still checked, exit 1', () =>
 
 for (const [encoding, bytes] of [
   // "title: Сила" with the Cyrillic word in Windows-1251.
-  ['Windows-1251', Buffer.concat([Buffer.from('repscript: 0\ntitle: '), Buffer.from([0xd1, 0xe8, 0xeb, 0xe0]), Buffer.from('\n')])],
+  [
+    'Windows-1251',
+    Buffer.concat([Buffer.from('repscript: 0\ntitle: '), Buffer.from([0xd1, 0xe8, 0xeb, 0xe0]), Buffer.from('\n')]),
+  ],
   // Every byte is below 0x80 ("С" is 21 04, "r" is 72 00), so it decodes as UTF-8 without an error.
   ['UTF-16LE without a byte order mark', Buffer.from('repscript: 0\ntitle: Сила\n', 'utf16le')],
 ]) {
@@ -61,7 +64,10 @@ for (const [encoding, bytes] of [
       writeFileSync(file, bytes);
       const { status, stdout } = run(file);
       assert.equal(status, 1);
-      assert.equal(stdout, `${file}\nerror: (top level)\n  The file is not UTF-8 text.\n  Hint: Save the file as UTF-8.\nerrors: 1, warnings: 0\n`);
+      assert.equal(
+        stdout,
+        `${file}\nerror: (top level)\n  The file is not UTF-8 text.\n  Hint: Save the file as UTF-8.\nerrors: 1, warnings: 0\n`,
+      );
     } finally {
       rmSync(dir, { recursive: true });
     }

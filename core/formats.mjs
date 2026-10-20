@@ -84,7 +84,8 @@ const NOTATIONS = {
   count: {
     expected: 'a whole number such as 3, or a range such as 3-4',
     minimum: AT_LEAST_1,
-    read: value => typeof value === 'number' ? (Number.isInteger(value) ? single(value) : undefined) : range(WHOLE.exec(value)),
+    read: value =>
+      typeof value === 'number' ? (Number.isInteger(value) ? single(value) : undefined) : range(WHOLE.exec(value)),
   },
   reps: {
     expected: 'a whole number such as 10, a range such as 8-12, a minimum such as 5+, or max',
@@ -113,7 +114,8 @@ const NOTATIONS = {
   weight: {
     expected: 'a number such as 18 or 2.5, or a range such as 2-5',
     minimum: ABOVE_0,
-    read: value => typeof value === 'number' ? (Number.isFinite(value) ? single(value) : undefined) : range(DECIMAL.exec(value)),
+    read: value =>
+      typeof value === 'number' ? (Number.isFinite(value) ? single(value) : undefined) : range(DECIMAL.exec(value)),
   },
 };
 

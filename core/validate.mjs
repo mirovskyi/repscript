@@ -1,7 +1,7 @@
 // Checks a program's source text and formats the issues as the report an AI agent reads.
 // No I/O: the caller passes the decoded text and the schema.
 
-import { Alias, LineCounter, Scalar, YAMLMap, YAMLSeq, parseDocument, visit } from '../vendor/yaml.mjs';
+import { Alias, LineCounter, parseDocument, Scalar, visit, YAMLMap, YAMLSeq } from '../vendor/yaml.mjs';
 import { checkRules } from './rules.mjs';
 import { check } from './schema.mjs';
 
@@ -20,18 +20,25 @@ const TOP = '(top level)';
 
 /** @type {Record<string, string>} */
 const SYNTAX_HINTS = {
-  BAD_INDENT: 'Indent nested fields with spaces, the same amount at each level. If a [ or { above is not closed, close it.',
+  BAD_INDENT:
+    'Indent nested fields with spaces, the same amount at each level. If a [ or { above is not closed, close it.',
   TAB_AS_INDENT: 'Indent with spaces, not tabs.',
   DUPLICATE_KEY: 'Each field may appear only once in a mapping. Remove or rename this one.',
-  MULTIPLE_DOCS: 'Put one program per file. Remove this --- line and what follows it, or move that part to its own file.',
-  MISSING_CHAR: 'Check the indentation and that every bracket and quote is closed. An unclosed one may start well above this line.',
-  BLOCK_AS_IMPLICIT_KEY: 'A value containing ": " must be in quotes, e.g. title: "Week 1: Strength". Otherwise check the indentation of this line and the next one.',
-  UNEXPECTED_TOKEN: 'This character has a special meaning in YAML (for example * & [ ] { } #). Put the value in quotes.',
-  BAD_SCALAR_START: 'A value cannot start with this character (for example @ or a backtick). Put the value in quotes, e.g. title: "@home".',
+  MULTIPLE_DOCS:
+    'Put one program per file. Remove this --- line and what follows it, or move that part to its own file.',
+  MISSING_CHAR:
+    'Check the indentation and that every bracket and quote is closed. An unclosed one may start well above this line.',
+  BLOCK_AS_IMPLICIT_KEY:
+    'A value containing ": " must be in quotes, e.g. title: "Week 1: Strength". Otherwise check the indentation of this line and the next one.',
+  UNEXPECTED_TOKEN:
+    'This character has a special meaning in YAML (for example * & [ ] { } #). Put the value in quotes.',
+  BAD_SCALAR_START:
+    'A value cannot start with this character (for example @ or a backtick). Put the value in quotes, e.g. title: "@home".',
   NON_STRING_KEY: 'A field name must be a plain word, not a list or a mapping.',
 };
 const SYNTAX_HINT = 'Fix the YAML at this line. The rest of the file was not checked.';
-const ALIAS_HINT = 'A value starting with * is read as a YAML alias, and one starting with & as an anchor. Put the value in quotes, e.g. title: "**Heavy**".';
+const ALIAS_HINT =
+  'A value starting with * is read as a YAML alias, and one starting with & as an anchor. Put the value in quotes, e.g. title: "**Heavy**".';
 const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YAML aliases (*name).';
 
 /**
@@ -41,7 +48,13 @@ const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YA
  */
 export function validate(source, schema) {
   const lineCounter = new LineCounter();
-  const doc = parseDocument(source, { lineCounter, schema: 'core', stringKeys: true, prettyErrors: false, resolveKnownTags: false });
+  const doc = parseDocument(source, {
+    lineCounter,
+    schema: 'core',
+    stringKeys: true,
+    prettyErrors: false,
+    resolveKnownTags: false,
+  });
   if (!doc) throw new Error('yaml parseDocument returned no document');
   /** @param {number} offset */
   const at = offset => {
@@ -50,10 +63,15 @@ export function validate(source, schema) {
   };
 
   if (doc.errors.length) {
-    return sortByLine(doc.errors.map(error => ({
-      severity: 'error', path: TOP, ...at(error.pos[0]), message: error.message,
-      hint: SYNTAX_HINTS[error.code] ?? SYNTAX_HINT,
-    })));
+    return sortByLine(
+      doc.errors.map(error => ({
+        severity: 'error',
+        path: TOP,
+        ...at(error.pos[0]),
+        message: error.message,
+        hint: SYNTAX_HINTS[error.code] ?? SYNTAX_HINT,
+      })),
+    );
   }
 
   // One pass in document order: an alias refers to an anchor above it. alias.resolve(doc) per alias
@@ -66,7 +84,13 @@ export function validate(source, schema) {
     Node(_, node) {
       if (node instanceof Alias) {
         if (!anchors.has(node.source)) {
-          aliases.push({ severity: 'error', path: TOP, ...at(start(node) ?? 0), message: `Alias *${node.source} has no anchor.`, hint: ALIAS_HINT });
+          aliases.push({
+            severity: 'error',
+            path: TOP,
+            ...at(start(node) ?? 0),
+            message: `Alias *${node.source} has no anchor.`,
+            hint: ALIAS_HINT,
+          });
         }
       } else {
         const anchor = /** @type {{ anchor?: string }} */ (node).anchor;
@@ -80,7 +104,14 @@ export function validate(source, schema) {
   try {
     data = doc.toJS();
   } catch (error) {
-    return [{ severity: 'error', path: TOP, message: error instanceof Error ? error.message : String(error), hint: ALIAS_LIMIT_HINT }];
+    return [
+      {
+        severity: 'error',
+        path: TOP,
+        message: error instanceof Error ? error.message : String(error),
+        hint: ALIAS_LIMIT_HINT,
+      },
+    ];
   }
 
   /** @param {(string|number)[]} path */
@@ -91,7 +122,9 @@ export function validate(source, schema) {
   // Schema issues first: the stable sort keeps them before rule issues on a shared line.
   /** @type {import('./rules.mjs').RuleIssue[]} */
   const found = check(data, schema).map(issue => ({ ...issue, severity: 'error' }));
-  return sortByLine(found.concat(checkRules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })));
+  return sortByLine(
+    found.concat(checkRules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })),
+  );
 }
 
 /**
@@ -130,7 +163,7 @@ function start(node) {
 /** @param {(string|number)[]} path */
 function formatPath(path) {
   if (!path.length) return TOP;
-  return path.map((step, i) => typeof step === 'number' ? `[${step}]` : i ? `.${step}` : step).join('');
+  return path.map((step, i) => (typeof step === 'number' ? `[${step}]` : i ? `.${step}` : step)).join('');
 }
 
 /** @param {Issue[]} issues */
@@ -146,7 +179,8 @@ function sortByLine(issues) {
 export function formatIssues(issues) {
   const lines = [];
   for (const { severity, path, line, column, value, message, hint } of issues) {
-    let header = column === undefined ? path + (line === undefined ? '' : ` (line ${line})`) : `(line ${line}, column ${column})`;
+    let header =
+      column === undefined ? path + (line === undefined ? '' : ` (line ${line})`) : `(line ${line}, column ${column})`;
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       // JSON has no Infinity or NaN: JSON.stringify would print null.
       const json = typeof value === 'number' && !Number.isFinite(value) ? String(value) : JSON.stringify(value);

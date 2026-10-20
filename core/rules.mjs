@@ -24,24 +24,31 @@ function loadIssue(load, path) {
   const extras = EXTRAS.filter(name => Object.hasOwn(load, name));
   if (!forms.length) {
     return {
-      severity: 'error', path, message: 'The load has no kg, lb or bw.',
+      severity: 'error',
+      path,
+      message: 'The load has no kg, lb or bw.',
       hint: 'Write load: {kg: 18} or load: {lb: 40} for an external weight, or load: {bw: true} for body weight, with add_kg or add_lb for extra weight.',
     };
   }
   if (forms.length > 1) {
     return {
-      severity: 'error', path, message: `The load has ${forms.slice(0, -1).join(', ')} and ${forms[forms.length - 1]} together.`,
+      severity: 'error',
+      path,
+      message: `The load has ${forms.slice(0, -1).join(', ')} and ${forms[forms.length - 1]} together.`,
       hint: 'Keep one: kg or lb for an external weight, or bw: true for body weight with add_kg or add_lb for extra weight.',
     };
   }
   if (extras.length && forms[0] !== 'bw') {
     const [extra] = extras;
     return {
-      severity: 'error', path: [...path, extra], message: `${extra} is extra weight on top of body weight and needs bw: true.`,
+      severity: 'error',
+      path: [...path, extra],
+      message: `${extra} is extra weight on top of body weight and needs bw: true.`,
       hint: `Write the whole weight in ${extra.slice('add_'.length)}, or use load: {bw: true, ${extra}: 5}.`,
     };
   }
-  if (extras.length > 1) return { severity: 'error', path, message: 'The load has add_kg and add_lb together.', hint: 'Keep one unit.' };
+  if (extras.length > 1)
+    return { severity: 'error', path, message: 'The load has add_kg and add_lb together.', hint: 'Keep one unit.' };
   return undefined;
 }
 
@@ -66,7 +73,14 @@ export function checkRules(data) {
     if (typeof workout.id === 'string') {
       const first = ids.get(workout.id);
       if (first === undefined) ids.set(workout.id, i);
-      else issues.push({ severity: 'error', path: ['workouts', i, 'id'], value: workout.id, message: `workouts[${first}] already has this id.`, hint: 'Give each workout its own id.' });
+      else
+        issues.push({
+          severity: 'error',
+          path: ['workouts', i, 'id'],
+          value: workout.id,
+          message: `workouts[${first}] already has this id.`,
+          hint: 'Give each workout its own id.',
+        });
     }
     if (!Array.isArray(workout.blocks)) return;
     workout.blocks.forEach((block, j) => {
@@ -75,9 +89,19 @@ export function checkRules(data) {
       const reps = Object.hasOwn(block, 'reps');
       const time = Object.hasOwn(block, 'time');
       if (reps && time) {
-        issues.push({ severity: 'error', path, message: 'The block has reps and time together.', hint: 'Keep reps for sets counted in repetitions, or time for timed sets such as a plank.' });
+        issues.push({
+          severity: 'error',
+          path,
+          message: 'The block has reps and time together.',
+          hint: 'Keep reps for sets counted in repetitions, or time for timed sets such as a plank.',
+        });
       } else if (!reps && !time) {
-        issues.push({ severity: 'error', path, message: 'The block has neither reps nor time.', hint: 'Add reps for sets counted in repetitions (reps: 8-12), or time for timed sets such as a plank (time: 30s).' });
+        issues.push({
+          severity: 'error',
+          path,
+          message: 'The block has neither reps nor time.',
+          hint: 'Add reps for sets counted in repetitions (reps: 8-12), or time for timed sets such as a plank (time: 30s).',
+        });
       }
       const load = block.load;
       if (!isMapping(load)) return;
@@ -92,7 +116,9 @@ export function checkRules(data) {
       else if (here !== unit) {
         mixed = true;
         issues.push({
-          severity: 'warning', path: loadPath, message: `The program mixes ${unit} and ${here}: this load is in ${here}, earlier loads are in ${unit}.`,
+          severity: 'warning',
+          path: loadPath,
+          message: `The program mixes ${unit} and ${here}: this load is in ${here}, earlier loads are in ${unit}.`,
           hint: 'Use one unit throughout, unless the equipment really is marked in both.',
         });
       }
