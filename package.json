@@ -1,0 +1,24 @@
+{
+  "name": "repscript",
+  "private": true,
+  "description": "Development tools only. Users run tools/*.mjs with Node 22+ and need no npm install.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.8"
+  },
+  "scripts": {
+    "lint": "biome ci",
+    "typecheck": "tsc -p .",
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"vendor/**\" --test-coverage-exclude=\"**/*.test.mjs\" --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=95",
+    "check:vendor": "node scripts/check-vendor.mjs",
+    "check": "npm run lint && npm run typecheck && npm run coverage && npm run check:vendor"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "yaml": "2.9.1"
+  }
+}

@@ -1,0 +1,3 @@
+# LF in every checkout, including Windows with core.autocrlf=true, so Biome and the golden reports see
+# the same bytes everywhere. CRLF input is the validator's job, not the checkout's.
+* text=auto eol=lf

@@ -1,15 +1,69 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Every commit on main keeps its result; a pull request only needs its latest push.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
-      - run: npm install --no-save typescript@7.0.2 @types/node@22
-      - run: npx tsc -p .
-      - run: node --test
+          cache: npm
+      # No install scripts: esbuild, Biome and tsc find their binaries through optional packages.
+      - run: npm ci --ignore-scripts
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run check:vendor
+      - name: No personal data in git
+        # my/ holds the user's profile, limitations and logs. .gitignore keeps it out; this catches
+        # a git add -f or a broken .gitignore, though only after the push.
+        run: |
+          if git ls-files -- my | grep -v '^my/\.gitkeep$'; then
+            echo '::error::Files under my/ are committed. They are personal data: git rm --cached them.'
+            exit 1
+          fi
+
+  # Without npm ci: the tools must run on plain Node, as users run them.
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm run coverage
+
+  workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
+        with:
+          # Dependabot does not see this input: bump it by hand with the action.
+          version: 1.31.1
+          advanced-security: false
+          annotations: true

@@ -104,7 +104,7 @@ export function check(value, schema, path = [], issues = []) {
       issues.push({ path, value, message: `Expected at least ${min} item${min === 1 ? '' : 's'}.`, hint: schema.description });
     }
     const items = schema.items;
-    if (items) list.forEach((item, i) => check(item, items, [...path, i], issues));
+    if (items) for (const [i, item] of list.entries()) check(item, items, [...path, i], issues);
   }
   return issues;
 }

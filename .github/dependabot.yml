@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ['*']
+
+  # Development tools only. A yaml or esbuild update fails npm run check:vendor until vendor/yaml.mjs
+  # is rebuilt, so they come in their own pull requests.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      dev-tools:
+        patterns: ['*']
+        exclude-patterns: [yaml, esbuild]
+    ignore:
+      # Types for the lowest supported Node, not the newest.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
