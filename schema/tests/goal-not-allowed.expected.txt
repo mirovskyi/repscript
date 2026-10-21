@@ -1,0 +1,6 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: goal (line 5) = "fat_loss"
+  Expected one of: "strength", "hypertrophy", "power", "muscular_endurance", "health".
+  Hint: What the program trains for, one of strength, hypertrophy, power, muscular_endurance and health. It is the training adaptation, not the person's own wish such as losing weight: write the wish in notes and choose the adaptation that serves it. Example: goal: hypertrophy
+errors: 1, warnings: 1

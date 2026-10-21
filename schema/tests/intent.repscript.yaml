@@ -1,0 +1,12 @@
+repscript: 0
+id: home-upper
+revision: 1
+title: Home upper body
+notes: Wants to lose weight.
+goal: hypertrophy
+schedule: {per_week: 3}
+workouts:
+  - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 8-12}]
+  - id: B
+    blocks: [{exercise: pullup, sets: 3, reps: 5-8}]

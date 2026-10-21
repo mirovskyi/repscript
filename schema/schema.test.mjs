@@ -10,8 +10,8 @@ import { readCatalogFiles } from '../tools/catalog.mjs';
 const schema = JSON.parse(readFileSync(new URL('./repscript.schema.json', import.meta.url), 'utf8'));
 
 /**
- * Problems that would make the interpreter silently ignore part of the schema or leave an issue
- * without a hint.
+ * Problems that would make the interpreter silently ignore part of the schema, leave an issue without
+ * a hint, or reject the x- fields that every mapping allows.
  * @param {Record<string, any>} schema
  * @param {string} where
  * @param {boolean} needsDescription
@@ -25,6 +25,9 @@ function lint(schema, where, needsDescription) {
   if ('additionalProperties' in schema && schema.additionalProperties !== false)
     problems.push(`${where}: additionalProperties must be false`);
   if (needsDescription && !schema.description) problems.push(`${where}: no description`);
+  // The format allows x- fields in every mapping.
+  if (schema.additionalProperties === false && !Object.hasOwn(schema.patternProperties ?? {}, '^x-'))
+    problems.push(`${where}: no ^x- pattern next to additionalProperties: false`);
   if ('format' in schema) {
     if (!Object.hasOwn(FORMATS, schema.format)) problems.push(`${where}: unknown format ${schema.format}`);
     // check() stops after format, so any other keyword next to it would be ignored.
@@ -48,6 +51,12 @@ test('lint rejects an unknown format and keywords next to a format', () => {
     'x: unknown format nope',
     'x: type next to format',
   ]);
+});
+
+test('lint rejects a closed mapping without x- fields', () => {
+  const closed = { description: 'x', type: 'object', additionalProperties: false };
+  assert.deepEqual(lint(closed, 'x', true), ['x: no ^x- pattern next to additionalProperties: false']);
+  assert.deepEqual(lint({ ...closed, patternProperties: { '^x-': {} } }, 'x', true), []);
 });
 
 test('core does not use Node modules', () => {
@@ -124,6 +133,30 @@ test('closest finds the nearest candidate within reach', () => {
   assert.equal(closest('ab', ['abcd']), undefined);
 });
 
+test('a string close to an allowed value gets "Did you mean"', () => {
+  const description = 'The goal.';
+  const goal = { type: 'string', enum: ['strength', 'hypertrophy', 'muscular_endurance'], description };
+  const message = 'Expected one of: "strength", "hypertrophy", "muscular_endurance".';
+  for (const [value, hint] of [
+    ['Hypertrophy', 'Did you mean hypertrophy?'],
+    ['strenght', 'Did you mean strength?'],
+    ['muscular-endurance', 'Did you mean muscular_endurance?'],
+    ['endurance', description],
+  ]) {
+    assert.deepEqual(check(value, goal), [{ path: [], value, message, hint }], value);
+  }
+  // Values that are not strings are not compared, with each other or with strings.
+  assert.deepEqual(check(1, { type: 'integer', enum: [0], description }), [
+    { path: [], value: 1, message: 'Expected one of: 0.', hint: description },
+  ]);
+  assert.deepEqual(check(1, { enum: ['1'], description }), [
+    { path: [], value: 1, message: 'Expected one of: "1".', hint: description },
+  ]);
+  assert.deepEqual(check('o', { enum: [0, 'on'], description }), [
+    { path: [], value: 'o', message: 'Expected one of: 0, "on".', hint: 'Did you mean on?' },
+  ]);
+});
+
 test('an empty field named by digits gets the flow comma hint', () => {
   const load = {
     type: 'object',
@@ -163,3 +196,58 @@ for (const file of readdirSync(fixtures).filter(name => name.endsWith('.repscrip
     assert.equal(formatIssues(validate(source, schema, catalog)), expected);
   });
 }
+
+/**
+ * The errors in a small valid program with extra top-level lines, without line numbers.
+ * @param {string} lines
+ */
+function errors(lines) {
+  const source = `repscript: 0\nid: p\nrevision: 1\ntitle: T\n${lines}\nworkouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}]\n`;
+  return validate(source, schema, catalog)
+    .filter(issue => issue.severity === 'error')
+    .map(({ path, message, hint }) => ({ path, message, hint }));
+}
+
+test('goal takes one of five values, with "Did you mean" for near misses', () => {
+  const hint = schema.properties.goal.description;
+  for (const goal of ['strength', 'hypertrophy', 'power', 'muscular_endurance', 'health'])
+    assert.deepEqual(errors(`goal: ${goal}`), [], goal);
+  const message = 'Expected one of: "strength", "hypertrophy", "power", "muscular_endurance", "health".';
+  for (const [goal, expected] of [
+    ['Hypertrophy', 'Did you mean hypertrophy?'],
+    ['strenght', 'Did you mean strength?'],
+    ['muscular-endurance', 'Did you mean muscular_endurance?'],
+    ['endurance', hint],
+  ])
+    assert.deepEqual(errors(`goal: ${goal}`), [{ path: 'goal', message, hint: expected }], goal);
+  assert.deepEqual(errors('goal: [strength, hypertrophy]'), [
+    { path: 'goal', message: 'Expected a string, found a list.', hint },
+  ]);
+});
+
+test('schedule requires per_week, a count', () => {
+  const hint = schema.properties.schedule.properties.per_week.description;
+  assert.deepEqual(errors('schedule: {}'), [{ path: 'schedule.per_week', message: 'Missing required field.', hint }]);
+  assert.deepEqual(errors('schedule: {per_week: "3–4"}'), [
+    {
+      path: 'schedule.per_week',
+      message: 'The range is joined with U+2013 instead of a hyphen (-).',
+      hint: 'Write 3-4.',
+    },
+  ]);
+  assert.deepEqual(errors('schedule: {per_week: "3"}'), []);
+  assert.deepEqual(errors('schedule: {per_week: 3-4}'), []);
+  assert.deepEqual(errors('schedule: 3'), [
+    {
+      path: 'schedule',
+      message: 'Expected a mapping, found an integer.',
+      hint: schema.properties.schedule.description,
+    },
+  ]);
+  // per_week belongs in schedule; at the top level it is unknown, and the allowed fields name schedule.
+  const [topLevel, ...others] = errors('per_week: 3');
+  assert.deepEqual(others, []);
+  assert.equal(topLevel.path, 'per_week');
+  assert.equal(topLevel.message, 'Unknown field.');
+  assert.match(topLevel.hint ?? '', /^Allowed fields here: .*\bschedule\b/);
+});

@@ -90,7 +90,10 @@ export function check(value, schema, path = [], issues = []) {
   }
   if (schema.enum && !schema.enum.includes(value)) {
     const allowed = schema.enum.map(v => JSON.stringify(v)).join(', ');
-    issues.push({ path, value, message: `Expected one of: ${allowed}.`, hint: schema.description });
+    const strings = schema.enum.filter(v => typeof v === 'string');
+    const best = typeof value === 'string' ? closest(value, strings) : undefined;
+    const hint = best ? `Did you mean ${best}?` : schema.description;
+    issues.push({ path, value, message: `Expected one of: ${allowed}.`, hint });
   }
   if (schema.minimum !== undefined && typeof value === 'number' && value < schema.minimum) {
     issues.push({ path, value, message: `Expected at least ${schema.minimum}.`, hint: schema.description });

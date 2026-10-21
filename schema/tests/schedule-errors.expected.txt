@@ -1,0 +1,9 @@
+warning: repscript (line 1) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: schedule.per_week (line 5) = 0
+  Expected at least 1.
+  Hint: The number of workouts in a week, a whole number or a range. The workouts follow in list order, then from the first again. Examples: per_week: 3, per_week: 3-4
+error: schedule.order (line 5)
+  Unknown field.
+  Hint: Allowed fields here: per_week. Extension fields start with x-.
+errors: 2, warnings: 1

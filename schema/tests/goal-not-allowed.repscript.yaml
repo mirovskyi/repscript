@@ -1,0 +1,8 @@
+repscript: 0
+id: home-strength
+revision: 1
+title: Home strength
+goal: fat_loss
+workouts:
+  - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

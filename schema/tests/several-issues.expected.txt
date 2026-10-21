@@ -5,7 +5,7 @@ warning: repscript (line 1) = 0
   Format version 0 is a draft: the format may still change before the first release.
 error: foo (line 4)
   Unknown field.
-  Hint: Allowed fields here: repscript, id, revision, title, notes, source, author, language, exercises, workouts. Extension fields start with x-.
+  Hint: Allowed fields here: repscript, id, revision, title, notes, source, author, language, goal, schedule, exercises, workouts. Extension fields start with x-.
 error: workouts[0].id (line 6) = 7
   Expected a string, found an integer.
   Hint: The workout's id, a short string that names it within the program. Example: id: A

@@ -39,6 +39,24 @@
       "description": "The language of the program's texts, a code such as en or ru. Example: language: en",
       "type": "string"
     },
+    "goal": {
+      "description": "What the program trains for, one of strength, hypertrophy, power, muscular_endurance and health. It is the training adaptation, not the person's own wish such as losing weight: write the wish in notes and choose the adaptation that serves it. Example: goal: hypertrophy",
+      "type": "string",
+      "enum": ["strength", "hypertrophy", "power", "muscular_endurance", "health"]
+    },
+    "schedule": {
+      "description": "How the workouts are spread over time, a mapping. For now it holds only per_week. Example: schedule: {per_week: 3}",
+      "type": "object",
+      "required": ["per_week"],
+      "properties": {
+        "per_week": {
+          "description": "The number of workouts in a week, a whole number or a range. The workouts follow in list order, then from the first again. Examples: per_week: 3, per_week: 3-4",
+          "format": "count"
+        }
+      },
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    },
     "exercises": {
       "description": "The program's own exercises, for those the catalog does not have: a list of entries, each with an id starting with my. and names. Example: exercises: [{id: my.towel_pullup, names: {en: Towel pull-up}}]",
       "type": "array",
