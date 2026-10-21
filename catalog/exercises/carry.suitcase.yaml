@@ -1,0 +1,7 @@
+id: carry.suitcase
+names: {en: Suitcase carry, ru: Прогулка с гантелью в одной руке}
+aliases: [Suitcase walk, One-arm farmer's carry, Чемоданная прогулка]
+equipment: [dumbbells]
+muscles:
+  primary: [obliques, forearms]
+  secondary: [traps, glute_med]

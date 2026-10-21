@@ -1,0 +1,5 @@
+id: walk
+names: {en: Walk, ru: Ходьба}
+equipment: []
+muscles:
+  primary: [quads]

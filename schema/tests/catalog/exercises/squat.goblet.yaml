@@ -1,0 +1,6 @@
+id: squat.goblet
+names: {en: Goblet squat, ru: Гоблет-приседания}
+equipment: [dumbbells]
+muscles:
+  primary: [quads]
+  secondary: [abs]

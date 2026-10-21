@@ -1,0 +1,7 @@
+id: lateral_raise.dumbbell
+names: {en: Dumbbell lateral raise, ru: Махи гантелями в стороны}
+aliases: [Lateral raise, Side raise, Разведения гантелей в стороны, Махи в стороны]
+equipment: [dumbbells]
+muscles:
+  primary: [delt_side]
+  secondary: [delt_front, rotator_cuff, traps, serratus]

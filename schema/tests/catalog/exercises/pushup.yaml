@@ -1,0 +1,7 @@
+id: pushup
+names: {en: Push-up, ru: Отжимания}
+aliases: [Отжимания от пола]
+equipment: []
+muscles:
+  primary: [pecs, triceps]
+  secondary: [delt_front, abs]

@@ -1,0 +1,7 @@
+id: overhead_press.dumbbell
+names: {en: Dumbbell overhead press, ru: Жим гантелей стоя}
+aliases: [Dumbbell shoulder press, Жим гантелей над головой]
+equipment: [dumbbells]
+muscles:
+  primary: [delt_front]
+  secondary: [delt_side, rotator_cuff, triceps, traps, serratus, pecs]

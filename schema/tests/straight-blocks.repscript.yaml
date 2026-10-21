@@ -17,7 +17,7 @@ workouts:
         reps: 5+
         rest: 2-3m
         load: {bw: true, add_kg: 2-5}
-      - exercise: dumbbell.press
+      - exercise: bench_press.dumbbell
         sets: "3"
         reps: 8-12
         rest: 90s
@@ -29,12 +29,12 @@ workouts:
         load: {bw: true}
   - id: B
     blocks:
-      - exercise: kettlebell.swing
+      - exercise: kettlebell_swing
         sets: 5
         reps: 10
         rest: 2m
         load: {kg: 18}
-      - exercise: lateral.raise
+      - exercise: lateral_raise.dumbbell
         sets: 3
         reps: 12
         load: {kg: 2.5}

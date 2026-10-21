@@ -1,0 +1,6 @@
+id: row.dumbbell
+names: {en: Dumbbell row, ru: Тяга гантели в наклоне}
+equipment: [dumbbells, bench]
+muscles:
+  primary: [lats]
+  secondary: [biceps]

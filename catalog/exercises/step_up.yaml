@@ -1,0 +1,7 @@
+id: step_up
+names: {en: Step-up, ru: Зашагивания на тумбу}
+aliases: [Box step-up, Зашагивания]
+equipment: [box]
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus, gastrocnemius]

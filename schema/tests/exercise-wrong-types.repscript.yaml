@@ -1,0 +1,36 @@
+# Exercise fields holding a value of the wrong type, or deprecated: false: one schema error each, and no
+# rule error from them.
+repscript: 0
+id: wrong-types
+revision: 1
+title: Wrong types
+exercises:
+  - my.x
+  - id: my.names
+    names: [Pull-up]
+  - id: my.aliases
+    names: {en: Towel hang}
+    aliases: x
+  - id: my.equipment
+    names: {en: Bar hang}
+    equipment: pullup_bar
+  - id: my.muscles
+    names: {en: Lat stretch}
+    muscles: {primary: lats}
+  - id: my.replaced
+    names: {en: Old hang}
+    deprecated: true
+    replaced_by: 5
+  - {id: 5, names: {en: Five}}
+  - {id: my.name_type, names: {en: 5}}
+  - {id: my.alias_item, names: {en: Hang drill}, aliases: [5]}
+  - {id: my.equipment_item, names: {en: Bar drill}, equipment: [5]}
+  - {id: my.muscles_list, names: {en: Lat drill}, muscles: [lats]}
+  - {id: my.secondary_text, names: {en: Lat hang}, muscles: {primary: [lats], secondary: lats}}
+  - {id: my.deprecated_text, names: {en: Old drill}, deprecated: yes, replaced_by: pushup}
+  - {id: my.deprecated_false, names: {en: Kept drill}, deprecated: false}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: 5, sets: 3, reps: 10}
+      - {exercise: pushup, sets: 3, reps: 10, load: {kg: 18, implement: 5}}

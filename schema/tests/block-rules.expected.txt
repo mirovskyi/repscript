@@ -23,7 +23,7 @@ error: workouts[0].blocks[6].load (line 15)
   Hint: Keep one unit.
 error: workouts[0].blocks[7].load (line 16) = 18
   Expected a mapping, found an integer.
-  Hint: The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}
+  Hint: The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight, and optionally implement for what carries it. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}
 error: workouts[0].blocks[8].load.bw (line 17) = false
   Expected one of: true.
   Hint: Body weight: bw: true means the exercise is done with body weight. Example: bw: true

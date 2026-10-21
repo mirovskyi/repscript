@@ -1,6 +1,8 @@
-// Checks outside the schema: rules that span several fields, and the draft-version warning.
-// Works on the same plain data as check() and returns issues in the same shape, plus a severity.
-// A value of the wrong type is skipped: the schema check already reports it.
+// Checks outside the schema: rules that span several fields, the draft-version warning, and the exercise
+// checks of exercises.mjs. Works on the same plain data as check() and returns issues in the same shape,
+// plus a severity. A value of the wrong type is skipped: the schema check already reports it.
+
+import { checkExercises } from './exercises.mjs';
 
 /** @typedef {import('./schema.mjs').SchemaIssue & { severity: 'error' | 'warning' }} RuleIssue */
 
@@ -54,9 +56,19 @@ function loadIssue(load, path) {
 
 /**
  * @param {unknown} data the program as plain values
+ * @param {import('./catalog.mjs').Catalog} catalog
  * @returns {RuleIssue[]}
  */
-export function checkRules(data) {
+export function checkRules(data, catalog) {
+  // The exercise checks come last: issues on a shared line keep this order.
+  return checkFormat(data).concat(checkExercises(data, catalog));
+}
+
+/**
+ * @param {unknown} data
+ * @returns {RuleIssue[]}
+ */
+function checkFormat(data) {
   /** @type {RuleIssue[]} */
   const issues = [];
   if (!isMapping(data)) return issues;

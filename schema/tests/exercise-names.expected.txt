@@ -1,0 +1,24 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].blocks[0].exercise (line 13) = "Wide-grip pull-ups"
+  The exercise needs an id, not a name.
+  Hint: Write exercise: pullup.wide.
+error: workouts[0].blocks[1].exercise (line 14) = "подтягивания широким хватом"
+  The exercise needs an id, not a name.
+  Hint: Write exercise: pullup.wide.
+error: workouts[0].blocks[2].exercise (line 15) = "PUSH UPS"
+  The exercise needs an id, not a name.
+  Hint: Write exercise: pushup.
+error: workouts[0].blocks[3].exercise (line 16) = "pushups"
+  The exercise needs an id, not a name.
+  Hint: Write exercise: pushup.
+error: workouts[0].blocks[4].exercise (line 17) = "Ring row"
+  The exercise needs an id, not a name.
+  Hint: Write exercise: my.ring_row.
+error: workouts[0].blocks[5].exercise (line 18) = "Pullup.Wide"
+  Exercise ids are lowercase.
+  Hint: Write exercise: pullup.wide.
+error: workouts[0].blocks[6].exercise (line 19) = "Towel pull-ups"
+  The exercise needs an id, not a name, and no exercise has this name.
+  Hint: Find the exercise's id in catalog/index.yaml. If it is not there, describe the exercise in exercises with an id starting with my., e.g. my.towel_pullup.
+errors: 7, warnings: 1

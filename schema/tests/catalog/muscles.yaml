@@ -1,0 +1,38 @@
+# The fixtures' muscle dictionary: it changes only with the fixtures, so pinned reports stay put.
+- id: back
+  names: {en: Back, ru: Спина}
+  children:
+    - id: lats
+      names: {en: Latissimus dorsi, ru: Широчайшие мышцы спины}
+- id: chest
+  names: {en: Chest, ru: Грудь}
+  children:
+    - id: pecs
+      names: {en: Pectorals, ru: Грудные мышцы}
+- id: shoulders
+  names: {en: Shoulders, ru: Плечи}
+  children:
+    - id: deltoids
+      names: {en: Deltoids, ru: Дельтовидные мышцы}
+      children:
+        - id: delt_front
+          names: {en: Front deltoid, ru: Передняя дельта}
+        - id: delt_side
+          names: {en: Side deltoid, ru: Средняя дельта}
+- id: arms
+  names: {en: Arms, ru: Руки}
+  children:
+    - id: biceps
+      names: {en: Biceps, ru: Бицепс}
+    - id: triceps
+      names: {en: Triceps, ru: Трицепс}
+- id: core
+  names: {en: Core, ru: Кор}
+  children:
+    - id: abs
+      names: {en: Rectus abdominis, ru: Прямая мышца живота}
+- id: legs
+  names: {en: Legs, ru: Ноги}
+  children:
+    - id: quads
+      names: {en: Quadriceps, ru: Квадрицепсы}

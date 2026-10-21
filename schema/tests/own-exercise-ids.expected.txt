@@ -1,0 +1,15 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: exercises[0].id (line 8) = "My.Towel-Pullup"
+  An exercise id is lowercase Latin letters, digits, _ and dots, starting with a letter.
+  Hint: Own exercise ids start with my., e.g. id: my.towel_pullup
+error: exercises[1].id (line 10) = "ring_row"
+  An own exercise's id starts with my.
+  Hint: Write id: my.ring_row, and use that id in the blocks.
+error: exercises[2].id (line 12) = "pullup.wide"
+  This is a catalog exercise: changing catalog entries in a program is not supported yet.
+  Hint: Remove this entry and write exercise: pullup.wide in the blocks, or give your own variant an id starting with my.
+error: exercises[4].id (line 16) = "my.towel_pullup"
+  exercises[3] already has this id.
+  Hint: Give each exercise its own id.
+errors: 4, warnings: 1

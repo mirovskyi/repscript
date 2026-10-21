@@ -1,0 +1,7 @@
+id: row.dumbbell
+names: {en: Dumbbell row, ru: Тяга гантели в наклоне}
+aliases: [One-arm dumbbell row, Single-arm dumbbell row, Тяга гантели одной рукой]
+equipment: [dumbbells, bench]
+muscles:
+  primary: [lats, rhomboids]
+  secondary: [traps, delt_rear, rotator_cuff, brachialis, forearms, pecs]

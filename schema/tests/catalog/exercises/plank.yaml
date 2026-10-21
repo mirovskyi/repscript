@@ -1,0 +1,5 @@
+id: plank
+names: {en: Plank, ru: Планка}
+equipment: []
+muscles:
+  primary: [abs]

@@ -1,0 +1,7 @@
+id: bench_press.barbell
+names: {en: Barbell bench press, ru: Жим штанги лёжа}
+aliases: [Bench press, Жим лёжа]
+equipment: [barbell, bench, squat_rack]
+muscles:
+  primary: [pecs]
+  secondary: [delt_front, triceps]

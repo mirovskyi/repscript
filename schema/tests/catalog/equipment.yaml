@@ -1,0 +1,15 @@
+# The fixtures' equipment dictionary: it changes only with the fixtures, so pinned reports stay put.
+- id: dumbbells
+  names: {en: Dumbbells, ru: Гантели}
+- id: kettlebell
+  names: {en: Kettlebell, ru: Гиря}
+- id: bench
+  names: {en: Bench, ru: Скамья}
+- id: bench.adjustable
+  names: {en: Adjustable bench, ru: Регулируемая скамья}
+- id: pullup_bar
+  names: {en: Pull-up bar, ru: Турник}
+- id: dip_bars
+  names: {en: Dip bars, ru: Брусья}
+- id: backpack
+  names: {en: Backpack, ru: Рюкзак}

@@ -1,0 +1,51 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: exercises[0] (line 8) = "my.x"
+  Expected a mapping, found a string.
+  Hint: An exercise entry: a mapping with id and names, and optionally aliases, equipment, muscles, deprecated and replaced_by. Example: {id: my.towel_pullup, names: {en: Towel pull-up}, equipment: [pullup_bar], muscles: {primary: [lats], secondary: [forearms]}}
+error: exercises[1].names (line 10)
+  Expected a mapping, found a list.
+  Hint: The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}
+error: exercises[2].aliases (line 13) = "x"
+  Expected a list, found a string.
+  Hint: Other names of the exercise, a list of strings in any language. Example: aliases: [towel pull-ups]
+error: exercises[3].equipment (line 16) = "pullup_bar"
+  Expected a list, found a string.
+  Hint: What the exercise needs: a list of keys from catalog/equipment.yaml, or [] when it needs nothing. Example: equipment: [pullup_bar]
+error: exercises[4].muscles.primary (line 19) = "lats"
+  Expected a list, found a string.
+  Hint: The muscles that do the work: a list of at least one key from catalog/muscles.yaml. Example: primary: [lats]
+error: exercises[5].replaced_by (line 23) = 5
+  Expected a string, found an integer.
+  Hint: The id of the exercise that replaces this one, together with deprecated: true. Example: replaced_by: pullup.wide
+error: exercises[6].id (line 24) = 5
+  Expected a string, found an integer.
+  Hint: The exercise's id: lowercase Latin letters, digits, _ and dots. An own exercise's id starts with my. Example: id: my.towel_pullup
+error: exercises[7].names.en (line 25) = 5
+  Expected a string, found an integer.
+  Hint: The exercise's name in this language, a string. Example: en: Towel pull-up
+error: exercises[8].aliases[0] (line 26) = 5
+  Expected a string, found an integer.
+  Hint: Another name of the exercise, a string. Example: towel pull-ups
+error: exercises[9].equipment[0] (line 27) = 5
+  Expected a string, found an integer.
+  Hint: An equipment key from catalog/equipment.yaml, a string. Example: pullup_bar
+error: exercises[10].muscles (line 28)
+  Expected a mapping, found a list.
+  Hint: The muscles the exercise works: primary for those that do the work, secondary for those that help, each a list of keys from catalog/muscles.yaml. Example: muscles: {primary: [lats], secondary: [biceps]}
+error: exercises[11].muscles.secondary (line 29) = "lats"
+  Expected a list, found a string.
+  Hint: The muscles that help: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]
+error: exercises[12].deprecated (line 30) = "yes"
+  Expected a boolean, found a string.
+  Hint: deprecated: true marks an exercise that another one replaces, named in replaced_by. Example: deprecated: true
+error: exercises[13].deprecated (line 31) = false
+  Expected one of: true.
+  Hint: deprecated: true marks an exercise that another one replaces, named in replaced_by. Example: deprecated: true
+error: workouts[0].blocks[0].exercise (line 35) = 5
+  Expected a string, found an integer.
+  Hint: The exercise's id: a catalog id from catalog/index.yaml, or the id of an own exercise described in exercises, starting with my. Example: exercise: pullup.wide
+error: workouts[0].blocks[1].load.implement (line 36) = 5
+  Expected a string, found an integer.
+  Hint: What carries the weight: a key from catalog/equipment.yaml, such as dumbbells or backpack. The weight is that of one implement. Example: implement: dumbbells
+errors: 16, warnings: 1

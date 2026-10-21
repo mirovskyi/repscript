@@ -1,0 +1,23 @@
+# Fields of own exercises: names that are empty or not under a language code, unknown muscle and
+# equipment keys, an unknown implement, and an own exercise named like a catalog exercise.
+repscript: 0
+id: own-fields
+revision: 1
+title: Own fields
+exercises:
+  - id: my.empty_names
+    names: {}
+  - id: my.english
+    names: {english: Towel pull-up}
+  - id: my.muscles
+    names: {en: Band pull-apart}
+    muscles: {primary: [lat], secondary: [wings]}
+  - id: my.equipment
+    names: {en: Bench hop}
+    equipment: [dumbells]
+  - id: my.wide_pullup
+    names: {en: Wide-grip pull-up}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 10, load: {kg: 18, implement: dumbells}}

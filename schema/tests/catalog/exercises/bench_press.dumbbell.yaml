@@ -1,0 +1,6 @@
+id: bench_press.dumbbell
+names: {en: Dumbbell bench press, ru: Жим гантелей лёжа}
+equipment: [dumbbells, bench]
+muscles:
+  primary: [pecs, triceps]
+  secondary: [delt_front]

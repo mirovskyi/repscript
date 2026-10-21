@@ -1,0 +1,7 @@
+id: split_squat.bulgarian
+names: {en: Bulgarian split squat, ru: Болгарские сплит-приседания}
+aliases: [Rear-foot-elevated split squat, Bulgarian squat, Болгарские выпады, Болгарские приседания]
+equipment: [bench]
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus]

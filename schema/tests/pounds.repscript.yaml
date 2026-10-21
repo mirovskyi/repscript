@@ -5,6 +5,6 @@ title: Garage strength
 workouts:
   - id: A
     blocks:
-      - {exercise: dumbbell.row, sets: 3, reps: 8-12, load: {lb: 40}}
-      - {exercise: goblet.squat, sets: 3, reps: 10, load: {lb: 35-45}}
+      - {exercise: row.dumbbell, sets: 3, reps: 8-12, load: {lb: 40}}
+      - {exercise: squat.goblet, sets: 3, reps: 10, load: {lb: 35-45}}
       - {exercise: dip, sets: 3, reps: 6-10, load: {bw: true, add_lb: 10}}

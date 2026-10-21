@@ -1,0 +1,7 @@
+id: curl.dumbbell
+names: {en: Dumbbell curl, ru: Сгибания рук с гантелями}
+aliases: [Dumbbell biceps curl, Biceps curl, Подъём гантелей на бицепс]
+equipment: [dumbbells]
+muscles:
+  primary: [biceps]
+  secondary: [brachialis, forearms]

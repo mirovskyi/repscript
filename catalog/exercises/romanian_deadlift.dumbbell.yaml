@@ -1,0 +1,7 @@
+id: romanian_deadlift.dumbbell
+names: {en: Dumbbell Romanian deadlift, ru: Румынская тяга с гантелями}
+aliases: [Dumbbell RDL, Румынская становая тяга с гантелями]
+equipment: [dumbbells]
+muscles:
+  primary: [hamstrings, glute_max]
+  secondary: [adductors]

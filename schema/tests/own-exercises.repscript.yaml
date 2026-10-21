@@ -1,0 +1,24 @@
+# Own exercises: one with names only, one with a muscle group, one with every optional field, all used
+# in blocks; loads that name their implement.
+repscript: 0
+id: own
+revision: 1
+title: Own exercises
+exercises:
+  - id: my.towel_pullup
+    names: {en: Towel pull-up}
+  - id: my.back_raise
+    names: {en: Back raise on a chair, ru: Гиперэкстензия на стуле}
+    muscles: {primary: [back]}
+  - id: my.bench_dip
+    names: {en: Bench dip}
+    aliases: [Chair dip]
+    equipment: [bench]
+    muscles: {primary: [triceps], secondary: [delt_front, pecs]}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: my.towel_pullup, sets: 3, reps: 5, load: {bw: true, add_kg: 5, implement: backpack}}
+      - {exercise: my.back_raise, sets: 3, reps: 12}
+      - {exercise: my.bench_dip, sets: 3, reps: 10}
+      - {exercise: squat.goblet, sets: 3, reps: 10, load: {kg: 18, implement: dumbbells}}

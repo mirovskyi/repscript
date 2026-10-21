@@ -1,0 +1,7 @@
+id: overhead_press.barbell
+names: {en: Barbell overhead press, ru: Жим штанги стоя}
+aliases: [Overhead press, Military press, OHP, Армейский жим, Жим стоя]
+equipment: [barbell, squat_rack]
+muscles:
+  primary: [delt_front]
+  secondary: [delt_side, triceps, traps, serratus, pecs]

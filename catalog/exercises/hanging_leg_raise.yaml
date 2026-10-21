@@ -1,0 +1,7 @@
+id: hanging_leg_raise
+names: {en: Hanging leg raise, ru: Подъём ног в висе}
+aliases: [Подъём ног в висе на турнике]
+equipment: [pullup_bar]
+muscles:
+  primary: [abs, hip_flexors]
+  secondary: [quads, adductors, obliques]

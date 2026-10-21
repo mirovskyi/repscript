@@ -17,9 +17,9 @@ workouts:
       - {exercise: pushup, sets: 3, reps: 10, rest: 2m-3m}
       - {exercise: plank, sets: 3, time: 30 сек}
       - {exercise: plank, sets: 3, time: 45−60s}
-      - exercise: lateral.raise
+      - exercise: lateral_raise.dumbbell
         sets: 3
         reps: 12
         load:
           kg: 2,5
-      - {exercise: lateral.raise, sets: 3, reps: 12, load: {kg: 2,5}}
+      - {exercise: lateral_raise.dumbbell, sets: 3, reps: 12, load: {kg: 2,5}}

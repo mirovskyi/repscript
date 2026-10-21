@@ -1,0 +1,51 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: exercises[1].names.english (line 9)
+  Unknown field.
+  Hint: The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}
+error: exercises[3].id (line 11) = "My.Plank_Row"
+  An exercise id is lowercase Latin letters, digits, _ and dots, starting with a letter.
+  Hint: Own exercise ids start with my., e.g. id: my.towel_pullup
+error: exercises[4].id (line 12) = "Ring_Row"
+  An exercise id is lowercase Latin letters, digits, _ and dots, starting with a letter.
+  Hint: Own exercise ids start with my., e.g. id: my.towel_pullup
+error: exercises[5] (line 13)
+  The replacements form a cycle: my.a, my.b, my.a.
+  Hint: End the chain at an exercise that is not deprecated.
+error: exercises[6] (line 14)
+  The replacements form a cycle: my.b, my.a, my.b.
+  Hint: End the chain at an exercise that is not deprecated.
+error: exercises[7] (line 15)
+  The replacements form a cycle: my.c, my.c.
+  Hint: End the chain at an exercise that is not deprecated.
+error: exercises[8] (line 16)
+  The entry has deprecated without replaced_by.
+  Hint: Add replaced_by with the id of the exercise that replaces this one.
+error: exercises[11].id (line 19) = "my.e"
+  exercises[9] already has this id.
+  Hint: Give each exercise its own id.
+error: workouts[0].blocks[0].exercise (line 23) = "Ring rows"
+  The exercise needs an id, not a name, and no exercise has this name.
+  Hint: Find the exercise's id in catalog/index.yaml. If it is not there, describe the exercise in exercises with an id starting with my., e.g. my.towel_pullup.
+error: workouts[0].blocks[1].exercise (line 24) = "?"
+  The exercise needs an id, not a name, and no exercise has this name.
+  Hint: Find the exercise's id in catalog/index.yaml. If it is not there, describe the exercise in exercises with an id starting with my., e.g. my.towel_pullup.
+error: workouts[0].blocks[2].exercise (line 25) = ""
+  The exercise needs an id, not a name, and no exercise has this name.
+  Hint: Find the exercise's id in catalog/index.yaml. If it is not there, describe the exercise in exercises with an id starting with my., e.g. my.towel_pullup.
+error: workouts[0].blocks[3].exercise (line 26) = "my.plank_row"
+  This own exercise is not described in exercises.
+  Hint: Add an entry with this id and the exercise's name to exercises, e.g. {id: my.plank_row, names: {en: <the exercise's name>}}
+error: workouts[0].blocks[4].exercise (line 27) = "my.Box-Jump"
+  This own exercise is not described in exercises.
+  Hint: Add an entry to exercises with an id of lowercase Latin letters, digits, _ and dots, starting with my., and the exercise's name, and write the same id here, e.g. {id: my.towel_pullup, names: {en: <the exercise's name>}}
+warning: workouts[0].blocks[5].exercise (line 28) = "my.a"
+  This exercise is deprecated and replaced by my.b.
+  Hint: Write exercise: my.b.
+warning: workouts[0].blocks[6].exercise (line 29) = "my.c"
+  This exercise is deprecated.
+  Hint: Choose another exercise: its replaced_by names the exercise itself.
+warning: workouts[0].blocks[7].exercise (line 30) = "my.d"
+  This exercise is deprecated.
+  Hint: Choose another exercise: it has no replaced_by naming the one that replaces it.
+errors: 13, warnings: 4

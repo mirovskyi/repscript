@@ -1,0 +1,6 @@
+id: glute_bridge
+names: {en: Glute bridge, ru: Ягодичный мост}
+aliases: [Hip bridge, Ягодичный мостик]
+equipment: []
+muscles:
+  primary: [glute_max]

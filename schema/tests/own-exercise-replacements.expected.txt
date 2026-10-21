@@ -1,0 +1,24 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: exercises[2] (line 14)
+  The entry has deprecated without replaced_by.
+  Hint: Add replaced_by with the id of the exercise that replaces this one.
+error: exercises[3] (line 17)
+  The entry has replaced_by without deprecated: true.
+  Hint: Add deprecated: true, or remove replaced_by.
+error: exercises[4].replaced_by (line 23) = "my.nothing"
+  No exercise has this id.
+  Hint: The id of the exercise that replaces this one, together with deprecated: true. Example: replaced_by: pullup.wide
+error: exercises[5] (line 24)
+  The replacements form a cycle: my.a, my.b, my.a.
+  Hint: End the chain at an exercise that is not deprecated.
+error: exercises[6] (line 28)
+  The replacements form a cycle: my.b, my.a, my.b.
+  Hint: End the chain at an exercise that is not deprecated.
+warning: workouts[0].blocks[0].exercise (line 35) = "my.pullup_towel"
+  This exercise is deprecated and replaced by my.towel_pullup.
+  Hint: Write exercise: my.towel_pullup.
+warning: workouts[0].blocks[1].exercise (line 36) = "my.old"
+  This exercise is deprecated.
+  Hint: Choose another exercise: its replaced_by names no exercise.
+errors: 5, warnings: 3

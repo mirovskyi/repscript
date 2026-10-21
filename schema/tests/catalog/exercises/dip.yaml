@@ -1,0 +1,6 @@
+id: dip
+names: {en: Dip, ru: Отжимания на брусьях}
+equipment: [dip_bars]
+muscles:
+  primary: [pecs, triceps]
+  secondary: [delt_front]

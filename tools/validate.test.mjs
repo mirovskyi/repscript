@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -73,6 +73,28 @@ for (const [encoding, bytes] of [
     }
   });
 }
+
+test('broken catalog: the file and the problem on standard error, no report, exit 1', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'repscript-'));
+  try {
+    const root = new URL('..', import.meta.url);
+    for (const path of ['tools', 'core', 'vendor', 'catalog', 'schema/repscript.schema.json'])
+      cpSync(new URL(path, root), join(dir, path), { recursive: true });
+    writeFileSync(join(dir, 'catalog', 'exercises', 'pushup.yaml'), 'id: [pushup\n');
+    const { status, stdout, stderr } = spawnSync(process.execPath, [join(dir, 'tools', 'validate.mjs'), valid], {
+      encoding: 'utf8',
+    });
+    assert.equal(status, 1);
+    assert.equal(stdout, '');
+    assert.equal(
+      stderr,
+      'Cannot read the catalog: catalog/exercises/pushup.yaml (line 2): Flow sequence in block collection must be sufficiently indented and end with a ]\n' +
+        'The catalog comes with the project: restore catalog/ with git checkout -- catalog, or download the project again.\n',
+    );
+  } finally {
+    rmSync(dir, { recursive: true });
+  }
+});
 
 test('no arguments: usage, exit 1', () => {
   const { status, stdout, stderr } = run();

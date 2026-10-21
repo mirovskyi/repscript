@@ -1,0 +1,19 @@
+# Exercise names instead of ids: a matching name gets the id to write, catalog first; a name that
+# matches nothing gets the index hint.
+repscript: 0
+id: names
+revision: 1
+title: Names
+exercises:
+  - id: my.ring_row
+    names: {en: Ring row}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: Wide-grip pull-ups, sets: 3, reps: 5}
+      - {exercise: подтягивания широким хватом, sets: 3, reps: 5}
+      - {exercise: PUSH UPS, sets: 3, reps: 10}
+      - {exercise: pushups, sets: 3, reps: 10}
+      - {exercise: Ring row, sets: 3, reps: 10}
+      - {exercise: Pullup.Wide, sets: 3, reps: 5}
+      - {exercise: Towel pull-ups, sets: 3, reps: 5}

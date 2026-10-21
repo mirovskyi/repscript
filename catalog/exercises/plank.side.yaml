@@ -1,0 +1,6 @@
+id: plank.side
+names: {en: Side plank, ru: Боковая планка}
+aliases: [Side bridge]
+equipment: []
+muscles:
+  primary: [obliques]

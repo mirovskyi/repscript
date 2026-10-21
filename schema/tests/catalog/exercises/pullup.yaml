@@ -1,0 +1,6 @@
+id: pullup
+names: {en: Pull-up, ru: Подтягивания}
+equipment: [pullup_bar]
+muscles:
+  primary: [lats]
+  secondary: [biceps]

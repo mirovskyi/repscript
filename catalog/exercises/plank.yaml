@@ -1,0 +1,6 @@
+id: plank
+names: {en: Plank, ru: Планка}
+aliases: [Front plank, Forearm plank, Планка на локтях]
+equipment: []
+muscles:
+  primary: [abs]

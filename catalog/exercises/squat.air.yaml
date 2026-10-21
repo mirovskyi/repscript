@@ -1,0 +1,7 @@
+id: squat.air
+names: {en: Air squat, ru: Приседания}
+aliases: [Bodyweight squat, Приседания без веса]
+equipment: []
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus]

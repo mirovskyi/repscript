@@ -1,0 +1,122 @@
+# Generated from catalog/exercises/ by node scripts/build-catalog-index.mjs.
+# Do not edit: change the entries and rebuild.
+- id: bench_press.barbell
+  names: {en: Barbell bench press, ru: Жим штанги лёжа}
+  aliases: [Bench press, Жим лёжа]
+  equipment: [barbell, bench, squat_rack]
+- id: bench_press.dumbbell
+  names: {en: Dumbbell bench press, ru: Жим гантелей лёжа}
+  aliases: [Dumbbell chest press, Жим гантелей лёжа на скамье]
+  equipment: [dumbbells, bench]
+- id: burpee
+  names: {en: Burpee, ru: Бёрпи}
+  aliases: [Бурпи]
+  equipment: []
+- id: calf_raise
+  names: {en: Calf raise, ru: Подъём на носки}
+  aliases: [Standing calf raise, Подъёмы на носки]
+  equipment: []
+- id: carry.suitcase
+  names: {en: Suitcase carry, ru: Прогулка с гантелью в одной руке}
+  aliases: [Suitcase walk, One-arm farmer's carry, Чемоданная прогулка]
+  equipment: [dumbbells]
+- id: chinup
+  names: {en: Chin-up, ru: Подтягивания обратным хватом}
+  aliases: [Underhand pull-up]
+  equipment: [pullup_bar]
+- id: crunch
+  names: {en: Crunch, ru: Скручивания}
+  aliases: [Abdominal crunch, Скручивания на пресс]
+  equipment: []
+- id: curl.dumbbell
+  names: {en: Dumbbell curl, ru: Сгибания рук с гантелями}
+  aliases: [Dumbbell biceps curl, Biceps curl, Подъём гантелей на бицепс]
+  equipment: [dumbbells]
+- id: deadlift.barbell
+  names: {en: Barbell deadlift, ru: Становая тяга}
+  aliases: [Deadlift, Conventional deadlift, Становая]
+  equipment: [barbell]
+- id: dip
+  names: {en: Dip, ru: Отжимания на брусьях}
+  aliases: [Parallel bar dip, Брусья]
+  equipment: [dip_bars]
+- id: glute_bridge
+  names: {en: Glute bridge, ru: Ягодичный мост}
+  aliases: [Hip bridge, Ягодичный мостик]
+  equipment: []
+- id: hanging_leg_raise
+  names: {en: Hanging leg raise, ru: Подъём ног в висе}
+  aliases: [Подъём ног в висе на турнике]
+  equipment: [pullup_bar]
+- id: kettlebell_swing
+  names: {en: Kettlebell swing, ru: Махи гирей}
+  aliases: [Swing, KB swing, Russian kettlebell swing, Мах гирей, Свинг гирей]
+  equipment: [kettlebell]
+- id: lateral_raise.dumbbell
+  names: {en: Dumbbell lateral raise, ru: Махи гантелями в стороны}
+  aliases: [Lateral raise, Side raise, Разведения гантелей в стороны, Махи в стороны]
+  equipment: [dumbbells]
+- id: lunge
+  names: {en: Lunge, ru: Выпады}
+  aliases: [Forward lunge, Выпады вперёд]
+  equipment: []
+- id: overhead_press.barbell
+  names: {en: Barbell overhead press, ru: Жим штанги стоя}
+  aliases: [Overhead press, Military press, OHP, Армейский жим, Жим стоя]
+  equipment: [barbell, squat_rack]
+- id: overhead_press.dumbbell
+  names: {en: Dumbbell overhead press, ru: Жим гантелей стоя}
+  aliases: [Dumbbell shoulder press, Жим гантелей над головой]
+  equipment: [dumbbells]
+- id: plank
+  names: {en: Plank, ru: Планка}
+  aliases: [Front plank, Forearm plank, Планка на локтях]
+  equipment: []
+- id: plank.side
+  names: {en: Side plank, ru: Боковая планка}
+  aliases: [Side bridge]
+  equipment: []
+- id: pullup
+  names: {en: Pull-up, ru: Подтягивания}
+  aliases: [Подтягивания на турнике]
+  equipment: [pullup_bar]
+- id: pullup.wide
+  names: {en: Wide-grip pull-up, ru: Подтягивания широким хватом}
+  aliases: [Wide pull-up, Широкие подтягивания]
+  equipment: [pullup_bar]
+- id: pushup
+  names: {en: Push-up, ru: Отжимания}
+  aliases: [Press-up, Отжимания от пола]
+  equipment: []
+- id: romanian_deadlift.dumbbell
+  names: {en: Dumbbell Romanian deadlift, ru: Румынская тяга с гантелями}
+  aliases: [Dumbbell RDL, Румынская становая тяга с гантелями]
+  equipment: [dumbbells]
+- id: row.dumbbell
+  names: {en: Dumbbell row, ru: Тяга гантели в наклоне}
+  aliases: [One-arm dumbbell row, Single-arm dumbbell row, Тяга гантели одной рукой]
+  equipment: [dumbbells, bench]
+- id: split_squat.bulgarian
+  names: {en: Bulgarian split squat, ru: Болгарские сплит-приседания}
+  aliases: [Rear-foot-elevated split squat, Bulgarian squat, Болгарские выпады, Болгарские приседания]
+  equipment: [bench]
+- id: squat.air
+  names: {en: Air squat, ru: Приседания}
+  aliases: [Bodyweight squat, Приседания без веса]
+  equipment: []
+- id: squat.barbell
+  names: {en: Barbell back squat, ru: Приседания со штангой}
+  aliases: [Back squat, Barbell squat, Приседания со штангой на спине]
+  equipment: [barbell, squat_rack]
+- id: squat.goblet
+  names: {en: Goblet squat, ru: Гоблет-приседания}
+  aliases: [Кубковые приседания, Приседания с гантелей у груди]
+  equipment: [dumbbells]
+- id: step_up
+  names: {en: Step-up, ru: Зашагивания на тумбу}
+  aliases: [Box step-up, Зашагивания]
+  equipment: [box]
+- id: triceps_extension.dumbbell
+  names: {en: Overhead dumbbell triceps extension, ru: Французский жим гантели из-за головы}
+  aliases: [Overhead triceps extension, Dumbbell French press, Французский жим гантели]
+  equipment: [dumbbells]

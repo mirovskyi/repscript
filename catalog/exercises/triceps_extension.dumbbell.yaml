@@ -1,0 +1,6 @@
+id: triceps_extension.dumbbell
+names: {en: Overhead dumbbell triceps extension, ru: Французский жим гантели из-за головы}
+aliases: [Overhead triceps extension, Dumbbell French press, Французский жим гантели]
+equipment: [dumbbells]
+muscles:
+  primary: [triceps]

@@ -1,0 +1,6 @@
+id: kettlebell_swing
+names: {en: Kettlebell swing, ru: Махи гирей}
+equipment: [kettlebell]
+muscles:
+  primary: [quads]
+  secondary: [abs]

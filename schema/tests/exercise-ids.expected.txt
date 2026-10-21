@@ -1,0 +1,27 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].blocks[0].exercise (line 13) = "pullup.wdie"
+  No exercise in the catalog has this id.
+  Hint: Did you mean pullup.wide?
+error: workouts[0].blocks[1].exercise (line 14) = "pullup.wide.weighted"
+  No exercise in the catalog has this id.
+  Hint: Did you mean pullup.wide?
+error: workouts[0].blocks[2].exercise (line 15) = "pushup.wide"
+  No exercise in the catalog has this id.
+  Hint: Did you mean pushup?
+error: workouts[0].blocks[3].exercise (line 16) = "zercher_squat"
+  No exercise in the catalog has this id.
+  Hint: Find the exercise's id in catalog/index.yaml. If it is not there, describe the exercise in exercises with an id starting with my., e.g. my.towel_pullup.
+error: workouts[0].blocks[4].exercise (line 17) = "towel_pullup"
+  No exercise in the catalog has this id.
+  Hint: Did you mean my.towel_pullup?
+error: workouts[0].blocks[5].exercise (line 18) = "my.towel_pulup"
+  This own exercise is not described in exercises.
+  Hint: Did you mean my.towel_pullup?
+error: workouts[0].blocks[6].exercise (line 19) = "my.box_jump"
+  This own exercise is not described in exercises.
+  Hint: Add an entry with this id and the exercise's name to exercises, e.g. {id: my.box_jump, names: {en: <the exercise's name>}}
+warning: workouts[0].blocks[7].exercise (line 20) = "pullup.wide_grip"
+  This exercise is deprecated and replaced by pullup.wide.
+  Hint: Write exercise: pullup.wide.
+errors: 7, warnings: 2

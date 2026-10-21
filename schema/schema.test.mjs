@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { buildCatalog } from '../core/catalog.mjs';
 import { FORMATS } from '../core/formats.mjs';
-import { check, KEYWORDS } from '../core/schema.mjs';
+import { check, closest, KEYWORDS } from '../core/schema.mjs';
 import { formatIssues, validate } from '../core/validate.mjs';
+import { readCatalogFiles } from '../tools/catalog.mjs';
 
 const schema = JSON.parse(readFileSync(new URL('./repscript.schema.json', import.meta.url), 'utf8'));
 
@@ -83,6 +85,45 @@ test('minimum, minItems and format', () => {
   assert.deepEqual(check('8-12', reps), []);
 });
 
+test('minProperties counts every field', () => {
+  const description = 'The mapping.';
+  assert.deepEqual(check({}, { type: 'object', minProperties: 2, description }), [
+    { path: [], value: {}, message: 'Expected at least 2 fields.', hint: description },
+  ]);
+  assert.deepEqual(check({ a: 1 }, { type: 'object', minProperties: 2, description }), [
+    { path: [], value: { a: 1 }, message: 'Expected at least 2 fields.', hint: description },
+  ]);
+  assert.deepEqual(check({ a: 1 }, { type: 'object', minProperties: 1, description }), []);
+  assert.deepEqual(
+    check({}, { type: 'object', minProperties: 1, description })[0].message,
+    'Expected at least 1 field.',
+  );
+});
+
+test('an unknown field in a mapping named by a pattern gets the mapping description', () => {
+  const names = {
+    type: 'object',
+    description: 'Names by language code.',
+    patternProperties: { '^[a-z]{2}$': { type: 'string' } },
+    additionalProperties: /** @type {const} */ (false),
+  };
+  assert.deepEqual(check({ english: 'Pull-up' }, names), [
+    { path: ['english'], message: 'Unknown field.', hint: 'Names by language code.' },
+  ]);
+});
+
+test('closest finds the nearest candidate within reach', () => {
+  assert.equal(closest('titel', ['id', 'title', 'notes']), 'title');
+  assert.equal(closest('DI', ['id']), 'id');
+  // Two edits from a long candidate, but one is the limit for four characters or fewer.
+  assert.equal(closest('pullup.wdie', ['pullup', 'pullup.wide']), 'pullup.wide');
+  assert.equal(closest('lat', ['abs', 'lats']), 'lats');
+  // A tie goes to the first candidate.
+  assert.equal(closest('cat', ['bat', 'hat']), 'bat');
+  assert.equal(closest('wings', ['lats', 'pecs']), undefined);
+  assert.equal(closest('ab', ['abcd']), undefined);
+});
+
 test('an empty field named by digits gets the flow comma hint', () => {
   const load = {
     type: 'object',
@@ -111,11 +152,14 @@ test('a program with 200,000 issues does not overflow the call stack', () => {
 });
 
 const fixtures = new URL('./tests/', import.meta.url);
+// The test catalog, not the project's: the real one grows, and its growth would change suggestions and
+// key lists in the pinned reports.
+const catalog = buildCatalog(readCatalogFiles(new URL('catalog/', fixtures)));
 for (const file of readdirSync(fixtures).filter(name => name.endsWith('.repscript.yaml'))) {
   const name = file.slice(0, -'.repscript.yaml'.length);
   test(`fixture ${name}`, () => {
     const source = readFileSync(new URL(file, fixtures), 'utf8');
     const expected = readFileSync(new URL(`${name}.expected.txt`, fixtures), 'utf8').replaceAll('\r\n', '\n');
-    assert.equal(formatIssues(validate(source, schema)), expected);
+    assert.equal(formatIssues(validate(source, schema, catalog)), expected);
   });
 }

@@ -1,0 +1,7 @@
+id: calf_raise
+names: {en: Calf raise, ru: Подъём на носки}
+aliases: [Standing calf raise, Подъёмы на носки]
+equipment: []
+muscles:
+  primary: [gastrocnemius]
+  secondary: [soleus]

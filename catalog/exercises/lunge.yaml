@@ -1,0 +1,7 @@
+id: lunge
+names: {en: Lunge, ru: Выпады}
+aliases: [Forward lunge, Выпады вперёд]
+equipment: []
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus]

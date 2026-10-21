@@ -1,0 +1,30 @@
+# Edge cases: only language codes under names hold names, a name of only punctuation matches nothing,
+# hints never suggest an own id that is not valid, and replacement chains that give no replacement.
+repscript: 0
+id: edge-cases
+revision: 1
+title: Edge cases
+exercises:
+  - {id: my.hop, names: {en: Hop, x-note: Ring row}}
+  - {id: my.english, names: {english: Pull-up}}
+  - {id: my.dash, names: {en: "-"}}
+  - {id: My.Plank_Row, names: {en: Plank row}}
+  - {id: Ring_Row, names: {en: Ring row}}
+  - {id: my.a, names: {en: A}, deprecated: true, replaced_by: my.b}
+  - {id: my.b, names: {en: B}, deprecated: true, replaced_by: my.a}
+  - {id: my.c, names: {en: C}, deprecated: true, replaced_by: my.c}
+  - {id: my.d, names: {en: D}, deprecated: true}
+  - {id: my.e, names: {en: E}}
+  - {id: my.f, names: {en: F}, deprecated: true, replaced_by: my.e}
+  - {id: my.e, names: {en: E again}, deprecated: true, replaced_by: my.f}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: Ring rows, sets: 3, reps: 10}
+      - {exercise: "?", sets: 3, reps: 10}
+      - {exercise: "", sets: 3, reps: 10}
+      - {exercise: my.plank_row, sets: 3, reps: 10}
+      - {exercise: my.Box-Jump, sets: 3, reps: 10}
+      - {exercise: my.a, sets: 3, reps: 5}
+      - {exercise: my.c, sets: 3, reps: 5}
+      - {exercise: my.d, sets: 3, reps: 5}

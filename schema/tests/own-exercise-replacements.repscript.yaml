@@ -1,0 +1,36 @@
+# Replacements among own exercises: a renamed exercise still in use, each of the two fields without the
+# other, a replacement that does not exist, and two exercises that replace each other.
+repscript: 0
+id: replacements
+revision: 1
+title: Replacements
+exercises:
+  - id: my.towel_pullup
+    names: {en: Towel pull-up}
+  - id: my.pullup_towel
+    names: {en: Pull-up on a towel}
+    deprecated: true
+    replaced_by: my.towel_pullup
+  - id: my.deprecated_alone
+    names: {en: Old hop}
+    deprecated: true
+  - id: my.replaced_alone
+    names: {en: Hop}
+    replaced_by: my.towel_pullup
+  - id: my.old
+    names: {en: Old row}
+    deprecated: true
+    replaced_by: my.nothing
+  - id: my.a
+    names: {en: Exercise A}
+    deprecated: true
+    replaced_by: my.b
+  - id: my.b
+    names: {en: Exercise B}
+    deprecated: true
+    replaced_by: my.a
+workouts:
+  - id: A
+    blocks:
+      - {exercise: my.pullup_towel, sets: 3, reps: 5}
+      - {exercise: my.old, sets: 3, reps: 10}

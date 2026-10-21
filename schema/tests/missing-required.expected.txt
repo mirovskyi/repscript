@@ -11,7 +11,7 @@ error: workouts[0].id (line 6)
   Hint: The workout's id, a short string that names it within the program. Example: id: A
 error: workouts[1].blocks[1].exercise (line 9)
   Missing required field.
-  Hint: The exercise's id, a string. Example: exercise: pullup.wide
+  Hint: The exercise's id: a catalog id from catalog/index.yaml, or the id of an own exercise described in exercises, starting with my. Example: exercise: pullup.wide
 error: workouts[1].blocks[1].sets (line 9)
   Missing required field.
   Hint: The number of sets, a whole number or a range. Examples: sets: 3, sets: 3-4

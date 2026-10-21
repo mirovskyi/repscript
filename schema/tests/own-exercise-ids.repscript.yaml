@@ -1,0 +1,20 @@
+# Own exercise ids: the id form, the my. prefix, a catalog id and a repeated id each get one error at
+# the id.
+repscript: 0
+id: own-ids
+revision: 1
+title: Own ids
+exercises:
+  - id: My.Towel-Pullup
+    names: {en: Towel pull-up}
+  - id: ring_row
+    names: {en: Ring row}
+  - id: pullup.wide
+    names: {en: My wide pull-up}
+  - id: my.towel_pullup
+    names: {en: Pull-up on a towel}
+  - id: my.towel_pullup
+    names: {en: Another towel pull-up}
+workouts:
+  - id: A
+    blocks: [{exercise: pushup, sets: 3, reps: 10}]

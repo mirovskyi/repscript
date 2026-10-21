@@ -1,0 +1,24 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: exercises[0].names (line 9)
+  Expected at least 1 field.
+  Hint: The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}
+error: exercises[1].names.english (line 11)
+  Unknown field.
+  Hint: The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}
+error: exercises[2].muscles.primary[0] (line 14) = "lat"
+  Unknown muscle key.
+  Hint: Did you mean lats?
+error: exercises[2].muscles.secondary[0] (line 14) = "wings"
+  Unknown muscle key.
+  Hint: Muscle keys (catalog/muscles.yaml): back, lats, chest, pecs, shoulders, deltoids, delt_front, delt_side, arms, biceps, triceps, core, abs, legs, quads.
+error: exercises[3].equipment[0] (line 17) = "dumbells"
+  Unknown equipment key.
+  Hint: Did you mean dumbbells?
+warning: exercises[4].names.en (line 19) = "Wide-grip pull-up"
+  The catalog has this exercise: pullup.wide.
+  Hint: If it is the same exercise, remove this entry and write exercise: pullup.wide. Otherwise give it a name that tells it apart.
+error: workouts[0].blocks[0].load.implement (line 23) = "dumbells"
+  Unknown equipment key.
+  Hint: Did you mean dumbbells?
+errors: 6, warnings: 2

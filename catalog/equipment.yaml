@@ -1,0 +1,26 @@
+# Equipment keys. A key X.Y is a variant of X that satisfies any need for X, as bench.adjustable does
+# for bench. Licensed under CC BY-SA 4.0 (LICENSE).
+- id: dumbbells
+  names: {en: Dumbbells, ru: Гантели}
+- id: kettlebell
+  names: {en: Kettlebell, ru: Гиря}
+- id: barbell
+  names: {en: Barbell, ru: Штанга}
+- id: bench
+  names: {en: Bench, ru: Скамья}
+- id: bench.adjustable
+  names: {en: Adjustable bench, ru: Регулируемая скамья}
+- id: squat_rack
+  names: {en: Squat rack, ru: Стойки для штанги}
+- id: pullup_bar
+  names: {en: Pull-up bar, ru: Турник}
+- id: dip_bars
+  names: {en: Dip bars, ru: Брусья}
+- id: box
+  names: {en: Plyo box, ru: Тумба}
+- id: backpack
+  names: {en: Backpack, ru: Рюкзак}
+- id: vest
+  names: {en: Weight vest, ru: Жилет-утяжелитель}
+- id: dip_belt
+  names: {en: Dip belt, ru: Пояс для отягощений}

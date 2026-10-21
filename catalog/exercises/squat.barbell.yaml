@@ -1,0 +1,7 @@
+id: squat.barbell
+names: {en: Barbell back squat, ru: Приседания со штангой}
+aliases: [Back squat, Barbell squat, Приседания со штангой на спине]
+equipment: [barbell, squat_rack]
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus]

@@ -1,9 +1,14 @@
-// Checks a program's source text and formats the issues as the report an AI agent reads.
-// No I/O: the caller passes the decoded text and the schema.
+// Checks a program's source text, or a catalog entry's, and formats the issues as the report an AI
+// agent reads. No I/O: the caller passes the decoded text, the schema and the catalog.
 
 import { Alias, LineCounter, parseDocument, Scalar, visit, YAMLMap, YAMLSeq } from '../vendor/yaml.mjs';
+import { checkEntry } from './exercises.mjs';
 import { checkRules } from './rules.mjs';
 import { check } from './schema.mjs';
+
+/** @typedef {import('./schema.mjs').Schema} Schema */
+/** @typedef {import('./catalog.mjs').Catalog} Catalog */
+/** @typedef {import('./rules.mjs').RuleIssue} RuleIssue */
 
 /**
  * @typedef {object} Issue
@@ -42,11 +47,44 @@ const ALIAS_HINT =
 const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YAML aliases (*name).';
 
 /**
+ * Checks a program.
  * @param {string} source the file's text, already decoded
- * @param {import('./schema.mjs').Schema} schema
+ * @param {Schema} schema
+ * @param {Catalog} catalog required: a missing catalog must not quietly skip the exercise checks
  * @returns {Issue[]} sorted by line, issues without a line first
  */
-export function validate(source, schema) {
+export function validate(source, schema, catalog) {
+  return checkSource(source, schema, data => checkRules(data, catalog));
+}
+
+/**
+ * Checks one catalog entry file against the entry schema and the catalog's rules. Paths in the report
+ * are relative to the entry, such as muscles.primary[0].
+ * @param {string} source the file's text, already decoded
+ * @param {Schema} schema the program schema, whose exercises items describe an entry
+ * @param {Catalog} catalog
+ * @param {string} file the path with /, such as catalog/exercises/pullup.wide.yaml: the part after the
+ *   last / is the file name the id must match
+ * @returns {Issue[]} sorted by line, issues without a line first
+ */
+export function validateEntry(source, schema, catalog, file) {
+  const entry = /** @type {Schema} */ (schema.properties?.exercises?.items);
+  const fileName = file.slice(file.lastIndexOf('/') + 1);
+  return checkSource(source, entry, data =>
+    typeof data === 'object' && data !== null && !Array.isArray(data)
+      ? checkEntry(/** @type {Record<string, unknown>} */ (data), [], { catalog, scope: 'catalog', fileName })
+      : [],
+  );
+}
+
+/**
+ * Parses a source, checks the data against the schema and then the rules, and gives each issue its line.
+ * @param {string} source
+ * @param {Schema} schema
+ * @param {(data: unknown) => RuleIssue[]} rules
+ * @returns {Issue[]}
+ */
+function checkSource(source, schema, rules) {
   const lineCounter = new LineCounter();
   const doc = parseDocument(source, {
     lineCounter,
@@ -120,10 +158,10 @@ export function validate(source, schema) {
     return offset === undefined ? undefined : lineCounter.linePos(offset).line;
   };
   // Schema issues first: the stable sort keeps them before rule issues on a shared line.
-  /** @type {import('./rules.mjs').RuleIssue[]} */
+  /** @type {RuleIssue[]} */
   const found = check(data, schema).map(issue => ({ ...issue, severity: 'error' }));
   return sortByLine(
-    found.concat(checkRules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })),
+    found.concat(rules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })),
   );
 }
 

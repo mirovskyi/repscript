@@ -1,0 +1,7 @@
+id: squat.goblet
+names: {en: Goblet squat, ru: Гоблет-приседания}
+aliases: [Кубковые приседания, Приседания с гантелей у груди]
+equipment: [dumbbells]
+muscles:
+  primary: [quads, glute_max]
+  secondary: [adductors, soleus]

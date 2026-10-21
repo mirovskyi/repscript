@@ -1,0 +1,7 @@
+id: kettlebell_swing
+names: {en: Kettlebell swing, ru: Махи гирей}
+aliases: [Swing, KB swing, Russian kettlebell swing, Мах гирей, Свинг гирей]
+equipment: [kettlebell]
+muscles:
+  primary: [glute_max, hamstrings]
+  secondary: [adductors, erector_spinae]

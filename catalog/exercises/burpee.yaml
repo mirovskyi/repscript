@@ -1,0 +1,7 @@
+id: burpee
+names: {en: Burpee, ru: Бёрпи}
+aliases: [Бурпи]
+equipment: []
+muscles:
+  primary: [quads, pecs]
+  secondary: [glute_max, triceps, delt_front, abs]

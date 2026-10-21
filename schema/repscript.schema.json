@@ -39,6 +39,87 @@
       "description": "The language of the program's texts, a code such as en or ru. Example: language: en",
       "type": "string"
     },
+    "exercises": {
+      "description": "The program's own exercises, for those the catalog does not have: a list of entries, each with an id starting with my. and names. Example: exercises: [{id: my.towel_pullup, names: {en: Towel pull-up}}]",
+      "type": "array",
+      "items": {
+        "description": "An exercise entry: a mapping with id and names, and optionally aliases, equipment, muscles, deprecated and replaced_by. Example: {id: my.towel_pullup, names: {en: Towel pull-up}, equipment: [pullup_bar], muscles: {primary: [lats], secondary: [forearms]}}",
+        "type": "object",
+        "required": ["id", "names"],
+        "properties": {
+          "id": {
+            "description": "The exercise's id: lowercase Latin letters, digits, _ and dots. An own exercise's id starts with my. Example: id: my.towel_pullup",
+            "type": "string"
+          },
+          "names": {
+            "description": "The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}",
+            "type": "object",
+            "minProperties": 1,
+            "patternProperties": {
+              "^[a-z]{2}$": {
+                "description": "The exercise's name in this language, a string. Example: en: Towel pull-up",
+                "type": "string"
+              },
+              "^x-": {}
+            },
+            "additionalProperties": false
+          },
+          "aliases": {
+            "description": "Other names of the exercise, a list of strings in any language. Example: aliases: [towel pull-ups]",
+            "type": "array",
+            "items": {
+              "description": "Another name of the exercise, a string. Example: towel pull-ups",
+              "type": "string"
+            }
+          },
+          "equipment": {
+            "description": "What the exercise needs: a list of keys from catalog/equipment.yaml, or [] when it needs nothing. Example: equipment: [pullup_bar]",
+            "type": "array",
+            "items": {
+              "description": "An equipment key from catalog/equipment.yaml, a string. Example: pullup_bar",
+              "type": "string"
+            }
+          },
+          "muscles": {
+            "description": "The muscles the exercise works: primary for those that do the work, secondary for those that help, each a list of keys from catalog/muscles.yaml. Example: muscles: {primary: [lats], secondary: [biceps]}",
+            "type": "object",
+            "required": ["primary"],
+            "properties": {
+              "primary": {
+                "description": "The muscles that do the work: a list of at least one key from catalog/muscles.yaml. Example: primary: [lats]",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "description": "A muscle key from catalog/muscles.yaml, a string. Example: lats",
+                  "type": "string"
+                }
+              },
+              "secondary": {
+                "description": "The muscles that help: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]",
+                "type": "array",
+                "items": {
+                  "description": "A muscle key from catalog/muscles.yaml, a string. Example: lats",
+                  "type": "string"
+                }
+              }
+            },
+            "patternProperties": { "^x-": {} },
+            "additionalProperties": false
+          },
+          "deprecated": {
+            "description": "deprecated: true marks an exercise that another one replaces, named in replaced_by. Example: deprecated: true",
+            "type": "boolean",
+            "enum": [true]
+          },
+          "replaced_by": {
+            "description": "The id of the exercise that replaces this one, together with deprecated: true. Example: replaced_by: pullup.wide",
+            "type": "string"
+          }
+        },
+        "patternProperties": { "^x-": {} },
+        "additionalProperties": false
+      }
+    },
     "workouts": {
       "description": "The program's workouts, a list of at least one mapping, each with an id and blocks. Example: workouts: [{id: A, blocks: [{exercise: pushup, sets: 3, reps: 10}]}]",
       "type": "array",
@@ -70,7 +151,7 @@
               "required": ["exercise", "sets"],
               "properties": {
                 "exercise": {
-                  "description": "The exercise's id, a string. Example: exercise: pullup.wide",
+                  "description": "The exercise's id: a catalog id from catalog/index.yaml, or the id of an own exercise described in exercises, starting with my. Example: exercise: pullup.wide",
                   "type": "string"
                 },
                 "sets": {
@@ -90,7 +171,7 @@
                   "format": "duration"
                 },
                 "load": {
-                  "description": "The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}",
+                  "description": "The weight of each set: kg or lb for an external weight, or bw: true for body weight, with add_kg or add_lb for extra weight, and optionally implement for what carries it. Examples: load: {kg: 18}, load: {bw: true, add_kg: 5}",
                   "type": "object",
                   "properties": {
                     "kg": {
@@ -113,6 +194,10 @@
                     "add_lb": {
                       "description": "Extra weight in pounds on top of body weight (a vest, a belt): a number or a range, together with bw: true. Example: add_lb: 10",
                       "format": "weight"
+                    },
+                    "implement": {
+                      "description": "What carries the weight: a key from catalog/equipment.yaml, such as dumbbells or backpack. The weight is that of one implement. Example: implement: dumbbells",
+                      "type": "string"
                     }
                   },
                   "patternProperties": { "^x-": {} },

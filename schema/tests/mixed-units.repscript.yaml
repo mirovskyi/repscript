@@ -7,8 +7,8 @@ workouts:
   - id: A
     blocks:
       - {exercise: pullup, sets: 3, reps: 5, load: {bw: true}}
-      - {exercise: goblet.squat, sets: 3, reps: 10, load: {kg: 16}}
+      - {exercise: squat.goblet, sets: 3, reps: 10, load: {kg: 16}}
   - id: B
     blocks:
-      - {exercise: dumbbell.row, sets: 3, reps: 10, load: {lb: 40}}
-      - {exercise: dumbbell.press, sets: 3, reps: 10, load: {lb: 35}}
+      - {exercise: row.dumbbell, sets: 3, reps: 10, load: {lb: 40}}
+      - {exercise: bench_press.dumbbell, sets: 3, reps: 10, load: {lb: 35}}

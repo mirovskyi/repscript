@@ -13,6 +13,7 @@
     "test": "node --test",
     "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"vendor/**\" --test-coverage-exclude=\"**/*.test.mjs\" --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=95",
     "check:vendor": "node scripts/check-vendor.mjs",
+    "catalog:index": "node scripts/build-catalog-index.mjs",
     "check": "npm run lint && npm run typecheck && npm run coverage && npm run check:vendor"
   },
   "devDependencies": {

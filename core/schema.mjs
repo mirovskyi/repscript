@@ -16,6 +16,7 @@ export const KEYWORDS = [
   'required',
   'patternProperties',
   'additionalProperties',
+  'minProperties',
   'minItems',
   'items',
 ];
@@ -30,6 +31,7 @@ export const KEYWORDS = [
  * @property {Record<string, Schema>} [properties]
  * @property {string[]} [required]
  * @property {Record<string, Schema>} [patternProperties]
+ * @property {number} [minProperties]
  * @property {number} [minItems]
  * @property {Schema} [items]
  * @property {false} [additionalProperties]
@@ -105,6 +107,16 @@ export function check(value, schema, path = [], issues = []) {
   }
   if (type === 'object') {
     const fields = /** @type {Record<string, unknown>} */ (value);
+    const min = schema.minProperties;
+    // Every key counts, x- fields included, as in JSON Schema.
+    if (min !== undefined && Object.keys(fields).length < min) {
+      issues.push({
+        path,
+        value,
+        message: `Expected at least ${min} field${min === 1 ? '' : 's'}.`,
+        hint: schema.description,
+      });
+    }
     const properties = schema.properties ?? {};
     for (const name of schema.required ?? []) {
       if (!Object.hasOwn(fields, name)) {
@@ -117,8 +129,11 @@ export function check(value, schema, path = [], issues = []) {
         : Object.entries(schema.patternProperties ?? {}).find(([pattern]) => new RegExp(pattern, 'u').test(name))?.[1];
       if (fieldSchema) check(field, fieldSchema, [...path, name], issues);
       else if (schema.additionalProperties === false) {
-        const hint =
-          field === null && /^\d+$/.test(name) ? FLOW_COMMA_HINT : unknownFieldHint(name, Object.keys(properties));
+        let hint = schema.description;
+        if (field === null && /^\d+$/.test(name)) hint = FLOW_COMMA_HINT;
+        // A mapping without properties names its fields by a pattern, such as language codes: its
+        // description says which, where a list of allowed fields would be empty.
+        else if (schema.properties) hint = unknownFieldHint(name, Object.keys(properties));
         issues.push({ path: [...path, name], message: 'Unknown field.', hint });
       }
     }
@@ -146,13 +161,25 @@ export function check(value, schema, path = [], issues = []) {
  * @param {string[]} defined
  */
 function unknownFieldHint(name, defined) {
-  let best = '';
-  let bestDistance = Infinity;
-  for (const field of defined) {
-    const d = distance(name.toLowerCase(), field.toLowerCase());
-    if (d <= (field.length <= 4 ? 1 : 2) && d < bestDistance) [best, bestDistance] = [field, d];
-  }
+  const best = closest(name, defined);
   return best ? `Did you mean ${best}?` : `Allowed fields here: ${defined.join(', ')}. Extension fields start with x-.`;
+}
+
+/**
+ * The candidate nearest to a value, ignoring case: within two edits, or one when the candidate has four
+ * characters or fewer. A tie goes to the earlier candidate.
+ * @param {string} value
+ * @param {Iterable<string>} candidates
+ * @returns {string | undefined}
+ */
+export function closest(value, candidates) {
+  let best;
+  let bestDistance = Infinity;
+  for (const candidate of candidates) {
+    const d = distance(value.toLowerCase(), candidate.toLowerCase());
+    if (d <= (candidate.length <= 4 ? 1 : 2) && d < bestDistance) [best, bestDistance] = [candidate, d];
+  }
+  return best;
 }
 
 /**

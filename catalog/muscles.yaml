@@ -1,0 +1,79 @@
+# Muscle keys: muscle groups, their muscles, and a muscle's bundles. A catalog entry names muscles or
+# bundles; an own exercise in a program may also name a group. Licensed under CC BY-SA 4.0 (LICENSE).
+- id: back
+  names: {en: Back, ru: Спина}
+  children:
+    - id: lats
+      names: {en: Latissimus dorsi, ru: Широчайшие мышцы спины}
+    - id: traps
+      names: {en: Trapezius, ru: Трапециевидные мышцы}
+    - id: rhomboids
+      names: {en: Rhomboids, ru: Ромбовидные мышцы}
+    - id: erector_spinae
+      names: {en: Erector spinae, ru: Разгибатели спины}
+- id: chest
+  names: {en: Chest, ru: Грудь}
+  children:
+    - id: pecs
+      names: {en: Pectorals, ru: Грудные мышцы}
+    - id: serratus
+      names: {en: Serratus anterior, ru: Передняя зубчатая мышца}
+- id: shoulders
+  names: {en: Shoulders, ru: Плечи}
+  children:
+    - id: deltoids
+      names: {en: Deltoids, ru: Дельтовидные мышцы}
+      children:
+        - id: delt_front
+          names: {en: Front deltoid, ru: Передняя дельта}
+        - id: delt_side
+          names: {en: Side deltoid, ru: Средняя дельта}
+        - id: delt_rear
+          names: {en: Rear deltoid, ru: Задняя дельта}
+    - id: rotator_cuff
+      names: {en: Rotator cuff, ru: Вращательная манжета плеча}
+- id: arms
+  names: {en: Arms, ru: Руки}
+  children:
+    - id: biceps
+      names: {en: Biceps, ru: Бицепс}
+    - id: triceps
+      names: {en: Triceps, ru: Трицепс}
+    - id: brachialis
+      names: {en: Brachialis, ru: Плечевая мышца}
+    - id: forearms
+      names: {en: Forearms, ru: Предплечья}
+- id: core
+  names: {en: Core, ru: Кор}
+  children:
+    - id: abs
+      names: {en: Rectus abdominis, ru: Прямая мышца живота}
+    - id: obliques
+      names: {en: Obliques, ru: Косые мышцы живота}
+    - id: transverse_abs
+      names: {en: Transverse abdominis, ru: Поперечная мышца живота}
+- id: glutes
+  names: {en: Glutes, ru: Ягодицы}
+  children:
+    - id: glute_max
+      names: {en: Gluteus maximus, ru: Большая ягодичная мышца}
+    - id: glute_med
+      names: {en: Gluteus medius, ru: Средняя ягодичная мышца}
+- id: legs
+  names: {en: Legs, ru: Ноги}
+  children:
+    - id: quads
+      names: {en: Quadriceps, ru: Квадрицепсы}
+    - id: hamstrings
+      names: {en: Hamstrings, ru: Задняя поверхность бедра}
+    - id: adductors
+      names: {en: Adductors, ru: Приводящие мышцы бедра}
+    - id: hip_flexors
+      names: {en: Hip flexors, ru: Сгибатели бедра}
+- id: calves
+  names: {en: Calves, ru: Икры}
+  children:
+    - id: gastrocnemius
+      names: {en: Gastrocnemius, ru: Икроножная мышца}
+    - id: soleus
+      names: {en: Soleus, ru: Камбаловидная мышца}

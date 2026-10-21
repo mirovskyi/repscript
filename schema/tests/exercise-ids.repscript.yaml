@@ -1,0 +1,20 @@
+# Ids that name no exercise: a close id of the same movement, a shorter variant, an own id, or the
+# index hint; own ids that are not described; and a deprecated id, which is only a warning.
+repscript: 0
+id: ids
+revision: 1
+title: Ids
+exercises:
+  - id: my.towel_pullup
+    names: {en: Pull-up on a towel}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pullup.wdie, sets: 3, reps: 5}
+      - {exercise: pullup.wide.weighted, sets: 3, reps: 5}
+      - {exercise: pushup.wide, sets: 3, reps: 10}
+      - {exercise: zercher_squat, sets: 3, reps: 5}
+      - {exercise: towel_pullup, sets: 3, reps: 5}
+      - {exercise: my.towel_pulup, sets: 3, reps: 5}
+      - {exercise: my.box_jump, sets: 3, reps: 5}
+      - {exercise: pullup.wide_grip, sets: 3, reps: 5}

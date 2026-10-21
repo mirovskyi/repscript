@@ -1,0 +1,7 @@
+id: crunch
+names: {en: Crunch, ru: Скручивания}
+aliases: [Abdominal crunch, Скручивания на пресс]
+equipment: []
+muscles:
+  primary: [abs]
+  secondary: [obliques]

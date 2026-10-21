@@ -1,0 +1,8 @@
+id: pullup.wide_grip
+names: {en: Wide-grip pull-up, ru: Подтягивания широким хватом}
+equipment: [pullup_bar]
+muscles:
+  primary: [lats]
+  secondary: [biceps]
+deprecated: true
+replaced_by: pullup.wide
