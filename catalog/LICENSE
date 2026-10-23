@@ -1,8 +1,8 @@
 Copyright (c) 2026 Repscript contributors
 
-The files under catalog/ (the exercise entries, the muscle and equipment dictionaries and the
-generated index) are licensed under the Creative Commons Attribution-ShareAlike 4.0 International
-License (CC BY-SA 4.0). The license text is at
+The files under catalog/ (the exercise entries, the muscle and equipment dictionaries, the generated
+index, the bibliography, the targets and the corridors) are licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). The license text is at
 https://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 The code elsewhere in this repository is licensed under the MIT License: see LICENSE in the project

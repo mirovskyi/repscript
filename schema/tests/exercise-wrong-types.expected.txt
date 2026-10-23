@@ -32,10 +32,10 @@ error: exercises[9].equipment[0] (line 27) = 5
   Hint: An equipment key from catalog/equipment.yaml, a string. Example: pullup_bar
 error: exercises[10].muscles (line 28)
   Expected a mapping, found a list.
-  Hint: The muscles the exercise works: primary for those that do the work, secondary for those that help, each a list of keys from catalog/muscles.yaml. Example: muscles: {primary: [lats], secondary: [biceps]}
+  Hint: The muscles the exercise works: primary for those that do the work, secondary for others it is likely to train meaningfully, each a list of keys from catalog/muscles.yaml. Leave out a muscle that only steadies a joint while others do the work. Example: muscles: {primary: [lats], secondary: [biceps]}
 error: exercises[11].muscles.secondary (line 29) = "lats"
   Expected a list, found a string.
-  Hint: The muscles that help: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]
+  Hint: Other muscles the exercise is likely to train meaningfully, such as the triceps in a bench press, but not one that only steadies a joint while others do the work: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]
 error: exercises[12].deprecated (line 30) = "yes"
   Expected a boolean, found a string.
   Hint: deprecated: true marks an exercise that another one replaces, named in replaced_by. Example: deprecated: true

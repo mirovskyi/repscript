@@ -4,4 +4,4 @@ aliases: [Parallel bar dip, Брусья]
 equipment: [dip_bars]
 muscles:
   primary: [pecs, triceps]
-  secondary: [delt_front, rhomboids, lats]
+  secondary: [delt_front]

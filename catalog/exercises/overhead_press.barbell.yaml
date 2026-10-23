@@ -4,4 +4,4 @@ aliases: [Overhead press, Military press, OHP, Армейский жим, Жим
 equipment: [barbell, squat_rack]
 muscles:
   primary: [delt_front]
-  secondary: [delt_side, triceps, traps, serratus, pecs]
+  secondary: [delt_side, triceps]

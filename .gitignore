@@ -1,5 +1,6 @@
 node_modules/
 /ROADMAP.md
 /SPEC.md
+/research/
 /my/*
 !/my/.gitkeep

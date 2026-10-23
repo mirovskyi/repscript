@@ -26,7 +26,7 @@ export const DESCRIPTIONS = {
   names:
     "The exercise's names by language: a mapping from a two-letter language code to the name, with at least one name. Example: names: {en: Towel pull-up, de: Handtuch-Klimmzug}",
   muscles:
-    'The muscles the exercise works: primary for those that do the work, secondary for those that help, each a list of keys from catalog/muscles.yaml. Example: muscles: {primary: [lats], secondary: [biceps]}',
+    'The muscles the exercise works: primary for those that do the work, secondary for others it is likely to train meaningfully, each a list of keys from catalog/muscles.yaml. Leave out a muscle that only steadies a joint while others do the work. Example: muscles: {primary: [lats], secondary: [biceps]}',
   replaced_by:
     'The id of the exercise that replaces this one, together with deprecated: true. Example: replaced_by: pullup.wide',
 };

@@ -99,7 +99,7 @@
             }
           },
           "muscles": {
-            "description": "The muscles the exercise works: primary for those that do the work, secondary for those that help, each a list of keys from catalog/muscles.yaml. Example: muscles: {primary: [lats], secondary: [biceps]}",
+            "description": "The muscles the exercise works: primary for those that do the work, secondary for others it is likely to train meaningfully, each a list of keys from catalog/muscles.yaml. Leave out a muscle that only steadies a joint while others do the work. Example: muscles: {primary: [lats], secondary: [biceps]}",
             "type": "object",
             "required": ["primary"],
             "properties": {
@@ -113,7 +113,7 @@
                 }
               },
               "secondary": {
-                "description": "The muscles that help: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]",
+                "description": "Other muscles the exercise is likely to train meaningfully, such as the triceps in a bench press, but not one that only steadies a joint while others do the work: a list of keys from catalog/muscles.yaml. Example: secondary: [biceps]",
                 "type": "array",
                 "items": {
                   "description": "A muscle key from catalog/muscles.yaml, a string. Example: lats",

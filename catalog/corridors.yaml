@@ -1,0 +1,261 @@
+# Corridors: for one value of a program, ordered bands that place it against what the sources support
+# or recommend. A band covers from <= value < to, and the last band has no to. Only a band with
+# finding: true gives a finding in the program report; inside another band, the report names it. A
+# corridor without goal applies to every program. Targets and groups are those of targets.yaml, and
+# sources are keys of references.yaml. Licensed under CC BY-SA 4.0 (LICENSE).
+- id: major_groups
+  unit: days_involved_per_week
+  groups: [legs, hips, back, abdomen, chest, shoulders, arms]
+  bands:
+    - from: 0
+      to: 2
+      label: less than twice a week
+      finding: true
+      description: >-
+        The group is trained on fewer than two days a week. Guidelines for adults ask for at least two
+        days a week of muscle-strengthening work for every major muscle group, at a moderate or greater
+        effort, and the primary recommendation of the ACSM position stand also asks for training at least
+        twice a week. A program cannot state effort yet, so every day that trains the group counts. For
+        the back, only the lats, the rhomboids and the trapezius count, not the lower back.
+      cites:
+        - {key: who2020, at: p. 32}
+        - {key: paga2018, at: p. 56}
+        - {key: paga2018, at: p. 61}
+        - {key: acsm2026, at: p. 862}
+    - from: 2
+      label: twice a week or more
+      finding: false
+      description: >-
+        The group is trained on at least two days a week, as guidelines for adults and the ACSM position
+        stand ask, provided the effort is moderate or greater, which a program cannot state yet.
+      cites:
+        - {key: who2020, at: p. 32}
+        - {key: paga2018, at: p. 56}
+        - {key: paga2018, at: p. 61}
+        - {key: acsm2026, at: p. 862}
+- id: hypertrophy.weekly_sets
+  goal: hypertrophy
+  unit: fractional_sets_per_week
+  targets: [chest, back, front_delts, side_delts, rear_delts, biceps, triceps, quads, hamstrings, glutes, calves, abs]
+  extrapolated: [back, side_delts, rear_delts, glutes, calves, abs]
+  extrapolation: >-
+    The meta-regression measured the growth of the quadriceps, the hamstrings, the pectorals, the front
+    delts, the trapezius, the triceps and the elbow flexors (pelland2026, Table 1). Its tiers are applied
+    to the other targets, and to the lats and rhomboids of back, on the assumption that these muscles
+    respond to weekly sets as the measured ones do.
+  bands:
+    - from: 0
+      to: 4
+      label: below the minimum effective dose
+      finding: true
+      description: >-
+        Fewer than 4 fractional sets a week, the least volume whose estimated growth cleared the
+        meta-regression's threshold for a detectable effect. Most of the pooled effects came from sets
+        taken to some form of failure, so the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.6}
+    - from: 4
+      to: 5
+      label: minimum effective dose
+      finding: false
+      description: >-
+        The least weekly volume whose estimated growth cleared the meta-regression's threshold for a
+        detectable effect. Position stands advise more for the most growth: the ACSM lists 10 or more
+        weekly sets among what enhances it, and the IUSCA takes about 10 sets per muscle as the usual
+        minimum, though some people grow on less. They count whole sets, not fractional ones, so the
+        comparison is rough. Most of the pooled effects came from sets taken to some form of failure, so
+        the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.6}
+        - {key: acsm2026, at: Table 6}
+        - {key: iusca2021, at: p. 9}
+    - from: 5
+      to: 11
+      label: higher efficiency
+      finding: false
+      description: >-
+        By the meta-regression's estimate, growth rises by one detectable step for roughly every 6 added
+        weekly sets, the best return above the minimum. Position stands advise at least about 10 weekly
+        sets for the most growth: the ACSM lists 10 or more among what enhances it, and the IUSCA takes
+        about 10 per muscle as the usual minimum, though some people grow on less. They count whole sets,
+        not fractional ones, so the comparison is rough. Most of the pooled effects came from sets taken
+        to some form of failure, so the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.6}
+        - {key: acsm2026, at: Table 6}
+        - {key: iusca2021, at: p. 9}
+    - from: 11
+      to: 19
+      label: intermediate efficiency
+      finding: false
+      description: >-
+        By the meta-regression's estimate, growth rises by one detectable step for roughly every 8.5
+        added weekly sets. Most of the pooled effects came from sets taken to some form of failure, so
+        the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.6}
+    - from: 19
+      to: 30
+      label: lower efficiency
+      finding: false
+      description: >-
+        By the meta-regression's estimate, growth rises by one detectable step for roughly every 10.75
+        added weekly sets, though the data thin out from about 25 sets up. Most of the pooled effects
+        came from sets taken to some form of failure, so the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.4}
+        - {key: pelland2026, at: Section 4.6}
+    - from: 30
+      to: 43
+      label: lowest efficiency
+      finding: false
+      description: >-
+        By the meta-regression's estimate, growth rises by one detectable step for roughly every 12.5
+        added weekly sets, though the data thin out from about 25 sets up. Most of the pooled effects
+        came from sets taken to some form of failure, so the tiers may overstate what easier sets give.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.4}
+        - {key: pelland2026, at: Section 4.6}
+    - from: 43
+      label: too little data
+      finding: true
+      description: >-
+        The meta-regression had too little data at these volumes to estimate what more sets add, and
+        growth here could be lower, not higher. The data thin out from about 25 weekly sets up, and most
+        of the pooled effects came from sets taken to some form of failure.
+      cites:
+        - {key: pelland2026, at: Table 3}
+        - {key: pelland2026, at: Section 4.4}
+        - {key: pelland2026, at: Section 4.6}
+- id: hypertrophy.reps
+  goal: hypertrophy
+  unit: reps_per_set
+  bands:
+    - from: 0
+      to: 29
+      label: 28 repetitions or fewer
+      finding: false
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of up to 28 repetitions taken to failure uses at
+        least 30% of 1RM, and loads from 30% to 100% of 1RM made no difference to growth. How many
+        repetitions a load allows differs between exercises, parts of the body and people, so the bound
+        is approximate.
+      cites:
+        - {key: acsm2026, at: p. 856}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+        - {key: iusca2021, at: p. 7}
+    - from: 29
+      label: lighter than the loads studied
+      finding: true
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of more than 28 repetitions uses less than 30% of
+        1RM, however many repetitions are left in reserve: lighter than the loads that made no difference
+        to growth, and in one study a load of 20% of 1RM gave less growth than 40% or more. How many
+        repetitions a load allows differs between exercises, parts of the body and people, so the bound
+        is approximate.
+      cites:
+        - {key: acsm2026, at: p. 856}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+        - {key: iusca2021, at: p. 7}
+- id: hypertrophy.rest
+  goal: hypertrophy
+  unit: rest_seconds
+  bands:
+    - from: 0
+      to: 60
+      label: shorter than recommended
+      finding: true
+      description: >-
+        Less rest between sets than the shortest that the IUSCA position stand advises: 60 to 90 seconds,
+        for single-joint and some machine exercises. Short rest may cost growth, likely by leaving less
+        work for the later sets, though rest shortened step by step over 6 to 8 weeks gave similar growth,
+        and the ACSM review found too little data to say how rest affects growth. The position stand
+        addresses athletes.
+      cites:
+        - {key: iusca2021, at: p. 11}
+        - {key: iusca2021, at: p. 10}
+        - {key: iusca2021, at: p. 1}
+        - {key: acsm2026, at: p. 856}
+    - from: 60
+      to: 120
+      label: enough for single-joint exercises
+      finding: false
+      description: >-
+        Enough rest for single-joint and some machine exercises, for which the IUSCA position stand advises
+        60 to 90 seconds, but less than the 2 minutes or more it advises for multi-joint exercises; sets
+        taken to failure likely need longer. The position stand addresses athletes.
+      cites:
+        - {key: iusca2021, at: p. 11}
+        - {key: iusca2021, at: p. 1}
+    - from: 120
+      label: enough for any exercise
+      finding: false
+      description: >-
+        At least the 2 minutes of rest that the IUSCA position stand advises for multi-joint exercises.
+        The position stand addresses athletes.
+      cites:
+        - {key: iusca2021, at: p. 11}
+        - {key: iusca2021, at: p. 1}
+- id: strength.reps
+  goal: strength
+  unit: reps_per_set
+  bands:
+    - from: 0
+      to: 9
+      label: 8 repetitions or fewer
+      finding: false
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of up to 8 repetitions taken to failure uses at
+        least 80% of 1RM, the load that the ACSM position stand lists among what enhances strength, with
+        more gain from heavier loads.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+    - from: 9
+      label: lighter than recommended for strength
+      finding: true
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of more than 8 repetitions uses less than 80% of
+        1RM, however many repetitions are left in reserve: lighter than the load that the ACSM position
+        stand lists among what enhances strength.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+- id: power.reps
+  goal: power
+  unit: reps_per_set
+  bands:
+    - from: 0
+      to: 29
+      label: 28 repetitions or fewer
+      finding: false
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of up to 28 repetitions can use a load within the
+        30% to 70% of 1RM that the ACSM position stand lists among what enhances power. Few repetitions do
+        not show a heavy load: the ACSM does not count sets to failure among what enhances power, so a
+        power set may stop far from failure. How many repetitions a load allows differs between
+        exercises, parts of the body and people, so the bound is approximate.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: acsm2026, at: p. 865}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+        - {key: iusca2021, at: p. 7}
+    - from: 29
+      label: lighter than the power range
+      finding: true
+      description: >-
+        By the conversion %1RM = 100 - 2.5 x RM, a set of more than 28 repetitions uses less than 30% of
+        1RM, however many repetitions are left in reserve: below the loads that the ACSM position stand
+        lists among what enhances power. How many repetitions a load allows differs between exercises,
+        parts of the body and people, so the bound is approximate.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: acsm2026, at: p. 865}
+        - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+        - {key: iusca2021, at: p. 7}

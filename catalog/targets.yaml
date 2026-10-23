@@ -1,0 +1,88 @@
+# Targets: the parts of the body that the program report counts sets for, each a set of keys from
+# muscles.yaml, with the rule by which a set counts toward them, and the major muscle groups that
+# guidelines for adults ask to train. Sources are keys of references.yaml. Licensed under CC BY-SA 4.0
+# (LICENSE).
+counting:
+  primary: 1
+  secondary: 0.5
+  description: >-
+    A set counts as one set for a target that one of its exercise's primary muscles reaches, and as half
+    a set for a target that only its secondary muscles reach. A target takes the largest of these weights
+    over its nodes, never their sum, so a set counts once for each target, as the source counts it once
+    for the muscle it measured. Of the three ways of counting indirect sets that the source compared,
+    half a set predicted muscle growth best; it did so for strength too, but there the source counted
+    sets per tested exercise, not per muscle. The source calls the half weight an assumption that may
+    not suit every exercise, repetition range or trainee.
+  cites:
+    - {key: pelland2026, at: Section 2.5}
+    - {key: pelland2026, at: Section 3.4}
+    - {key: pelland2026, at: Section 4.1}
+targets:
+  - id: chest
+    names: {en: Chest, ru: Грудь}
+    nodes: [pecs]
+  - id: back
+    names: {en: Back, ru: Спина}
+    nodes: [lats, rhomboids, traps]
+  - id: front_delts
+    names: {en: Front delts, ru: Передние дельты}
+    nodes: [delt_front]
+  - id: side_delts
+    names: {en: Side delts, ru: Средние дельты}
+    nodes: [delt_side]
+  - id: rear_delts
+    names: {en: Rear delts, ru: Задние дельты}
+    nodes: [delt_rear]
+  - id: biceps
+    names: {en: Biceps, ru: Бицепс}
+    nodes: [biceps, brachialis]
+  - id: triceps
+    names: {en: Triceps, ru: Трицепс}
+    nodes: [triceps]
+  - id: quads
+    names: {en: Quads, ru: Квадрицепсы}
+    nodes: [quads]
+  - id: hamstrings
+    names: {en: Hamstrings, ru: Задняя поверхность бедра}
+    nodes: [hamstrings]
+  - id: glutes
+    names: {en: Glutes, ru: Ягодицы}
+    nodes: [glute_max, glute_med]
+  - id: calves
+    names: {en: Calves, ru: Икры}
+    nodes: [gastrocnemius, soleus]
+  - id: abs
+    names: {en: Abs, ru: Пресс}
+    nodes: [abs, obliques, transverse_abs]
+major_groups:
+  description: >-
+    The major muscle groups that guidelines for adults ask muscle-strengthening activity to work: the
+    seven named by the US guidelines. The WHO guidelines name the same groups without the hips. Each
+    group holds the targets that count for it. The back here is the lats, the rhomboids and the
+    trapezius: the lower back is in no target, so a program whose only back work is a deadlift does not
+    cover the back.
+  cites:
+    - {key: paga2018, at: p. 30}
+    - {key: who2020, at: p. vii}
+  groups:
+    - id: legs
+      names: {en: Legs, ru: Ноги}
+      targets: [quads, hamstrings, calves]
+    - id: hips
+      names: {en: Hips, ru: Бёдра}
+      targets: [glutes]
+    - id: back
+      names: {en: Back, ru: Спина}
+      targets: [back]
+    - id: abdomen
+      names: {en: Abdomen, ru: Живот}
+      targets: [abs]
+    - id: chest
+      names: {en: Chest, ru: Грудь}
+      targets: [chest]
+    - id: shoulders
+      names: {en: Shoulders, ru: Плечи}
+      targets: [front_delts, side_delts, rear_delts]
+    - id: arms
+      names: {en: Arms, ru: Руки}
+      targets: [biceps, triceps]

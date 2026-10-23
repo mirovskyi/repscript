@@ -4,4 +4,4 @@ aliases: [Box step-up, Зашагивания]
 equipment: [box]
 muscles:
   primary: [quads, glute_max]
-  secondary: [adductors, soleus, gastrocnemius]
+  secondary: [adductors]

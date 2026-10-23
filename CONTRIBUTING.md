@@ -9,6 +9,9 @@ Programs name exercises by id, and the ids come from the catalog in `catalog/`:
 - `catalog/equipment.yaml`: the equipment keys;
 - `catalog/index.yaml`: a list of every exercise for chats, generated from the files.
 
+`catalog/` also holds the training guidelines that the program report will check programs against:
+`references.yaml`, `targets.yaml` and `corridors.yaml`. Adding an exercise does not touch them.
+
 Adding an exercise means adding one file and rebuilding the index. You can do it by hand or with an
 agent (see [With an agent](#with-an-agent)).
 
@@ -39,7 +42,7 @@ aliases: [Wide pull-up, Широкие подтягивания]
 equipment: [pullup_bar]
 muscles:
   primary: [lats]
-  secondary: [biceps, brachialis, forearms, delt_rear, rotator_cuff, rhomboids, traps]
+  secondary: [biceps, brachialis, forearms, delt_rear, rhomboids, traps]
 ```
 
 - **`names`**: required in `en` and `ru`. Other two-letter language codes are welcome.
@@ -50,9 +53,9 @@ muscles:
 - **`equipment`**: keys from `catalog/equipment.yaml` for everything the exercise needs. Write
   `equipment: []` when it needs nothing; the field is required. Added load, such as a backpack or a
   vest, is not the exercise's equipment: a program names it in `load.implement`.
-- **`muscles`**: keys from `catalog/muscles.yaml`. `primary` lists the muscles that do the work and
-  `secondary` the ones that help. Name muscles or bundles (`lats`, `delt_rear`), never a group
-  (`back`, `shoulders`).
+- **`muscles`**: keys from `catalog/muscles.yaml`. `primary` lists the muscles that do the work, and
+  `secondary` the others that the exercise is likely to train meaningfully, not those that only steady a
+  joint (see step 3). Name muscles or bundles (`lats`, `delt_rear`), never a group (`back`, `shoulders`).
 
 If the exercise needs a muscle or an equipment key that the dictionary lacks, add the key in the same
 pull request, with names in `en` and `ru`:
@@ -65,8 +68,28 @@ pull request, with names in `en` and `ru`:
 ### 3. Check the muscles
 
 Catalog entries are drafts until the catalog is reviewed against professional sources. Until then,
-check each entry's muscles against [ExRx](https://exrx.net/Lists/Directory): its Target muscles go in
-`primary` and its Synergists in `secondary`. Take only which muscles work, and copy no text from ExRx.
+check each entry's muscles against these rules, which follow the definition of an indirect set in
+`pelland2026` (`catalog/references.yaml`):
+
+- Where Table 1 of `pelland2026` codes the exercise for a muscle, follow its coding: for example,
+  bench presses train the front delts and the triceps indirectly, and pulldowns and rows the biceps and
+  the trapezius.
+- `primary`: the muscles that drive the movement, its primary force generators.
+- `secondary`: other muscles that work against the load through the movement and that the exercise is
+  likely to train meaningfully, such as the front delts and the triceps in a bench press.
+- Not in `secondary`: a muscle that only steadies a joint or balances the body while others move the
+  load, or one that helps at an effort too low to train it, such as the rotator cuff in a pull-up, the
+  soleus in a squat and the lats in a dip. Where holding the load is the exercise, as in a carry, the
+  muscles that hold it work against the load and count.
+
+This matters because the program report will count a set as half a set for a target, such as the back,
+that only the exercise's `secondary` muscles reach (`catalog/targets.yaml`). A stabilizer listed there,
+such as the lats in a dip, would make dips count as back work, and the report would miss a back that no
+exercise trains.
+
+[ExRx](https://exrx.net/Lists/Directory) helps to find which muscles work, but its Synergists are not
+copied as they are: check each one against the rules above. Take only which muscles work, and copy no
+text from ExRx.
 
 ### 4. Rebuild the index and run the tests
 
@@ -79,8 +102,11 @@ node --test
 
 `npm run catalog:index` does the same as the first command.
 
-The tests check every entry and both dictionaries. They also fail when `catalog/index.yaml` is out of
-date, and when a file in `catalog/` is not UTF-8 or a file in `catalog/exercises/` does not end in
+The tests check every entry, both dictionaries and the guideline files. A muscle key that a target in
+`catalog/targets.yaml` names cannot be renamed without changing the target, and a new muscle key fails
+the tests until a target takes it or it joins the list of keys that no target needs, in
+`schema/guidelines.test.mjs`. They also fail when
+`catalog/index.yaml` is out of date, and when a file in `catalog/` is not UTF-8 or a file in `catalog/exercises/` does not end in
 `.yaml`. A problem in an entry is reported in the validator's format: the entry's file, the field's
 path, its line and a hint. For example:
 
@@ -97,8 +123,8 @@ Commit the entry and `catalog/index.yaml` together.
 
 Point the agent at this file and name the exercise, for example: "Add a catalog entry for the
 Copenhagen plank, following CONTRIBUTING.md." The agent writes the file, runs the two commands and
-fixes what the tests report. Before you open the pull request, check its muscles against ExRx
-yourself.
+fixes what the tests report. Before you open the pull request, check its muscles yourself, as step 3
+describes.
 
 ## Changing or removing an exercise
 

@@ -1,0 +1,43 @@
+# The bibliography: one entry per source that targets.yaml or corridors.yaml cites, under the key that
+# its citations use. citation names the version of record, whichever copy was read; read says what of
+# the source was read in full, and the data cites a source only from that. Licensed under CC BY-SA 4.0
+# (LICENSE).
+- key: acsm2026
+  citation: >-
+    Currier BS, D'Souza AC, Fiatarone Singh MA, et al. American College of Sports Medicine Position
+    Stand. Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance
+    in Healthy Adults: An Overview of Reviews. Med Sci Sports Exerc. 2026;58(4):851-872.
+  doi: 10.1249/MSS.0000000000003897
+  read: full
+- key: currier2023
+  citation: >-
+    Currier BS, Mcleod JC, Banfield L, et al. Resistance training prescription for muscle strength and
+    hypertrophy in healthy adults: a systematic review and Bayesian network meta-analysis. Br J Sports
+    Med. 2023;57(18):1211-1220.
+  doi: 10.1136/bjsports-2023-106807
+  read: full
+- key: iusca2021
+  citation: >-
+    Schoenfeld BJ, Fisher JP, Grgic J, et al. Resistance Training Recommendations to Maximize Muscle
+    Hypertrophy in an Athletic Population: Position Stand of the IUSCA. Int J Strength Cond. 2021;1(1).
+  doi: 10.47206/ijsc.v1i1.81
+  read: full
+- key: paga2018
+  citation: >-
+    U.S. Department of Health and Human Services. Physical Activity Guidelines for Americans, 2nd
+    edition. Washington, DC: U.S. Department of Health and Human Services; 2018.
+  url: https://odphp.health.gov/paguidelines/
+  read: chapters 2, 4
+- key: pelland2026
+  citation: >-
+    Pelland JC, Remmert JF, Robinson ZP, Hinson SR, Zourdos MC. The Resistance Training Dose Response:
+    Meta-Regressions Exploring the Effects of Weekly Volume and Frequency on Muscle Hypertrophy and
+    Strength Gains. Sports Med. 2026;56(2):481-505.
+  doi: 10.1007/s40279-025-02344-w
+  read: full
+- key: who2020
+  citation: >-
+    World Health Organization. WHO guidelines on physical activity and sedentary behaviour. Geneva:
+    World Health Organization; 2020.
+  isbn: 978-92-4-001512-8
+  read: glossary of terms; recommendations
