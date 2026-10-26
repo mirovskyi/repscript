@@ -204,10 +204,18 @@ test('loadCatalog returns the two error lines for a broken catalog', () => {
         'The catalog comes with the project: restore catalog/ with git checkout -- catalog, or download the project again.',
       ].join('\n'),
     });
+    // A missing file or folder is named by its path from the project root, not by the operating system's.
+    const firstLine = () =>
+      /** @type {{ error: string }} */ (loadCatalog(pathToFileURL(`${dir}/`))).error.split('\n')[0];
     rmSync(join(dir, 'muscles.yaml'));
-    assert.match(
-      /** @type {{ error: string }} */ (loadCatalog(pathToFileURL(`${dir}/`))).error,
-      /^Cannot read the catalog: ENOENT/,
+    assert.equal(
+      firstLine(),
+      `Cannot read the catalog: ${relative(ROOT, join(dir, 'muscles.yaml')).replaceAll('\\', '/')}: the file cannot be read (ENOENT).`,
+    );
+    rmSync(join(dir, 'exercises'), { recursive: true });
+    assert.equal(
+      firstLine(),
+      `Cannot read the catalog: ${relative(ROOT, join(dir, 'exercises')).replaceAll('\\', '/')}/: the file cannot be read (ENOENT).`,
     );
   } finally {
     rmSync(dir, { recursive: true });

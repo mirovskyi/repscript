@@ -1,0 +1,19 @@
+# A strength program with a single heavy set of deadlifts: checked for coverage and repetitions only. The
+# deadlift trains no back target, so the back is not covered.
+repscript: 0
+id: strength
+revision: 1
+title: Strength
+goal: strength
+schedule: {per_week: 3}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: squat.barbell, sets: 3, reps: 5}
+      - {exercise: bench_press.barbell, sets: 3, reps: 5}
+      - {exercise: deadlift.barbell, sets: 1, reps: 5}
+  - id: B
+    blocks:
+      - {exercise: squat.barbell, sets: 3, reps: 5}
+      - {exercise: overhead_press.barbell, sets: 3, reps: 5}
+      - {exercise: deadlift.barbell, sets: 1, reps: 5}

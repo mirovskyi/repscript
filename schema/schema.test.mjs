@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { buildCatalog } from '../core/catalog.mjs';
 import { FORMATS } from '../core/formats.mjs';
 import { check, closest, KEYWORDS } from '../core/schema.mjs';
-import { formatIssues, validate } from '../core/validate.mjs';
+import { checkProgram, formatIssues, formatPath, formatValue, validate } from '../core/validate.mjs';
 import { readCatalogFiles } from '../tools/catalog.mjs';
 
 const schema = JSON.parse(readFileSync(new URL('./repscript.schema.json', import.meta.url), 'utf8'));
@@ -196,6 +196,41 @@ for (const file of readdirSync(fixtures).filter(name => name.endsWith('.repscrip
     assert.equal(formatIssues(validate(source, schema, catalog)), expected);
   });
 }
+
+test('checkProgram gives the parsed program and the line of a path', () => {
+  const source =
+    'repscript: 0\nid: p\nrevision: 1\ntitle: T\nworkouts:\n  - id: A\n    blocks:\n      - exercise: pushup\n        sets: 3\n        reps: 10\n        rest: 90s\n';
+  const { issues, data, lineOf } = checkProgram(source, schema, catalog);
+  assert.deepEqual(issues, validate(source, schema, catalog));
+  assert.deepEqual(data, {
+    repscript: 0,
+    id: 'p',
+    revision: 1,
+    title: 'T',
+    workouts: [{ id: 'A', blocks: [{ exercise: 'pushup', sets: 3, reps: 10, rest: '90s' }] }],
+  });
+  assert.equal(lineOf(['workouts', 0, 'blocks', 0, 'rest']), 11);
+});
+
+test('checkProgram gives no data and no lines after a YAML or alias error', () => {
+  for (const source of ['title: [T\n', 'title: *t\n']) {
+    const { issues, data, lineOf } = checkProgram(source, schema, catalog);
+    assert.deepEqual(issues, validate(source, schema, catalog));
+    assert.equal(data, undefined);
+    assert.equal(lineOf(['title']), undefined);
+  }
+});
+
+test('formatValue writes a value as an issue header does', () => {
+  assert.equal(formatValue('45s'), '"45s"');
+  assert.equal(formatValue(3), '3');
+  assert.equal(formatValue(Infinity), 'Infinity');
+  assert.equal(formatValue(true), 'true');
+  assert.equal(formatValue('x'.repeat(70)), `"${'x'.repeat(59)}...`);
+  assert.equal(formatValue([1]), undefined);
+  assert.equal(formatPath(['workouts', 0, 'blocks', 2, 'rest']), 'workouts[0].blocks[2].rest');
+  assert.equal(formatPath([]), '(top level)');
+});
 
 /**
  * The errors in a small valid program with extra top-level lines, without line numbers.

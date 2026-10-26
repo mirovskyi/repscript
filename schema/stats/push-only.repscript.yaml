@@ -1,0 +1,12 @@
+# Pushing only, twice a week and without a goal: checked for coverage only, with no set for the back.
+repscript: 0
+id: push-only
+revision: 1
+title: Push only
+schedule: {per_week: 2}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 8-12}
+      - {exercise: dip, sets: 3, reps: 8-12}
+      - {exercise: overhead_press.barbell, sets: 3, reps: 8-12}

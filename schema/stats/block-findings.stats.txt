@@ -1,0 +1,38 @@
+goal: hypertrophy
+workouts: A; 2 a week
+corridors: major_groups, hypertrophy.weekly_sets, hypertrophy.reps, hypertrophy.rest
+finding: major_groups: less than twice a week, 0 to under 2 days involved a week
+  groups: legs 0, hips 0
+  The group is trained on fewer than two days a week. Guidelines for adults ask for at least two days a week of muscle-strengthening work for every major muscle group, at a moderate or greater effort, and the primary recommendation of the ACSM position stand also asks for training at least twice a week. A program cannot state effort yet, so every day that trains the group counts. For the back, only the lats, the rhomboids and the trapezius count, not the lower back.
+  Sources: who2020 p. 32; paga2018 p. 56; paga2018 p. 61; acsm2026 p. 862
+finding: hypertrophy.weekly_sets: below the minimum effective dose, 0 to under 4 fractional sets a week
+  targets: front_delts 3, side_delts 0 (extrapolated), rear_delts 3 (extrapolated), triceps 3, quads 0, hamstrings 0, glutes 0 (extrapolated), calves 0 (extrapolated)
+  Fewer than 4 fractional sets a week, the least volume whose estimated growth cleared the meta-regression's threshold for a detectable effect. Most of the pooled effects came from sets taken to some form of failure, so the tiers may overstate what easier sets give.
+  Extrapolation: The meta-regression measured the growth of the quadriceps, the hamstrings, the pectorals, the front delts, the trapezius, the triceps and the elbow flexors (pelland2026, Table 1). Its tiers are applied to the other targets, and to the lats and rhomboids of back, on the assumption that these muscles respond to weekly sets as the measured ones do.
+  Sources: pelland2026 Table 3; pelland2026 Section 4.6
+finding: hypertrophy.reps: lighter than the loads studied, 29 or more repetitions per set
+  workouts[0].blocks[1].reps (line 13) = "8-30" (upper end)
+  By the conversion %1RM = 100 - 2.5 x RM, a set of more than 28 repetitions uses less than 30% of 1RM, however many repetitions are left in reserve: lighter than the loads that made no difference to growth, and in one study a load of 20% of 1RM gave less growth than 40% or more. How many repetitions a load allows differs between exercises, parts of the body and people, so the bound is approximate.
+  Sources: acsm2026 p. 856; currier2023 Methods: Study selection and data extraction; iusca2021 p. 7
+finding: hypertrophy.rest: shorter than recommended, 0 to under 60 seconds of rest
+  workouts[0].blocks[0].rest (line 12) = "45s"
+  Less rest between sets than the shortest that the IUSCA position stand advises: 60 to 90 seconds, for single-joint and some machine exercises. Short rest may cost growth, likely by leaving less work for the later sets, though rest shortened step by step over 6 to 8 weeks gave similar growth, and the ACSM review found too little data to say how rest affects growth. The position stand addresses athletes.
+  Sources: iusca2021 p. 11; iusca2021 p. 10; iusca2021 p. 1; acsm2026 p. 856
+numbers (information, no action needed)
+targets: fractional sets and sessions a week
+  chest       6 sets: higher efficiency; 2 sessions; per workout: A 3
+  back        6 sets: higher efficiency; 2 sessions; per workout: A 3
+  front_delts 3 sets: below the minimum effective dose *; 1 session; per workout: A 1.5
+  side_delts  0 sets: below the minimum effective dose *; 0 sessions
+  rear_delts  3 sets: below the minimum effective dose *; 1 session; per workout: A 1.5
+  biceps      9 sets: higher efficiency; 2 sessions; per workout: A 4.5
+  triceps     3 sets: below the minimum effective dose *; 1 session; per workout: A 1.5
+  quads       0 sets: below the minimum effective dose *; 0 sessions
+  hamstrings  0 sets: below the minimum effective dose *; 0 sessions
+  glutes      0 sets: below the minimum effective dose *; 0 sessions
+  calves      0 sets: below the minimum effective dose *; 0 sessions
+  abs         6 sets: higher efficiency; 2 sessions; per workout: A 3
+major groups: days involved a week
+  legs 0, hips 0: less than twice a week *
+  back 2, abdomen 2, chest 2, shoulders 2, arms 2: twice a week or more
+findings: 4

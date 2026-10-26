@@ -9,8 +9,9 @@ Programs name exercises by id, and the ids come from the catalog in `catalog/`:
 - `catalog/equipment.yaml`: the equipment keys;
 - `catalog/index.yaml`: a list of every exercise for chats, generated from the files.
 
-`catalog/` also holds the training guidelines that the program report will check programs against:
-`references.yaml`, `targets.yaml` and `corridors.yaml`. Adding an exercise does not touch them.
+`catalog/` also holds the training guidelines that the program report, `node tools/stats.mjs`, counts
+programs by and checks them against: `references.yaml`, `targets.yaml` and `corridors.yaml`. Adding an
+exercise does not touch them.
 
 Adding an exercise means adding one file and rebuilding the index. You can do it by hand or with an
 agent (see [With an agent](#with-an-agent)).
@@ -82,10 +83,11 @@ check each entry's muscles against these rules, which follow the definition of a
   soleus in a squat and the lats in a dip. Where holding the load is the exercise, as in a carry, the
   muscles that hold it work against the load and count.
 
-This matters because the program report will count a set as half a set for a target, such as the back,
+This matters because the program report counts a set as half a set for a target, such as the back,
 that only the exercise's `secondary` muscles reach (`catalog/targets.yaml`). A stabilizer listed there,
 such as the lats in a dip, would make dips count as back work, and the report would miss a back that no
-exercise trains.
+exercise trains. The report's own tests count real programs with these entries, so changing the
+`muscles` of an entry they use changes their expected reports (step 4).
 
 [ExRx](https://exrx.net/Lists/Directory) helps to find which muscles work, but its Synergists are not
 copied as they are: check each one against the rules above. Take only which muscles work, and copy no
@@ -117,14 +119,21 @@ error: muscles.primary[0] (line 6) = "chest_mid"
   Hint: Muscle keys (catalog/muscles.yaml): lats, traps, ...
 ```
 
-Commit the entry and `catalog/index.yaml` together.
+The programs in `schema/stats/` are counted with the project's catalog, each compared with its expected
+report `<name>.stats.txt` in a test named `stats report <name>`. A change to the `muscles` of an entry
+they use can move a count and fail that test. Update the expected report in the same commit, and check
+each number that changed by hand against the counting rule in `catalog/targets.yaml` rather than
+copying the output of `node tools/stats.mjs`: the diff is how the review sees what the change does to
+real programs. A new entry changes no report, since no program there uses it.
+
+Commit the entry, `catalog/index.yaml` and any expected report that the entry changes together.
 
 ### With an agent
 
 Point the agent at this file and name the exercise, for example: "Add a catalog entry for the
 Copenhagen plank, following CONTRIBUTING.md." The agent writes the file, runs the two commands and
 fixes what the tests report. Before you open the pull request, check its muscles yourself, as step 3
-describes.
+describes, and every number that changed in an expected report in `schema/stats/`.
 
 ## Changing or removing an exercise
 

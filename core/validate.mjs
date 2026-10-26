@@ -47,6 +47,14 @@ const ALIAS_HINT =
 const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YAML aliases (*name).';
 
 /**
+ * @typedef {object} Checked
+ * @property {Issue[]} issues sorted by line, issues without a line first
+ * @property {unknown} data the parsed program, or undefined after a YAML or alias error
+ * @property {(path: (string|number)[]) => number | undefined} lineOf the line of a path, as an issue gets
+ *   it; undefined for every path after a YAML or alias error
+ */
+
+/**
  * Checks a program.
  * @param {string} source the file's text, already decoded
  * @param {Schema} schema
@@ -54,6 +62,18 @@ const ALIAS_LIMIT_HINT = 'Write the values out instead of repeating them with YA
  * @returns {Issue[]} sorted by line, issues without a line first
  */
 export function validate(source, schema, catalog) {
+  return checkProgram(source, schema, catalog).issues;
+}
+
+/**
+ * Checks a program and keeps what the program report needs: the parsed data and the line of a path,
+ * so the report never parses the source a second time.
+ * @param {string} source the file's text, already decoded
+ * @param {Schema} schema
+ * @param {Catalog} catalog
+ * @returns {Checked}
+ */
+export function checkProgram(source, schema, catalog) {
   return checkSource(source, schema, data => checkRules(data, catalog));
 }
 
@@ -74,15 +94,18 @@ export function validateEntry(source, schema, catalog, file) {
     typeof data === 'object' && data !== null && !Array.isArray(data)
       ? checkEntry(/** @type {Record<string, unknown>} */ (data), [], { catalog, scope: 'catalog', fileName })
       : [],
-  );
+  ).issues;
 }
+
+/** What a source that does not parse gives: its issues, and no data or lines. */
+const UNPARSED = { data: undefined, lineOf: () => undefined };
 
 /**
  * Parses a source, checks the data against the schema and then the rules, and gives each issue its line.
  * @param {string} source
  * @param {Schema} schema
  * @param {(data: unknown) => RuleIssue[]} rules
- * @returns {Issue[]}
+ * @returns {Checked}
  */
 function checkSource(source, schema, rules) {
   const lineCounter = new LineCounter();
@@ -101,7 +124,7 @@ function checkSource(source, schema, rules) {
   };
 
   if (doc.errors.length) {
-    return sortByLine(
+    const issues = sortByLine(
       doc.errors.map(error => ({
         severity: 'error',
         path: TOP,
@@ -110,6 +133,7 @@ function checkSource(source, schema, rules) {
         hint: SYNTAX_HINTS[error.code] ?? SYNTAX_HINT,
       })),
     );
+    return { issues, ...UNPARSED };
   }
 
   // One pass in document order: an alias refers to an anchor above it. alias.resolve(doc) per alias
@@ -136,20 +160,19 @@ function checkSource(source, schema, rules) {
       }
     },
   });
-  if (aliases.length) return aliases;
+  if (aliases.length) return { issues: aliases, ...UNPARSED };
 
   let data;
   try {
     data = doc.toJS();
   } catch (error) {
-    return [
-      {
-        severity: 'error',
-        path: TOP,
-        message: error instanceof Error ? error.message : String(error),
-        hint: ALIAS_LIMIT_HINT,
-      },
-    ];
+    const issue = {
+      severity: /** @type {const} */ ('error'),
+      path: TOP,
+      message: error instanceof Error ? error.message : String(error),
+      hint: ALIAS_LIMIT_HINT,
+    };
+    return { issues: [issue], ...UNPARSED };
   }
 
   /** @param {(string|number)[]} path */
@@ -160,9 +183,10 @@ function checkSource(source, schema, rules) {
   // Schema issues first: the stable sort keeps them before rule issues on a shared line.
   /** @type {RuleIssue[]} */
   const found = check(data, schema).map(issue => ({ ...issue, severity: 'error' }));
-  return sortByLine(
+  const issues = sortByLine(
     found.concat(rules(data)).map(issue => ({ ...issue, path: formatPath(issue.path), line: lineOf(issue.path) })),
   );
+  return { issues, data, lineOf };
 }
 
 /**
@@ -198,10 +222,25 @@ function start(node) {
   return /** @type {{ range?: number[] } | null | undefined} */ (node)?.range?.[0];
 }
 
-/** @param {(string|number)[]} path */
-function formatPath(path) {
+/**
+ * A path as an issue writes it, such as workouts[0].blocks[2].rest.
+ * @param {(string|number)[]} path
+ */
+export function formatPath(path) {
   if (!path.length) return TOP;
   return path.map((step, i) => (typeof step === 'number' ? `[${step}]` : i ? `.${step}` : step)).join('');
+}
+
+/**
+ * A value as an issue header writes it after =: JSON, so a string is quoted, cut at 60 characters.
+ * @param {unknown} value
+ * @returns {string | undefined} undefined for a value that is not a string, a number or a boolean
+ */
+export function formatValue(value) {
+  if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') return undefined;
+  // JSON has no Infinity or NaN: JSON.stringify would print null.
+  const json = typeof value === 'number' && !Number.isFinite(value) ? String(value) : JSON.stringify(value);
+  return json.length > 60 ? `${json.slice(0, 60)}...` : json;
 }
 
 /** @param {Issue[]} issues */
@@ -219,11 +258,8 @@ export function formatIssues(issues) {
   for (const { severity, path, line, column, value, message, hint } of issues) {
     let header =
       column === undefined ? path + (line === undefined ? '' : ` (line ${line})`) : `(line ${line}, column ${column})`;
-    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      // JSON has no Infinity or NaN: JSON.stringify would print null.
-      const json = typeof value === 'number' && !Number.isFinite(value) ? String(value) : JSON.stringify(value);
-      header += ` = ${json.length > 60 ? `${json.slice(0, 60)}...` : json}`;
-    }
+    const shown = formatValue(value);
+    if (shown !== undefined) header += ` = ${shown}`;
     lines.push(`${severity}: ${header}`, `  ${message}`);
     if (hint) lines.push(`  Hint: ${hint}`);
   }

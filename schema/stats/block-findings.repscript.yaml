@@ -1,0 +1,15 @@
+# Findings on blocks: a short rest and a range of repetitions whose upper end is lighter than the loads
+# studied. Sets to failure and timed sets have no repetitions per set, and a block without rest no rest.
+repscript: 0
+id: block-findings
+revision: 1
+title: One workout
+goal: hypertrophy
+schedule: {per_week: 2}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 10, rest: 45s}
+      - {exercise: curl.dumbbell, sets: 3, reps: 8-30, rest: 90s}
+      - {exercise: pullup, sets: 3, reps: max, rest: 2m}
+      - {exercise: plank, sets: 3, time: 30s}

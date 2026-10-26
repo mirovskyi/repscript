@@ -1,0 +1,30 @@
+goal: hypertrophy
+workouts: A, B; 2-3 a week
+corridors: major_groups, hypertrophy.weekly_sets, hypertrophy.reps, hypertrophy.rest
+finding: major_groups: less than twice a week, 0 to under 2 days involved a week
+  groups: legs 0, hips 0, back 1-1.5, abdomen 0, chest 1-1.5
+  The group is trained on fewer than two days a week. Guidelines for adults ask for at least two days a week of muscle-strengthening work for every major muscle group, at a moderate or greater effort, and the primary recommendation of the ACSM position stand also asks for training at least twice a week. A program cannot state effort yet, so every day that trains the group counts. For the back, only the lats, the rhomboids and the trapezius count, not the lower back.
+  Sources: who2020 p. 32; paga2018 p. 56; paga2018 p. 61; acsm2026 p. 862
+finding: hypertrophy.weekly_sets: below the minimum effective dose, 0 to under 4 fractional sets a week
+  targets: chest 3-4.5 (lower end), back 3-4.5 (lower end, extrapolated), front_delts 1.5-2.25, side_delts 0 (extrapolated), rear_delts 1.5-2.25 (extrapolated), biceps 1.5-2.25, triceps 1.5-2.25, quads 0, hamstrings 0, glutes 0 (extrapolated), calves 0 (extrapolated), abs 0 (extrapolated)
+  Fewer than 4 fractional sets a week, the least volume whose estimated growth cleared the meta-regression's threshold for a detectable effect. Most of the pooled effects came from sets taken to some form of failure, so the tiers may overstate what easier sets give.
+  Extrapolation: The meta-regression measured the growth of the quadriceps, the hamstrings, the pectorals, the front delts, the trapezius, the triceps and the elbow flexors (pelland2026, Table 1). Its tiers are applied to the other targets, and to the lats and rhomboids of back, on the assumption that these muscles respond to weekly sets as the measured ones do.
+  Sources: pelland2026 Table 3; pelland2026 Section 4.6
+numbers (information, no action needed)
+targets: fractional sets and sessions a week
+  chest       3-4.5 sets: below the minimum effective dose * to minimum effective dose; 1-1.5 sessions; per workout: A 3
+  back        3-4.5 sets: below the minimum effective dose * to minimum effective dose; 1-1.5 sessions; per workout: B 3
+  front_delts 1.5-2.25 sets: below the minimum effective dose *; 0.5-0.75 sessions; per workout: A 1.5
+  side_delts  0 sets: below the minimum effective dose *; 0 sessions
+  rear_delts  1.5-2.25 sets: below the minimum effective dose *; 0.5-0.75 sessions; per workout: B 1.5
+  biceps      1.5-2.25 sets: below the minimum effective dose *; 0.5-0.75 sessions; per workout: B 1.5
+  triceps     1.5-2.25 sets: below the minimum effective dose *; 0.5-0.75 sessions; per workout: A 1.5
+  quads       0 sets: below the minimum effective dose *; 0 sessions
+  hamstrings  0 sets: below the minimum effective dose *; 0 sessions
+  glutes      0 sets: below the minimum effective dose *; 0 sessions
+  calves      0 sets: below the minimum effective dose *; 0 sessions
+  abs         0 sets: below the minimum effective dose *; 0 sessions
+major groups: days involved a week
+  legs 0, hips 0, back 1-1.5, abdomen 0, chest 1-1.5: less than twice a week *
+  shoulders 2-3, arms 2-3: twice a week or more
+findings: 2

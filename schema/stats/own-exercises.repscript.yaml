@@ -1,0 +1,30 @@
+# Own exercises: one with names only, a deprecated one without muscles whose replacement has them, one
+# with a muscle group, and one whose muscles are in no target.
+repscript: 0
+id: own-exercises
+revision: 1
+title: Own exercises
+schedule: {per_week: 2}
+exercises:
+  - id: my.towel_row
+    names: {en: Towel row}
+  - id: my.pullup_towel
+    names: {en: Pull-up on a towel}
+    deprecated: true
+    replaced_by: my.towel_pullup
+  - id: my.towel_pullup
+    names: {en: Towel pull-up}
+    muscles: {primary: [lats]}
+  - id: my.band_press
+    names: {en: Band press}
+    muscles: {primary: [shoulders]}
+  - id: my.wrist_roller
+    names: {en: Wrist roller}
+    muscles: {primary: [forearms]}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: my.towel_row, sets: 3, reps: 10}
+      - {exercise: my.pullup_towel, sets: 3, reps: 5}
+      - {exercise: my.band_press, sets: 3, reps: 12}
+      - {exercise: my.wrist_roller, sets: 3, time: 30s}

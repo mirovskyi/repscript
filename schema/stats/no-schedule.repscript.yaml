@@ -1,0 +1,15 @@
+# The full-body rotation without a schedule: weekly values are unknown, except those at 0.
+repscript: 0
+id: no-schedule
+revision: 1
+title: Full body
+goal: hypertrophy
+workouts:
+  - id: A
+    blocks:
+      - {exercise: squat.barbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: bench_press.barbell, sets: 3, reps: 8-12, rest: 2m}
+  - id: B
+    blocks:
+      - {exercise: romanian_deadlift.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: pullup, sets: 3, reps: 8-12, rest: 2m}

@@ -40,6 +40,12 @@ print the catalog file and the problem to standard error, check no file, and exi
 - **THEN** the command names that file and the problem on standard error, prints no report and exits
   with code 1
 
+#### Scenario: Missing catalog file
+- **WHEN** `catalog/muscles.yaml` or the folder `catalog/exercises/` does not exist
+- **THEN** standard error names it by its path from the project root, written with `/`, never by a path
+  of the operating system, with the reason, such as `(ENOENT)`; no report is printed, and the command
+  exits with code 1
+
 ### Requirement: Report layout
 A file's report SHALL start with the file path, list its issues in file order, and end with the line
 `errors: <N>, warnings: <M>`.

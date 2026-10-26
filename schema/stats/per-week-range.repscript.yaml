@@ -1,0 +1,15 @@
+# A range of workouts a week: weekly values at both ends, and subjects whose lower end only falls in a
+# band with a finding.
+repscript: 0
+id: per-week-range
+revision: 1
+title: Push and pull
+goal: hypertrophy
+schedule: {per_week: 2-3}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: pushup, sets: 3, reps: 8-12, rest: 90s}
+  - id: B
+    blocks:
+      - {exercise: pullup, sets: 3, reps: 5-8, rest: 2m}

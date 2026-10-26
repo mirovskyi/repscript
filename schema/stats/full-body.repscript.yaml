@@ -1,0 +1,17 @@
+# A full-body rotation of two workouts, three times a week: volume below the minimum effective dose for
+# seven targets, and three groups trained on fewer than two days a week.
+repscript: 0
+id: full-body
+revision: 1
+title: Full body
+goal: hypertrophy
+schedule: {per_week: 3}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: squat.barbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: bench_press.barbell, sets: 3, reps: 8-12, rest: 2m}
+  - id: B
+    blocks:
+      - {exercise: romanian_deadlift.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: pullup, sets: 3, reps: 8-12, rest: 2m}

@@ -1,0 +1,43 @@
+# Push, pull and legs, each twice in a rotation of six workouts a week: a balanced program with no
+# finding.
+repscript: 0
+id: ppl
+revision: 1
+title: Push, pull, legs
+goal: hypertrophy
+schedule: {per_week: 6}
+workouts:
+  - id: push1
+    blocks:
+      - {exercise: bench_press.barbell, sets: 4, reps: 8-12, rest: 2m}
+      - {exercise: overhead_press.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: lateral_raise.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+      - {exercise: triceps_extension.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+  - id: pull1
+    blocks:
+      - {exercise: pullup, sets: 4, reps: 8-12, rest: 2m}
+      - {exercise: row.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: curl.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+  - id: legs1
+    blocks:
+      - {exercise: squat.barbell, sets: 4, reps: 8-12, rest: 2m}
+      - {exercise: romanian_deadlift.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: calf_raise, sets: 4, reps: 12-15, rest: 90s}
+      - {exercise: crunch, sets: 3, reps: 8-12, rest: 90s}
+  - id: push2
+    blocks:
+      - {exercise: bench_press.dumbbell, sets: 4, reps: 8-12, rest: 2m}
+      - {exercise: dip, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: lateral_raise.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+      - {exercise: triceps_extension.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+  - id: pull2
+    blocks:
+      - {exercise: chinup, sets: 4, reps: 8-12, rest: 2m}
+      - {exercise: row.dumbbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: curl.dumbbell, sets: 3, reps: 8-12, rest: 90s}
+  - id: legs2
+    blocks:
+      - {exercise: split_squat.bulgarian, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: deadlift.barbell, sets: 3, reps: 8-12, rest: 2m}
+      - {exercise: calf_raise, sets: 4, reps: 12-15, rest: 90s}
+      - {exercise: plank, sets: 3, time: 30s, rest: 90s}

@@ -51,11 +51,12 @@ function fail(where, message) {
 }
 
 /**
- * Parses a catalog file with the validator's YAML options.
+ * Parses a catalog or guideline file with the validator's YAML options. Throws an Error naming the file,
+ * with the line of the first YAML error, when it is not valid YAML.
  * @param {CatalogFile} catalogFile
  * @returns {unknown}
  */
-function parse({ file, source }) {
+export function parseCatalogFile({ file, source }) {
   const lineCounter = new LineCounter();
   const doc = parseDocument(source, {
     lineCounter,
@@ -82,7 +83,7 @@ function parse({ file, source }) {
  */
 export function buildCatalog(files) {
   const entries = files.exercises.map(catalogFile => {
-    const entry = parse(catalogFile);
+    const entry = parseCatalogFile(catalogFile);
     if (!isMapping(entry) || typeof entry.id !== 'string')
       fail(catalogFile.file, 'expected an exercise entry, a mapping with a string id.');
     return /** @type {Record<string, unknown> & { id: string }} */ (entry);
@@ -116,9 +117,11 @@ export function buildCatalog(files) {
       addMuscles(list, `${where}[${i}].children`, false);
     }
   };
-  addMuscles(dictionary(parse(files.muscles), files.muscles.file, ''), '', true);
+  addMuscles(dictionary(parseCatalogFile(files.muscles), files.muscles.file, ''), '', true);
 
-  const equipment = new Set(dictionary(parse(files.equipment), files.equipment.file, '').map(item => String(item.id)));
+  const equipment = new Set(
+    dictionary(parseCatalogFile(files.equipment), files.equipment.file, '').map(item => String(item.id)),
+  );
 
   return { exercises: new Map(entries.map(entry => [entry.id, entry])), names, muscles, equipment };
 }

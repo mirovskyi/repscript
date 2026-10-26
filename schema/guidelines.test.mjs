@@ -5,7 +5,8 @@ import { join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildCatalog } from '../core/catalog.mjs';
-import { loadCatalog, readCatalogFiles, readGuidelineFiles } from '../tools/catalog.mjs';
+import { buildGuidelines, musclesProblem } from '../core/guidelines.mjs';
+import { loadCatalog, loadGuidelines, readCatalogFiles, readGuidelineFiles } from '../tools/catalog.mjs';
 import { LineCounter, parse, parseDocument } from '../vendor/yaml.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -999,4 +1000,269 @@ test('the guideline check reports odd YAML instead of failing', () => {
     'catalog/targets.yaml: target chest: unknown node (a value that holds itself)',
     'catalog/corridors.yaml: strength.reps: goal (a value that holds itself) is not a program goal',
   ]);
+});
+
+test('loadGuidelines reads targets.yaml and corridors.yaml, and names a file it cannot use', () => {
+  const catalog = buildCatalog(readCatalogFiles(PROJECT_CATALOG));
+  const loaded = loadGuidelines(PROJECT_CATALOG, catalog);
+  assert.ok('guidelines' in loaded, 'error' in loaded ? loaded.error : '');
+  assert.equal(loaded.guidelines.targets.length, 12);
+  const restore =
+    'The catalog comes with the project: restore catalog/ with git checkout -- catalog, or download the project again.';
+  inTempDir(dir => {
+    cpSync(fileURLToPath(PROJECT_CATALOG), dir, { recursive: true });
+    const url = pathToFileURL(`${dir}/`);
+    const fileOf = (/** @type {string} */ name) => relative(ROOT, join(dir, name)).replaceAll('\\', '/');
+    const load = () => loadGuidelines(url, catalog);
+    const corridors = readFileSync(join(dir, 'corridors.yaml'), 'utf8');
+
+    writeFileSync(join(dir, 'corridors.yaml'), '- id: [hypertrophy\n');
+    assert.deepEqual(load(), {
+      error: `Cannot read the guidelines: ${fileOf('corridors.yaml')} (line 2): Flow sequence in block collection must be sufficiently indented and end with a ]\n${restore}`,
+    });
+    writeFileSync(join(dir, 'corridors.yaml'), corridors.replace('      label: less than twice a week\n', ''));
+    assert.deepEqual(load(), {
+      error: `Cannot read the guidelines: ${fileOf('corridors.yaml')}: corridor major_groups bands[0]: label is not a string.\n${restore}`,
+    });
+    writeFileSync(join(dir, 'corridors.yaml'), corridors);
+
+    // references.yaml is not read: broken or missing, it does not stop the report.
+    writeFileSync(join(dir, 'references.yaml'), '- key: [pelland2026\n');
+    assert.ok('guidelines' in load());
+    rmSync(join(dir, 'references.yaml'));
+    assert.ok('guidelines' in load());
+
+    // An entry's muscles, which the validator does not read, name the entry's file in the catalog.
+    const pushup = join(dir, 'exercises', 'pushup.yaml');
+    writeFileSync(pushup, readFileSync(pushup, 'utf8').replace('primary: [pecs]', 'primary: [pec]'));
+    assert.deepEqual(loadGuidelines(url, buildCatalog(readCatalogFiles(url))), {
+      error: `Cannot read the catalog: ${fileOf('exercises/pushup.yaml')}: muscles.primary is not a list of muscle keys.\n${restore}`,
+    });
+
+    rmSync(join(dir, 'targets.yaml'));
+    assert.deepEqual(load(), {
+      error: `Cannot read the guidelines: ${fileOf('targets.yaml')}: the file cannot be read (ENOENT).\n${restore}`,
+    });
+  });
+});
+
+test('musclesProblem: what the count cannot read in an entry muscles', () => {
+  const guidelines = buildGuidelines(
+    readGuidelineFiles(PROJECT_CATALOG),
+    buildCatalog(readCatalogFiles(PROJECT_CATALOG)),
+  );
+  /** @param {unknown} muscles */
+  const problem = muscles => musclesProblem(muscles === undefined ? { id: 'x' } : { id: 'x', muscles }, guidelines);
+  assert.equal(problem(undefined), undefined);
+  assert.equal(problem({ primary: ['lats'] }), undefined);
+  assert.equal(problem({ primary: ['back'], secondary: ['biceps', 'delt_rear'] }), undefined);
+  assert.equal(problem([['lats']]), 'muscles is not a mapping.');
+  assert.equal(problem(null), 'muscles is not a mapping.');
+  assert.equal(problem({ secondary: ['lats'] }), 'muscles.primary is not a list of muscle keys.');
+  assert.equal(problem({ primary: 'lats' }), 'muscles.primary is not a list of muscle keys.');
+  assert.equal(problem({ primary: ['lat'] }), 'muscles.primary is not a list of muscle keys.');
+  assert.equal(problem({ primary: ['lats'], secondary: [5] }), 'muscles.secondary is not a list of muscle keys.');
+  assert.equal(problem({ primary: ['lats'], secondary: null }), 'muscles.secondary is not a list of muscle keys.');
+});
+
+/**
+ * buildGuidelines over the test catalog, with some of the valid files replaced.
+ * @param {{ targets?: string, corridors?: string }} sources
+ */
+function buildWith(sources) {
+  const texts = { targets: VALID.targets, corridors: VALID.corridors, ...sources };
+  return buildGuidelines(
+    {
+      targets: { file: 'catalog/targets.yaml', source: texts.targets },
+      corridors: { file: 'catalog/corridors.yaml', source: texts.corridors },
+    },
+    testCatalog(),
+  );
+}
+
+test('buildGuidelines builds the project guideline files', () => {
+  const catalog = buildCatalog(readCatalogFiles(PROJECT_CATALOG));
+  const guidelines = buildGuidelines(readGuidelineFiles(PROJECT_CATALOG), catalog);
+  const { counting, targets, major_groups } = projectTargets();
+  assert.deepEqual(guidelines.weights, { primary: counting.primary, secondary: counting.secondary });
+  assert.deepEqual(
+    guidelines.targets,
+    targets.map((/** @type {any} */ { id, nodes }) => ({ id, nodes })),
+  );
+  assert.deepEqual(
+    guidelines.groups,
+    major_groups.groups.map((/** @type {any} */ { id, targets }) => ({ id, targets })),
+  );
+  assert.deepEqual(
+    guidelines.corridors.map(({ id, goal, unit }) => [id, goal, unit]),
+    [
+      ['major_groups', undefined, 'days_involved_per_week'],
+      ['hypertrophy.weekly_sets', 'hypertrophy', 'fractional_sets_per_week'],
+      ['hypertrophy.reps', 'hypertrophy', 'reps_per_set'],
+      ['hypertrophy.rest', 'hypertrophy', 'rest_seconds'],
+      ['strength.reps', 'strength', 'reps_per_set'],
+      ['power.reps', 'power', 'reps_per_set'],
+    ],
+  );
+  const [coverage, volume] = guidelines.corridors;
+  assert.deepEqual(coverage.subjects, ['legs', 'hips', 'back', 'abdomen', 'chest', 'shoulders', 'arms']);
+  assert.deepEqual(coverage.extrapolated, []);
+  assert.equal(coverage.extrapolation, undefined);
+  assert.deepEqual(volume.extrapolated, ['back', 'side_delts', 'rear_delts', 'glutes', 'calves', 'abs']);
+  assert.match(volume.extrapolation ?? '', /^The meta-regression measured/);
+  // A band's range is its own: the last band has no to.
+  assert.deepEqual(
+    volume.bands.map(({ from, to, finding }) => [from, to, finding]),
+    [
+      [0, 4, true],
+      [4, 5, false],
+      [5, 11, false],
+      [11, 19, false],
+      [19, 30, false],
+      [30, 43, false],
+      [43, undefined, true],
+    ],
+  );
+  assert.deepEqual(volume.bands[0].cites, [
+    { key: 'pelland2026', at: 'Table 3' },
+    { key: 'pelland2026', at: 'Section 4.6' },
+  ]);
+  assert.deepEqual(guidelines.corridors[2].subjects, []);
+});
+
+test('the reach map: a group key, a muscle with bundles and a key in no target', () => {
+  const catalog = buildCatalog(readCatalogFiles(PROJECT_CATALOG));
+  const { reach } = buildGuidelines(readGuidelineFiles(PROJECT_CATALOG), catalog);
+  const delts = ['front_delts', 'side_delts', 'rear_delts'];
+  assert.deepEqual([...(reach.get('shoulders') ?? [])], delts);
+  assert.deepEqual([...(reach.get('deltoids') ?? [])], delts);
+  assert.deepEqual([...(reach.get('delt_side') ?? [])], ['side_delts']);
+  assert.deepEqual([...(reach.get('lats') ?? [])], ['back']);
+  assert.deepEqual([...(reach.get('back') ?? [])], ['back']);
+  assert.deepEqual([...(reach.get('arms') ?? [])], ['biceps', 'triceps']);
+  assert.deepEqual([...(reach.get('erector_spinae') ?? ['missing'])], []);
+  assert.equal(reach.size, catalog.muscles.size);
+  // A node outside the dictionary, which the guideline checks report, still reaches its target.
+  const targets = VALID.targets.replace('nodes: [pecs]', 'nodes: [pecs, pec_minor]');
+  assert.deepEqual([...(buildWith({ targets }).reach.get('pec_minor') ?? [])], ['chest']);
+});
+
+test('buildGuidelines names the file and the place of a shape the count cannot use', () => {
+  /** @param {{ targets?: string, corridors?: string }} sources */
+  const error = sources => {
+    try {
+      buildWith(sources);
+    } catch (thrown) {
+      return /** @type {Error} */ (thrown).message;
+    }
+    return 'no error';
+  };
+  assert.equal(error({}), 'no error');
+  /** @param {string | RegExp} from @param {string} to */
+  const targets = (from, to) => error({ targets: VALID.targets.replace(from, to) });
+  /** @param {string | RegExp} from @param {string} to */
+  const corridors = (from, to) => error({ corridors: VALID.corridors.replace(from, to) });
+  const bandCites = 'cites: [{key: who_guide, at: p. 56}]}\n    - {from: 2';
+  for (const [actual, expected] of [
+    [error({ targets: '[]\n' }), 'catalog/targets.yaml: the top level is not a mapping.'],
+    [targets('primary: 1', 'primary: one'), 'catalog/targets.yaml: counting.primary is not a number.'],
+    [targets('  secondary: 0.5\n', ''), 'catalog/targets.yaml: counting.secondary is not a number.'],
+    [error({ targets: 'counting: {primary: 1, secondary: 0.5}\n' }), 'catalog/targets.yaml: targets is not a list.'],
+    [targets(/^major_groups:[\s\S]*/m, ''), 'catalog/targets.yaml: major_groups.groups is not a list.'],
+    [
+      targets('  - id: delts\n', '  - name: delts\n'),
+      'catalog/targets.yaml: targets[1] is not a mapping with a string id.',
+    ],
+    [
+      targets('nodes: [deltoids]', 'nodes: deltoids'),
+      'catalog/targets.yaml: target delts: nodes is not a list of strings.',
+    ],
+    [
+      targets('    - id: upper\n', '    - id: 5\n'),
+      'catalog/targets.yaml: major_groups.groups[1] is not a mapping with a string id.',
+    ],
+    [
+      targets('targets: [chest]', 'targets: [chest, 5]'),
+      'catalog/targets.yaml: group chest: targets is not a list of strings.',
+    ],
+    [error({ corridors: '{}\n' }), 'catalog/corridors.yaml: the top level is not a list.'],
+    [
+      corridors('- id: major_groups\n', '- name: major_groups\n'),
+      'catalog/corridors.yaml: [2] is not a mapping with a string id.',
+    ],
+    [
+      corridors('unit: days_involved_per_week', 'unit: days_per_week'),
+      'catalog/corridors.yaml: corridor major_groups: unit is not one the report counts.',
+    ],
+    [
+      corridors('  targets: [chest, delts]\n', ''),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets: targets is not a list of strings.',
+    ],
+    [
+      corridors('groups: [chest, upper]', 'groups: chest'),
+      'catalog/corridors.yaml: corridor major_groups: groups is not a list of strings.',
+    ],
+    [
+      corridors('goal: strength\n  unit: reps', 'goal: [strength]\n  unit: reps'),
+      'catalog/corridors.yaml: corridor strength.reps: goal is not a string.',
+    ],
+    [
+      corridors('extrapolation: The study', 'extrapolation:\n    - The study'),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets: extrapolation is not a string.',
+    ],
+    [
+      corridors('extrapolated: [delts]', 'extrapolated: delts'),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets: extrapolated is not a list of strings.',
+    ],
+    [
+      corridors('  extrapolation: The study measured the chest, not the delts.\n', ''),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets: extrapolated without extrapolation.',
+    ],
+    [
+      corridors(/ {2}bands:\n {4}- \{from: 0, to: 9[\s\S]*/, '  bands: []\n'),
+      'catalog/corridors.yaml: corridor strength.reps: bands is not a list of at least one band.',
+    ],
+    [
+      corridors('    - {from: 0, to: 2, label: rare,', '    - rare\n    - {from: 0, to: 2, label: rare,'),
+      'catalog/corridors.yaml: corridor major_groups bands[0]: not a mapping.',
+    ],
+    [
+      corridors('{from: 2, label: often', '{label: often'),
+      'catalog/corridors.yaml: corridor major_groups bands[1]: from is not a number.',
+    ],
+    [
+      corridors('{from: 0, to: 2, label: rare', '{from: 0, label: rare'),
+      'catalog/corridors.yaml: corridor major_groups bands[0]: to is not a number.',
+    ],
+    [
+      corridors('label: too few', 'label: 5'),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets bands[0]: label is not a string.',
+    ],
+    [
+      corridors('description: Fewer sets', 'descriptions: Fewer sets'),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets bands[0]: description is not a string.',
+    ],
+    [
+      corridors('finding: false, description: Often.', 'finding: no, description: Often.'),
+      'catalog/corridors.yaml: corridor major_groups bands[1]: finding is not a boolean.',
+    ],
+    [
+      corridors(bandCites, bandCites.replace(', at: p. 56', '')),
+      'catalog/corridors.yaml: corridor major_groups bands[0]: cites is not a list of citations with a string key and at.',
+    ],
+    [
+      corridors(bandCites, bandCites.replace('[{key: who_guide, at: p. 56}]', 'who_guide')),
+      'catalog/corridors.yaml: corridor major_groups bands[0]: cites is not a list of citations with a string key and at.',
+    ],
+    [
+      error({ corridors: '- id: [hypertrophy\n' }),
+      'catalog/corridors.yaml (line 2): Flow sequence in block collection must be sufficiently indented and end with a ]',
+    ],
+  ])
+    assert.equal(actual, expected);
+  // The last band needs no to, and one there is not read.
+  const open = buildWith({
+    corridors: VALID.corridors.replace('{from: 2, label: often', '{from: 2, to: 3, label: often'),
+  });
+  assert.equal(open.corridors[2].bands[1].to, undefined);
 });
