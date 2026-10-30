@@ -9,8 +9,8 @@ import { parseCatalogFile } from './catalog.mjs';
 /** @typedef {import('./catalog.mjs').CatalogFile} CatalogFile */
 
 /**
- * What a unit is measured for: a target, a major group, or a block.
- * @type {Record<string, 'target' | 'group' | 'block'>}
+ * What a unit is measured for: a target, a major group, a block, or an exercise of a workout.
+ * @type {Record<string, 'target' | 'group' | 'block' | 'exercise'>}
  */
 export const UNITS = {
   fractional_sets_per_week: 'target',
@@ -18,6 +18,7 @@ export const UNITS = {
   days_involved_per_week: 'group',
   reps_per_set: 'block',
   rest_seconds: 'block',
+  exercise_sets_per_workout: 'exercise',
 };
 
 /**
@@ -35,7 +36,8 @@ export const UNITS = {
  * @property {string} id
  * @property {string | undefined} goal undefined: the corridor applies to every program
  * @property {string} unit a key of UNITS
- * @property {string[]} subjects the targets or groups it measures, none for a unit per block
+ * @property {string[]} subjects the targets or groups it measures, none for a unit per block or per
+ *   exercise of a workout
  * @property {string[]} extrapolated the subjects its sources did not measure
  * @property {string | undefined} extrapolation
  * @property {Band[]} bands
@@ -155,7 +157,7 @@ function readCorridors(corridorsFile) {
     const kind = UNITS[unit];
     /** @type {string[]} */
     let subjects = [];
-    if (kind !== 'block') {
+    if (kind === 'target' || kind === 'group') {
       const field = `${kind}s`;
       const listed = item[field];
       if (!isStrings(listed)) fail(file, `${where}: ${field} is not a list of strings.`);

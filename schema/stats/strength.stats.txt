@@ -1,10 +1,15 @@
 goal: strength
 workouts: A, B; 3 a week
-corridors: major_groups, strength.reps
+corridors: major_groups, strength.reps, strength.exercise_sets
 finding: major_groups: less than twice a week, 0 to under 2 days involved a week
   groups: back 0, abdomen 0, chest 1.5
   The group is trained on fewer than two days a week. Guidelines for adults ask for at least two days a week of muscle-strengthening work for every major muscle group, at a moderate or greater effort, and the primary recommendation of the ACSM position stand also asks for training at least twice a week. A program cannot state effort yet, so every day that trains the group counts. For the back, only the lats, the rhomboids and the trapezius count, not the lower back.
   Sources: who2020 p. 32; paga2018 p. 56; paga2018 p. 61; acsm2026 p. 862
+finding: strength.exercise_sets: fewer than two sets, 0 to under 2 sets of an exercise in a workout
+  A deadlift.barbell 1: workouts[0].blocks[2].sets (line 14)
+  B deadlift.barbell 1: workouts[1].blocks[2].sets (line 19)
+  Fewer than two sets of the exercise in this workout. The ACSM position stand lists 2 to 3 sets in a session among what enhances strength, finds two sets better than one, and advises healthy adults to do at least two sets of each exercise. A single set is not wasted: the US guidelines find that one set of 8 to 12 repetitions of each exercise already builds strength, and that 2 or 3 sets may build more, with each exercise taken to the point where another repetition would be hard, which a program cannot state yet. They do not speak of a single heavier set.
+  Sources: acsm2026 Table 6; acsm2026 Table 2; acsm2026 p. 865; paga2018 p. 61
 numbers (information, no action needed)
 targets: fractional sets and sessions a week
   chest       4.5 sets; 1.5 sessions; per workout: A 3
@@ -22,4 +27,4 @@ targets: fractional sets and sessions a week
 major groups: days involved a week
   back 0, abdomen 0, chest 1.5: less than twice a week *
   legs 3, hips 3, shoulders 3, arms 3: twice a week or more
-findings: 1
+findings: 2

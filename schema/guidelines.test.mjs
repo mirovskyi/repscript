@@ -73,13 +73,14 @@ const KEY_FORM = /^[a-z][a-z0-9_]*$/;
 const ID_FORM = /^[a-z][a-z0-9_]*(?:\.[a-z0-9_]+)*$/;
 /** A key of names that holds a name. */
 const LANGUAGE = /^[a-z]{2}$/;
-/** What each unit is measured for: targets, groups, or null for a block. */
-const UNITS = /** @type {Record<string, 'targets' | 'groups' | null>} */ ({
+/** What each unit is measured for: targets, groups, a block, or an exercise of a workout. */
+const UNITS = /** @type {Record<string, 'targets' | 'groups' | 'block' | 'exercise of a workout'>} */ ({
   fractional_sets_per_week: 'targets',
   fractional_sessions_per_week: 'targets',
   days_involved_per_week: 'groups',
-  reps_per_set: null,
-  rest_seconds: null,
+  reps_per_set: 'block',
+  rest_seconds: 'block',
+  exercise_sets_per_workout: 'exercise of a workout',
 });
 
 /** What the guideline check takes for a file that is not valid YAML, which it has reported. */
@@ -373,14 +374,16 @@ function guidelineProblems(files, catalog, goals) {
     const { unit } = item;
     const known = typeof unit === 'string' && Object.hasOwn(UNITS, unit);
     if (!('unit' in item)) corridor(id, 'no unit');
-    else if (!known) corridor(id, `unit ${show(unit)} is not one of the five units`);
+    else if (!known) corridor(id, `unit ${show(unit)} is not one of the six units`);
     /** @type {unknown[]} */
     let subjects = [];
     if (known) {
-      const kind = UNITS[unit];
+      const per = UNITS[unit];
+      // The field that lists the subjects, or null for a unit per block or per exercise of a workout.
+      const kind = per === 'targets' || per === 'groups' ? per : null;
       for (const field of /** @type {const} */ (['targets', 'groups']))
         if (field !== kind && field in item)
-          corridor(id, `${field} for a unit per ${kind === null ? 'block' : kind.slice(0, -1)}`);
+          corridor(id, `${field} for a unit per ${kind === null ? per : kind.slice(0, -1)}`);
       if (kind !== null) {
         const ids = kind === 'targets' ? targetIds : groupIds;
         const value = item[kind];
@@ -832,7 +835,7 @@ ${band('from: 120, label: longer, finding: false')}`;
     'catalog/corridors.yaml: hypertrophy.weekly_sets: no band without a finding',
     'catalog/corridors.yaml: hypertrophy.weekly_sets: repeated',
     'catalog/corridors.yaml: hypertrophy.weekly_sets: goal fat_loss is not a program goal',
-    'catalog/corridors.yaml: hypertrophy.weekly_sets: unit sets_per_session is not one of the five units',
+    'catalog/corridors.yaml: hypertrophy.weekly_sets: unit sets_per_session is not one of the six units',
     'catalog/corridors.yaml: hypertrophy.weekly_sets: extrapolation without extrapolated',
     'catalog/corridors.yaml: hypertrophy.weekly_sets: fewer than two bands',
     'catalog/corridors.yaml: major_groups: unknown group legs',
@@ -857,6 +860,34 @@ ${band('from: 120, label: longer, finding: false')}`;
     'catalog/corridors.yaml: rest.check bands[1]: to is not a number',
     'catalog/corridors.yaml: rest.check bands[1]: no description',
     'catalog/corridors.yaml: rest.check bands[1]: no finding',
+  ]);
+});
+
+/**
+ * A corridor in sets of an exercise in a workout, for the tests.
+ * @param {string} id
+ * @param {string} goal
+ * @param {string} [fields] more lines of fields
+ */
+function exerciseSets(id, goal, fields = '') {
+  return `- id: ${id}
+  goal: ${goal}
+  unit: exercise_sets_per_workout
+${fields}  bands:
+    - {from: 0, to: 2, label: few, finding: true, description: Few., cites: [{key: smith2020, at: Table 6}]}
+    - {from: 2, label: more, finding: false, description: More., cites: [{key: smith2020, at: Table 6}]}
+`;
+}
+
+test('the guideline check: a corridor per exercise of a workout has no targets, and one applies to a program', () => {
+  const one = VALID.corridors + exerciseSets('strength.exercise_sets', 'strength');
+  assert.deepEqual(problemsWith({ corridors: one }), []);
+  assert.deepEqual(
+    problemsWith({ corridors: VALID.corridors + exerciseSets('power.exercise_sets', 'power', '  targets: [chest]\n') }),
+    ['catalog/corridors.yaml: power.exercise_sets: targets for a unit per exercise of a workout'],
+  );
+  assert.deepEqual(problemsWith({ corridors: one + exerciseSets('strength.exercise_sets_again', 'strength') }), [
+    'catalog/corridors.yaml: strength.exercise_sets_again: measures exercise_sets_per_workout, as strength.exercise_sets does',
   ]);
 });
 
@@ -982,7 +1013,7 @@ test('the guideline check reports a file it cannot use once, not at every place 
     - {from: 4, label: more, finding: false, description: More., cites: [{key: who_guide, at: p. 56}]}
 `;
   assert.deepEqual(problemsWith({ corridors }), [
-    'catalog/corridors.yaml: hypertrophy.weekly_sets: unit sets_per_week is not one of the five units',
+    'catalog/corridors.yaml: hypertrophy.weekly_sets: unit sets_per_week is not one of the six units',
   ]);
 });
 
@@ -1101,6 +1132,7 @@ test('buildGuidelines builds the project guideline files', () => {
       ['hypertrophy.reps', 'hypertrophy', 'reps_per_set'],
       ['hypertrophy.rest', 'hypertrophy', 'rest_seconds'],
       ['strength.reps', 'strength', 'reps_per_set'],
+      ['strength.exercise_sets', 'strength', 'exercise_sets_per_workout'],
       ['power.reps', 'power', 'reps_per_set'],
     ],
   );
@@ -1128,6 +1160,33 @@ test('buildGuidelines builds the project guideline files', () => {
     { key: 'pelland2026', at: 'Section 4.6' },
   ]);
   assert.deepEqual(guidelines.corridors[2].subjects, []);
+  // Sets of an exercise in a workout: for strength only, with its one finding below two sets, which rests
+  // on ACSM and cites PAGA beside it.
+  const sets = guidelines.corridors.filter(({ unit }) => unit === 'exercise_sets_per_workout');
+  assert.deepEqual(
+    sets.map(({ id, goal, subjects }) => [id, goal, subjects]),
+    [['strength.exercise_sets', 'strength', []]],
+  );
+  assert.deepEqual(
+    sets[0].bands.map(({ from, to, finding }) => [from, to, finding]),
+    [
+      [0, 2, true],
+      [2, 4, false],
+      [4, undefined, false],
+    ],
+  );
+  assert.deepEqual(sets[0].bands[0].cites, [
+    { key: 'acsm2026', at: 'Table 6' },
+    { key: 'acsm2026', at: 'Table 2' },
+    { key: 'acsm2026', at: 'p. 865' },
+    { key: 'paga2018', at: 'p. 61' },
+  ]);
+});
+
+test('buildGuidelines builds a corridor per exercise of a workout without subjects', () => {
+  const { corridors } = buildWith({ corridors: VALID.corridors + exerciseSets('strength.exercise_sets', 'strength') });
+  const built = corridors[corridors.length - 1];
+  assert.deepEqual([built.id, built.unit, built.subjects], ['strength.exercise_sets', 'exercise_sets_per_workout', []]);
 });
 
 test('the reach map: a group key, a muscle with bundles and a key in no target', () => {

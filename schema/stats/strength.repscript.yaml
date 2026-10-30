@@ -1,5 +1,5 @@
-# A strength program with a single heavy set of deadlifts: checked for coverage and repetitions only. The
-# deadlift trains no back target, so the back is not covered.
+# A strength program with a single heavy set of deadlifts: checked for coverage, repetitions and sets per
+# exercise. The deadlift trains no back target, so the back is not covered.
 repscript: 0
 id: strength
 revision: 1

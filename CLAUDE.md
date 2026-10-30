@@ -94,9 +94,10 @@ modifies files: a slip that `core/formats.mjs` recognizes (an en dash in a range
   with an error, or one that cannot be read, gets the validator's report and
   `No numbers: fix the errors above first.` A valid file's warnings are not printed.
 - `programStats(data, lineOf, catalog, guidelines)` in `core/stats.mjs` counts a valid program (weights
-  per target, weekly values at both ends, values per block), places each value in the bands of the
-  corridors that apply to the goal, and returns the report as data. `formatStats(report)` writes the text
-  from the report alone, so the player can print the same text later.
+  per target, weekly values at both ends, values per block and per exercise of a workout), places each
+  value in the bands of the corridors that apply to the goal, and returns the report as data.
+  `formatStats(report)` writes the text from the report alone, so the player can print the same text
+  later.
 - The guidelines come from `loadGuidelines()` in `tools/catalog.mjs`, which reads only `targets.yaml` and
   `corridors.yaml` and builds them with `buildGuidelines()` in `core/guidelines.mjs`: targets, groups,
   weights, corridors and the reach map of muscle keys to targets. It throws, naming the file, only for a

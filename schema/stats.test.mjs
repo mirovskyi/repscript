@@ -218,6 +218,78 @@ test('values per block: reps of 8-12, 5+ and max, rest of 1:30 and 2-3m, none wi
   assert.deepEqual(target(report, 'triceps').byWorkout, [{ workout: 'A', sets: { min: 4.5, max: 4.5 } }]);
 });
 
+test('sets of an exercise in a workout: summed over its blocks, apart per workout, with time, max and no muscles', () => {
+  // Every band gives a finding, so each value shows as one. No schedule: a value per workout needs none.
+  /** @type {[number, boolean][]} */
+  const everyBand = [
+    [0, true],
+    [10, true],
+  ];
+  const report = stats(
+    body({
+      exercises: ['{id: my.towel_row, names: {en: Towel row}}'],
+      workouts: {
+        // The deadlift comes first by its first block, though its last block comes after the row's.
+        A: [
+          '{exercise: deadlift.barbell, sets: 1, reps: 3}',
+          '{exercise: row.dumbbell, sets: 1-3, reps: 8}',
+          '{exercise: row.dumbbell, sets: 2, reps: 12}',
+          '{exercise: deadlift.barbell, sets: 2, reps: 5}',
+          '{exercise: plank, sets: 1, time: 30s}',
+          '{exercise: pullup, sets: 3, reps: max}',
+        ],
+        B: ['{exercise: my.towel_row, sets: 1, reps: 10}', '{exercise: deadlift.barbell, sets: 1, reps: 5}'],
+      },
+    }),
+    withCorridors([corridor({ id: 'test.sets', unit: 'exercise_sets_per_workout' }, everyBand)]),
+  );
+  const shown = report.findings.map(({ corridor, band, subject, value, ends }) => [
+    corridor,
+    band.from,
+    subject.kind === 'exercise' && [
+      subject.workout,
+      subject.exercise,
+      subject.blocks.map(({ path, line }) => [path, line]),
+    ],
+    value,
+    ends,
+  ]);
+  assert.deepEqual(shown, [
+    [
+      'test.sets',
+      0,
+      [
+        'A',
+        'deadlift.barbell',
+        [
+          ['workouts[0].blocks[0].sets', 10],
+          ['workouts[0].blocks[3].sets', 13],
+        ],
+      ],
+      exactly(3),
+      'both',
+    ],
+    [
+      'test.sets',
+      0,
+      [
+        'A',
+        'row.dumbbell',
+        [
+          ['workouts[0].blocks[1].sets', 11],
+          ['workouts[0].blocks[2].sets', 12],
+        ],
+      ],
+      { min: 3, max: 5 },
+      'both',
+    ],
+    ['test.sets', 0, ['A', 'plank', [['workouts[0].blocks[4].sets', 14]]], exactly(1), 'both'],
+    ['test.sets', 0, ['A', 'pullup', [['workouts[0].blocks[5].sets', 15]]], exactly(3), 'both'],
+    ['test.sets', 0, ['B', 'my.towel_row', [['workouts[1].blocks[0].sets', 18]]], exactly(1), 'both'],
+    ['test.sets', 0, ['B', 'deadlift.barbell', [['workouts[1].blocks[1].sets', 19]]], exactly(1), 'both'],
+  ]);
+});
+
 test('a value on a band bound is exact: 6 sets over three workouts at 2 a week is 4, and 7 sets 14/3', () => {
   const workouts = (/** @type {number} */ sets) => ({
     A: [`{exercise: bench_press.barbell, sets: ${sets}, reps: 10}`],
@@ -304,7 +376,11 @@ test('every band with a finding is the first or the last of its corridor, so bot
 test('the corridors that apply to the goal, in file order', () => {
   const workouts = { A: ['{exercise: squat.barbell, sets: 3, reps: 5}'] };
   assert.deepEqual(stats(body({ workouts })).corridors, ['major_groups']);
-  assert.deepEqual(stats(body({ goal: 'strength', workouts })).corridors, ['major_groups', 'strength.reps']);
+  assert.deepEqual(stats(body({ goal: 'strength', workouts })).corridors, [
+    'major_groups',
+    'strength.reps',
+    'strength.exercise_sets',
+  ]);
   assert.deepEqual(stats(body({ goal: 'hypertrophy', workouts })).corridors, [
     'major_groups',
     'hypertrophy.weekly_sets',
@@ -316,6 +392,26 @@ test('the corridors that apply to the goal, in file order', () => {
   const report = stats(body({ goal: 'strength', perWeek: 3, workouts }));
   assert.equal(target(report, 'quads').sets.bands, undefined);
   assert.equal(target(report, 'quads').sessions.bands, undefined);
+  // Sets of an exercise in a strength workout: one set gives a finding, without a schedule too, and three
+  // or five sets none.
+  const unscheduled = stats(
+    body({
+      goal: 'strength',
+      workouts: {
+        A: [
+          '{exercise: deadlift.barbell, sets: 1, reps: 5}',
+          '{exercise: squat.barbell, sets: 3, reps: 5}',
+          '{exercise: bench_press.barbell, sets: 5, reps: 5}',
+        ],
+      },
+    }),
+  );
+  assert.deepEqual(
+    unscheduled.findings
+      .filter(({ corridor }) => corridor === 'strength.exercise_sets')
+      .map(({ band, subject, value }) => [band.label, subject.kind === 'exercise' && subject.exercise, value]),
+    [['fewer than two sets', 'deadlift.barbell', exactly(1)]],
+  );
 });
 
 test('findings: lower end only, both ends in two finding bands, and the extrapolation of a subject', () => {
@@ -361,7 +457,7 @@ test('findings: lower end only, both ends in two finding bands, and the extrapol
   // An unknown value gives no finding.
   const unknown = stats(body({ goal: 'hypertrophy', workouts: FULL_BODY }));
   assert.deepEqual(
-    unknown.findings.map(({ subject }) => subject.kind !== 'block' && subject.id),
+    unknown.findings.map(({ subject }) => (subject.kind === 'target' || subject.kind === 'group') && subject.id),
     ['abdomen', 'side_delts', 'calves', 'abs'],
   );
 });
@@ -498,6 +594,53 @@ test('formatStats: marks of a subject, one Extrapolation line, and a block line'
   );
   assert.match(quadsAndChest, /^ {2}targets: chest 1, quads 1$/m);
   assert.equal(linesStarting(quadsAndChest, '  Extrapolation: ').length, 0);
+});
+
+test('formatStats: an exercise of a workout on its own line, with the sets path of each of its blocks', () => {
+  /** @type {[number, boolean][]} */
+  const everyBand = [
+    [0, true],
+    [10, true],
+  ];
+  const sets = withCorridors([corridor({ id: 'test.sets', unit: 'exercise_sets_per_workout' }, everyBand)]);
+  const parts = {
+    workouts: {
+      'Day 1': [
+        '{exercise: deadlift.barbell, sets: 1, reps: 3}',
+        '{exercise: deadlift.barbell, sets: 2, reps: 5}',
+        '{exercise: pullup, sets: 1, reps: 5}',
+      ],
+    },
+  };
+  const report = text(parts, sets);
+  assert.equal(
+    report.slice(report.indexOf('finding: '), report.indexOf('numbers (')),
+    'finding: test.sets: band 0, 0 to under 10 sets of an exercise in a workout\n' +
+      '  "Day 1" deadlift.barbell 3: workouts[0].blocks[0].sets (line 8), workouts[0].blocks[1].sets (line 9)\n' +
+      '  "Day 1" pullup 1: workouts[0].blocks[2].sets (line 10)\n' +
+      '  Band 0.\n' +
+      '  Sources: pelland2026 Table 3\n',
+  );
+  // Without a line, the path alone.
+  const { data } = checkProgram(`${HEAD}${body(parts)}`, SCHEMA, catalog);
+  assert.deepEqual(linesStarting(formatStats(programStats(data, () => undefined, catalog, sets)), '  "Day 1" '), [
+    '  "Day 1" deadlift.barbell 3: workouts[0].blocks[0].sets, workouts[0].blocks[1].sets',
+    '  "Day 1" pullup 1: workouts[0].blocks[2].sets',
+  ]);
+  // 1 to 3 sets: only the lower end falls in the band with a finding.
+  const lowerEnd = text(
+    { workouts: { A: ['{exercise: row.dumbbell, sets: 1-3, reps: 8}'] } },
+    withCorridors([
+      corridor({ unit: 'exercise_sets_per_workout' }, [
+        [0, true],
+        [2, false],
+        [4, false],
+      ]),
+    ]),
+  );
+  assert.deepEqual(linesStarting(lowerEnd, '  A '), [
+    '  A row.dumbbell 1-3 (lower end): workouts[0].blocks[0].sets (line 8)',
+  ]);
 });
 
 test('formatStats: a band after the sessions, from a corridor in sessions', () => {

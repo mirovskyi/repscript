@@ -16,8 +16,10 @@ import { formatPath, formatValue } from './validate.mjs';
  * @typedef {{ value: Value, bands: Band[] | undefined }} Measure bands: the band at each end, when a
  *   corridor in the value's unit applies to it and the value is known
  * @typedef {{ kind: 'target' | 'group', id: string }
- *   | { kind: 'block', path: string, line: number | undefined, value: unknown }} Subject path: as a
- *   validator issue writes it, such as workouts[0].blocks[2].rest; value: as written
+ *   | { kind: 'block', path: string, line: number | undefined, value: unknown }
+ *   | { kind: 'exercise', workout: string, exercise: string, blocks: { path: string, line: number | undefined }[] }
+ *   } Subject path: as a validator issue writes it, such as workouts[0].blocks[2].rest; value: as written;
+ *   blocks: the sets path of each block of the exercise in the workout, in program order
  */
 
 /**
@@ -184,13 +186,14 @@ export function programStats(data, lineOf, catalog, guidelines) {
     })),
     days_involved_per_week: groups.map(({ id, days }) => ({ subject: { kind: 'group', id }, value: days.value })),
     ...blockValues(program, lineOf),
+    ...exerciseValues(program, lineOf),
   };
 
   /** @type {Finding[]} */
   const findings = [];
   for (const corridor of corridors) {
     const subjects = values[corridor.unit].filter(
-      ({ subject }) => subject.kind === 'block' || corridor.subjects.includes(subject.id),
+      ({ subject }) => !isListed(subject) || corridor.subjects.includes(subject.id),
     );
     for (const band of corridor.bands) {
       if (!band.finding) continue;
@@ -199,7 +202,7 @@ export function programStats(data, lineOf, catalog, guidelines) {
         const lower = bandAt(corridor.bands, value.min) === band;
         const upper = bandAt(corridor.bands, value.max) === band;
         if (!lower && !upper) continue;
-        const extrapolated = subject.kind !== 'block' && corridor.extrapolated.includes(subject.id);
+        const extrapolated = isListed(subject) && corridor.extrapolated.includes(subject.id);
         findings.push({
           corridor: corridor.id,
           unit: corridor.unit,
@@ -223,6 +226,16 @@ export function programStats(data, lineOf, catalog, guidelines) {
     notCounted,
     findings,
   };
+}
+
+/**
+ * Whether the subject is of a kind that a corridor lists: a target or a group, not a block or an exercise
+ * of a workout.
+ * @param {Subject} subject
+ * @returns {subject is Extract<Subject, { id: string }>}
+ */
+function isListed(subject) {
+  return subject.kind === 'target' || subject.kind === 'group';
 }
 
 /**
@@ -275,6 +288,36 @@ function blockValues(program, lineOf) {
   return { reps_per_set: reps, rest_seconds: rest };
 }
 
+/**
+ * The sets of each exercise in each workout, summed over the workout's blocks that name it, at both ends
+ * of a range: workouts in list order, and in each the exercises in the order of their first block. Every
+ * block counts, with time or reps: max too.
+ * @param {Program} program
+ * @param {(path: (string|number)[]) => number | undefined} lineOf
+ */
+function exerciseValues(program, lineOf) {
+  /** @type {{ subject: Subject, value: Value }[]} */
+  const sets = [];
+  program.workouts.forEach((workout, i) => {
+    /** @type {Map<string, { subject: Extract<Subject, { kind: 'exercise' }>, value: Range }>} */
+    const byExercise = new Map();
+    workout.blocks.forEach((block, j) => {
+      const path = ['workouts', i, 'blocks', j, 'sets'];
+      const count = parse('count', block.sets);
+      const item = byExercise.get(block.exercise) ?? {
+        subject: { kind: 'exercise', workout: workout.id, exercise: block.exercise, blocks: [] },
+        value: { min: 0, max: 0 },
+      };
+      item.subject.blocks.push({ path: formatPath(path), line: lineOf(path) });
+      item.value.min += count.min;
+      item.value.max += count.max;
+      byExercise.set(block.exercise, item);
+    });
+    sets.push(...byExercise.values());
+  });
+  return { exercise_sets_per_workout: sets };
+}
+
 /** The words of each unit in the report. @type {Record<string, string>} */
 const UNIT_WORDS = {
   fractional_sets_per_week: 'fractional sets a week',
@@ -282,6 +325,7 @@ const UNIT_WORDS = {
   days_involved_per_week: 'days involved a week',
   reps_per_set: 'repetitions per set',
   rest_seconds: 'seconds of rest',
+  exercise_sets_per_workout: 'sets of an exercise in a workout',
 };
 
 /**
@@ -348,6 +392,14 @@ function formatMeasure({ value, bands }, word) {
 }
 
 /**
+ * A path with its line, as a validator issue header writes it.
+ * @param {{ path: string, line: number | undefined }} place
+ */
+function formatPlace({ path, line }) {
+  return line === undefined ? path : `${path} (line ${line})`;
+}
+
+/**
  * The text of a finding's subject.
  * @param {Finding} finding
  */
@@ -356,10 +408,11 @@ function formatSubject({ subject, value, ends, extrapolation }) {
   if (ends !== 'both') marks.push(`${ends} end`);
   if (extrapolation !== undefined) marks.push('extrapolated');
   const suffix = marks.length ? ` (${marks.join(', ')})` : '';
-  if (subject.kind !== 'block') return `${subject.id} ${formatRange(value)}${suffix}`;
-  const line = subject.line === undefined ? '' : ` (line ${subject.line})`;
+  if (isListed(subject)) return `${subject.id} ${formatRange(value)}${suffix}`;
+  if (subject.kind === 'exercise')
+    return `${formatWorkout(subject.workout)} ${subject.exercise} ${formatRange(value)}${suffix}: ${subject.blocks.map(formatPlace).join(', ')}`;
   const shown = formatValue(subject.value);
-  return `${subject.path}${line}${shown === undefined ? '' : ` = ${shown}`}${suffix}`;
+  return `${formatPlace(subject)}${shown === undefined ? '' : ` = ${shown}`}${suffix}`;
 }
 
 /**
@@ -392,7 +445,8 @@ export function formatStats(report) {
         : `${formatNumber(band.from)} to under ${formatNumber(band.to)} ${UNIT_WORDS[unit]}`;
     lines.push(`finding: ${corridor}: ${band.label}, ${range}`);
     const [{ subject }] = group;
-    if (subject.kind === 'block') for (const finding of group) lines.push(`  ${formatSubject(finding)}`);
+    // A block or an exercise of a workout on a line of its own, the targets or groups on one line.
+    if (!isListed(subject)) for (const finding of group) lines.push(`  ${formatSubject(finding)}`);
     else lines.push(`  ${subject.kind}s: ${group.map(formatSubject).join(', ')}`);
     lines.push(`  ${band.description}`);
     const extrapolated = group.find(({ extrapolation }) => extrapolation !== undefined);

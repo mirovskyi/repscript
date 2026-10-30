@@ -227,6 +227,47 @@
       cites:
         - {key: acsm2026, at: Table 6}
         - {key: currier2023, at: 'Methods: Study selection and data extraction'}
+- id: strength.exercise_sets
+  goal: strength
+  unit: exercise_sets_per_workout
+  bands:
+    - from: 0
+      to: 2
+      label: fewer than two sets
+      finding: true
+      description: >-
+        Fewer than two sets of the exercise in this workout. The ACSM position stand lists 2 to 3 sets
+        in a session among what enhances strength, finds two sets better than one, and advises healthy
+        adults to do at least two sets of each exercise. A single set is not wasted: the US guidelines
+        find that one set of 8 to 12 repetitions of each exercise already builds strength, and that 2
+        or 3 sets may build more, with each exercise taken to the point where another repetition would
+        be hard, which a program cannot state yet. They do not speak of a single heavier set.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: acsm2026, at: Table 2}
+        - {key: acsm2026, at: p. 865}
+        - {key: paga2018, at: p. 61}
+    - from: 2
+      to: 4
+      label: two or three sets
+      finding: false
+      description: >-
+        Two or three sets of the exercise in this workout: the number in a session that the ACSM
+        position stand lists among what enhances strength.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: acsm2026, at: Table 2}
+    - from: 4
+      label: four sets or more
+      finding: false
+      description: >-
+        More sets of the exercise in this workout than the 2 to 3 in a session that the ACSM position
+        stand lists for strength. More sets may still add benefit, but the position stand hypothesizes
+        that each set past the second adds less.
+      cites:
+        - {key: acsm2026, at: Table 6}
+        - {key: acsm2026, at: Table 2}
+        - {key: acsm2026, at: p. 865}
 - id: power.reps
   goal: power
   unit: reps_per_set
