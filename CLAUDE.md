@@ -105,6 +105,13 @@ modifies files: a slip that `core/formats.mjs` recognizes (an en dash in a range
   muscles with `musclesProblem()`, since the count reads them and the validator does not.
 - A finding is atomic in the data (one corridor, band, subject and value, with the ends that fall in
   the band), and grouped per corridor and band in the text. Findings never change the exit code.
+- A corridor per block or per exercise of a workout can have `main_only: true` (with its
+  `main_only_reason` and `main_only_cites`). Once a program marks any block with `main: true`, such a
+  corridor checks only the marked blocks, and only the exercises of a workout with at least one marked
+  block there, whose sets still sum all their blocks in that workout. A program without marks is
+  checked on every block. When such a corridor applies, the `main blocks:` line after the header lists
+  the marked blocks, or says that none is marked; otherwise there is no such line, marks or not. Marks
+  never change a number.
 - Band placement is exact only while the weights are multiples of 0.5 and band bounds are whole numbers,
   and it checks both ends of a range only, which finds every finding band while those sit first or last
   in a corridor. Tests in `schema/stats.test.mjs` hold both on the project data.

@@ -39,6 +39,10 @@ import { formatPath, formatValue } from './validate.mjs';
  * @property {string[]} workouts ids in list order
  * @property {Range | undefined} perWeek
  * @property {string[]} corridors ids of the applying corridors, in file order
+ * @property {{ corridors: { id: string, reason: string, cites: { key: string, at: string }[] }[],
+ *   blocks: { workout: string, exercise: string }[] } | undefined} main the applying corridors limited to
+ *   main blocks, in file order, and the main blocks in program order; undefined when no such corridor
+ *   applies
  * @property {{ id: string, sets: Measure, sessions: Measure, byWorkout: { workout: string, sets: Range }[] }[]} targets
  *   in target order; byWorkout: the workouts that add to the target, in list order
  * @property {{ id: string, days: Measure }[]} groups in group order
@@ -49,7 +53,7 @@ import { formatPath, formatValue } from './validate.mjs';
 
 /**
  * The parts of a valid program that the count reads: the schema and the rules have held.
- * @typedef {{ exercise: string, sets: number | string, reps?: number | string, rest?: number | string }} Block
+ * @typedef {{ exercise: string, sets: number | string, reps?: number | string, rest?: number | string, main?: true }} Block
  * @typedef {object} Program
  * @property {string} [goal]
  * @property {{ per_week: number | string }} [schedule]
@@ -177,7 +181,11 @@ export function programStats(data, lineOf, catalog, guidelines) {
     return { id, days: measure('days_involved_per_week', id, weekly(both(days))) };
   });
 
-  /** @type {Record<string, { subject: Subject, value: Value }[]>} the values of every subject by unit */
+  /**
+   * The values of every subject by unit. main: the value's block is a main block, or one of the
+   * exercise's blocks in the workout is; a target or a group has none.
+   * @type {Record<string, { subject: Subject, value: Value, main?: boolean }[]>}
+   */
   const values = {
     fractional_sets_per_week: targets.map(({ id, sets }) => ({ subject: { kind: 'target', id }, value: sets.value })),
     fractional_sessions_per_week: targets.map(({ id, sessions }) => ({
@@ -189,11 +197,18 @@ export function programStats(data, lineOf, catalog, guidelines) {
     ...exerciseValues(program, lineOf),
   };
 
+  // A corridor limited to main blocks checks every value until the program marks a block.
+  const mainBlocks = program.workouts.flatMap(({ id, blocks }) =>
+    blocks.filter(block => block.main === true).map(({ exercise }) => ({ workout: id, exercise })),
+  );
+  const marked = mainBlocks.length > 0;
+  const limited = corridors.filter(({ mainOnly }) => mainOnly);
   /** @type {Finding[]} */
   const findings = [];
   for (const corridor of corridors) {
     const subjects = values[corridor.unit].filter(
-      ({ subject }) => !isListed(subject) || corridor.subjects.includes(subject.id),
+      ({ subject, main }) =>
+        (!isListed(subject) || corridor.subjects.includes(subject.id)) && (!corridor.mainOnly || !marked || main),
     );
     for (const band of corridor.bands) {
       if (!band.finding) continue;
@@ -221,6 +236,16 @@ export function programStats(data, lineOf, catalog, guidelines) {
     workouts: program.workouts.map(({ id }) => id),
     perWeek,
     corridors: corridors.map(({ id }) => id),
+    main: limited.length
+      ? {
+          corridors: limited.map(({ id, mainOnlyReason, mainOnlyCites }) => ({
+            id,
+            reason: /** @type {string} */ (mainOnlyReason),
+            cites: mainOnlyCites,
+          })),
+          blocks: mainBlocks,
+        }
+      : undefined,
     targets,
     groups,
     notCounted,
@@ -259,15 +284,15 @@ function targetWeights(entry, { targets, reach, weights }) {
 }
 
 /**
- * The values per block, in program order: the repetitions per set, and the rest in seconds. A block with
- * reps: max, with time, or without rest has no such value.
+ * The values per block, in program order: the repetitions per set, and the rest in seconds, each with
+ * whether its block is a main block. A block with reps: max, with time, or without rest has no such value.
  * @param {Program} program
  * @param {(path: (string|number)[]) => number | undefined} lineOf
  */
 function blockValues(program, lineOf) {
-  /** @type {{ subject: Subject, value: Value }[]} */
+  /** @type {{ subject: Subject, value: Value, main: boolean }[]} */
   const reps = [];
-  /** @type {{ subject: Subject, value: Value }[]} */
+  /** @type {{ subject: Subject, value: Value, main: boolean }[]} */
   const rest = [];
   program.workouts.forEach((workout, i) => {
     workout.blocks.forEach((block, j) => {
@@ -276,13 +301,14 @@ function blockValues(program, lineOf) {
         const path = ['workouts', i, 'blocks', j, field];
         return { kind: 'block', path: formatPath(path), line: lineOf(path), value };
       };
+      const main = block.main === true;
       if (block.reps !== undefined && block.reps !== 'max') {
         const { min, max } = parse('reps', block.reps);
         // 5+ is counted at its minimum.
-        reps.push({ subject: subject('reps', block.reps), value: { min, max: max === Infinity ? min : max } });
+        reps.push({ subject: subject('reps', block.reps), value: { min, max: max === Infinity ? min : max }, main });
       }
       if (block.rest !== undefined)
-        rest.push({ subject: subject('rest', block.rest), value: parse('duration', block.rest) });
+        rest.push({ subject: subject('rest', block.rest), value: parse('duration', block.rest), main });
     });
   });
   return { reps_per_set: reps, rest_seconds: rest };
@@ -291,15 +317,16 @@ function blockValues(program, lineOf) {
 /**
  * The sets of each exercise in each workout, summed over the workout's blocks that name it, at both ends
  * of a range: workouts in list order, and in each the exercises in the order of their first block. Every
- * block counts, with time or reps: max too.
+ * block counts, with time or reps: max too. main: one of the exercise's blocks in the workout is a main
+ * block.
  * @param {Program} program
  * @param {(path: (string|number)[]) => number | undefined} lineOf
  */
 function exerciseValues(program, lineOf) {
-  /** @type {{ subject: Subject, value: Value }[]} */
+  /** @type {{ subject: Subject, value: Value, main: boolean }[]} */
   const sets = [];
   program.workouts.forEach((workout, i) => {
-    /** @type {Map<string, { subject: Extract<Subject, { kind: 'exercise' }>, value: Range }>} */
+    /** @type {Map<string, { subject: Extract<Subject, { kind: 'exercise' }>, value: Range, main: boolean }>} */
     const byExercise = new Map();
     workout.blocks.forEach((block, j) => {
       const path = ['workouts', i, 'blocks', j, 'sets'];
@@ -307,10 +334,12 @@ function exerciseValues(program, lineOf) {
       const item = byExercise.get(block.exercise) ?? {
         subject: { kind: 'exercise', workout: workout.id, exercise: block.exercise, blocks: [] },
         value: { min: 0, max: 0 },
+        main: false,
       };
       item.subject.blocks.push({ path: formatPath(path), line: lineOf(path) });
       item.value.min += count.min;
       item.value.max += count.max;
+      if (block.main === true) item.main = true;
       byExercise.set(block.exercise, item);
     });
     sets.push(...byExercise.values());
@@ -400,6 +429,14 @@ function formatPlace({ path, line }) {
 }
 
 /**
+ * Citations as a Sources line lists them.
+ * @param {{ key: string, at: string }[]} cites
+ */
+function formatCites(cites) {
+  return cites.map(({ key, at }) => `${key} ${at}`).join('; ');
+}
+
+/**
  * The text of a finding's subject.
  * @param {Finding} finding
  */
@@ -428,6 +465,22 @@ export function formatStats(report) {
     `corridors: ${report.corridors.join(', ') || 'none'}`,
   ];
 
+  // Above the findings: what a corridor limited to main blocks left unchecked, which no finding shows.
+  if (report.main) {
+    const { corridors, blocks } = report.main;
+    if (blocks.length === 0)
+      lines.push(
+        `main blocks: none marked with main: true, every block checked by ${corridors.map(({ id }) => id).join(', ')}`,
+      );
+    else {
+      lines.push(
+        `main blocks: ${blocks.map(({ workout, exercise }) => `${formatWorkout(workout)} ${exercise}`).join(', ')}`,
+      );
+      for (const { id, reason, cites } of corridors)
+        lines.push(`  only these are checked by ${id}: ${reason}`, `  Sources: ${formatCites(cites)}`);
+    }
+  }
+
   // The atomic findings grouped by corridor and band, which are adjacent in data order.
   /** @type {Finding[][]} */
   const groups = [];
@@ -451,7 +504,7 @@ export function formatStats(report) {
     lines.push(`  ${band.description}`);
     const extrapolated = group.find(({ extrapolation }) => extrapolation !== undefined);
     if (extrapolated) lines.push(`  Extrapolation: ${extrapolated.extrapolation}`);
-    lines.push(`  Sources: ${band.cites.map(({ key, at }) => `${key} ${at}`).join('; ')}`);
+    lines.push(`  Sources: ${formatCites(band.cites)}`);
   }
 
   lines.push('numbers (information, no action needed)', 'targets: fractional sets and sessions a week');

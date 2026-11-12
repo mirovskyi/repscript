@@ -1,0 +1,15 @@
+warning: repscript (line 3) = 0
+  Format version 0 is a draft: the format may still change before the first release.
+error: workouts[0].main (line 10)
+  Unknown field.
+  Hint: Allowed fields here: id, title, notes, blocks. Extension fields start with x-.
+error: workouts[0].blocks[1].main (line 13) = false
+  Expected one of: true.
+  Hint: Marks a main lift, an exercise whose own result the program is built to raise: write main: true on the block that trains it for that result, such as its heavy sets, and leave the field out on assistance work and on lighter volume sets of the same lift. With goal: strength, the program report then checks the load only of marked blocks, and the sets per exercise only of exercises with a marked block in that workout. Example: {exercise: squat.barbell, sets: 3, reps: 5, main: true}
+error: workouts[0].blocks[2].main (line 14) = "yes"
+  Expected a boolean, found a string.
+  Hint: Marks a main lift, an exercise whose own result the program is built to raise: write main: true on the block that trains it for that result, such as its heavy sets, and leave the field out on assistance work and on lighter volume sets of the same lift. With goal: strength, the program report then checks the load only of marked blocks, and the sets per exercise only of exercises with a marked block in that workout. Example: {exercise: squat.barbell, sets: 3, reps: 5, main: true}
+error: workouts[0].blocks[3].mian (line 15)
+  Unknown field.
+  Hint: Did you mean main?
+errors: 4, warnings: 1

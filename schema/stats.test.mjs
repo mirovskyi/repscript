@@ -98,6 +98,9 @@ function corridor(fields, bands) {
     subjects: [],
     extrapolated: [],
     extrapolation: undefined,
+    mainOnly: false,
+    mainOnlyReason: undefined,
+    mainOnlyCites: [],
     ...fields,
     bands: bands.map(([from, finding], k) => ({
       from,
@@ -463,6 +466,203 @@ test('findings: lower end only, both ends in two finding bands, and the extrapol
 });
 
 /**
+ * The subjects that a corridor's findings list: a block by its path, an exercise of a workout as
+ * <workout> <exercise>, a target or a group by its id.
+ * @param {Report} report
+ * @param {string} id
+ */
+function listed(report, id) {
+  return report.findings
+    .filter(({ corridor }) => corridor === id)
+    .map(({ subject }) =>
+      subject.kind === 'block'
+        ? subject.path
+        : subject.kind === 'exercise'
+          ? `${subject.workout} ${subject.exercise}`
+          : subject.id,
+    );
+}
+
+/** A block without its main mark. @param {string} block */
+const unmark = block => block.replace(', main: true', '');
+
+/** @param {Record<string, string[]>} workouts */
+const unmarked = workouts =>
+  Object.fromEntries(Object.entries(workouts).map(([id, blocks]) => [id, blocks.map(unmark)]));
+
+const BIKE = '{id: my.bike, names: {en: Stationary bike}}';
+
+test('main blocks: assistance work, a light main lift, a single set of one, a warm-up and timed sets', () => {
+  /** @param {Record<string, string[]>} workouts */
+  const strength = workouts => stats(body({ goal: 'strength', exercises: [BIKE], workouts }));
+  // Assistance work after a main lift; without the mark, the row is checked.
+  const assistance = {
+    A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}', '{exercise: row.dumbbell, sets: 3, reps: 8-12}'],
+  };
+  assert.deepEqual(listed(strength(assistance), 'strength.reps'), []);
+  assert.deepEqual(listed(strength(assistance), 'strength.exercise_sets'), []);
+  // A single set of assistance work, which only the mark keeps from strength.exercise_sets.
+  const singleRow = {
+    A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}', '{exercise: row.dumbbell, sets: 1, reps: 8}'],
+  };
+  assert.deepEqual(listed(strength(singleRow), 'strength.exercise_sets'), []);
+  assert.deepEqual(listed(strength(unmarked(singleRow)), 'strength.exercise_sets'), ['A row.dumbbell']);
+  assert.deepEqual(listed(strength(unmarked(assistance)), 'strength.reps'), ['workouts[0].blocks[1].reps']);
+  // A main lift that is too light.
+  const light = strength({
+    A: ['{exercise: squat.barbell, sets: 3, reps: 10, main: true}', '{exercise: row.dumbbell, sets: 3, reps: 8-12}'],
+  });
+  assert.deepEqual(listed(light, 'strength.reps'), ['workouts[0].blocks[0].reps']);
+  // A single set of a main lift.
+  const single = strength({ A: ['{exercise: deadlift.barbell, sets: 1, reps: 5, main: true}'] });
+  assert.deepEqual(listed(single, 'strength.exercise_sets'), ['A deadlift.barbell']);
+  // A warm-up and a single timed set, unchecked once a block is marked, and checked without the mark.
+  const warmUp = {
+    A: [
+      '{exercise: my.bike, sets: 1, time: 5m}',
+      '{exercise: squat.barbell, sets: 3, reps: 5, main: true}',
+      '{exercise: plank, sets: 1, time: 60s}',
+    ],
+  };
+  assert.deepEqual(listed(strength(warmUp), 'strength.exercise_sets'), []);
+  assert.deepEqual(listed(strength(unmarked(warmUp)), 'strength.exercise_sets'), ['A my.bike', 'A plank']);
+  // A marked timed set: no value for the repetitions, and its single set is checked.
+  const timed = strength({
+    A: ['{exercise: plank, sets: 1, time: 60s, main: true}', '{exercise: pullup, sets: 3, reps: 10}'],
+  });
+  assert.deepEqual(listed(timed, 'strength.reps'), []);
+  assert.deepEqual(listed(timed, 'strength.exercise_sets'), ['A plank']);
+});
+
+test('main blocks: back-off sets, a workout without a mark, an exercise marked in one workout', () => {
+  /** @type {[number, boolean][]} */
+  const everyBand = [
+    [0, true],
+    [10, true],
+  ];
+  // Test corridors limited to main blocks whose every band gives a finding, so each checked value shows.
+  const limited = withCorridors([
+    corridor({ id: 'test.reps', unit: 'reps_per_set', mainOnly: true }, everyBand),
+    corridor({ id: 'test.sets', unit: 'exercise_sets_per_workout', mainOnly: true }, everyBand),
+  ]);
+  const backOff = {
+    A: [
+      '{exercise: deadlift.barbell, sets: 1, reps: 3, main: true}',
+      '{exercise: deadlift.barbell, sets: 1, reps: 10}',
+    ],
+  };
+  const report = stats(body({ goal: 'strength', workouts: backOff }), limited);
+  assert.deepEqual(listed(report, 'test.reps'), ['workouts[0].blocks[0].reps']);
+  assert.deepEqual(
+    report.findings.filter(({ corridor }) => corridor === 'test.sets').map(({ value }) => value),
+    [exactly(2)],
+  );
+  // The project corridors: two sets, and the back-off repetitions unchecked.
+  const project = stats(body({ goal: 'strength', workouts: backOff }));
+  assert.deepEqual(listed(project, 'strength.exercise_sets'), []);
+  assert.deepEqual(listed(project, 'strength.reps'), []);
+  assert.deepEqual(listed(stats(body({ goal: 'strength', workouts: unmarked(backOff) })), 'strength.reps'), [
+    'workouts[0].blocks[1].reps',
+  ]);
+
+  const withoutMark = stats(
+    body({
+      goal: 'strength',
+      workouts: {
+        A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}'],
+        B: ['{exercise: pullup, sets: 1, reps: 10}'],
+      },
+    }),
+  );
+  assert.deepEqual(listed(withoutMark, 'strength.reps'), []);
+  assert.deepEqual(listed(withoutMark, 'strength.exercise_sets'), []);
+
+  const oneWorkout = stats(
+    body({
+      goal: 'strength',
+      workouts: {
+        A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}'],
+        B: ['{exercise: squat.barbell, sets: 1, reps: 5}'],
+      },
+    }),
+  );
+  assert.deepEqual(listed(oneWorkout, 'strength.exercise_sets'), []);
+});
+
+test('main blocks: none marked checks every value, and every block marked gives the same findings', () => {
+  const workouts = {
+    A: [
+      '{exercise: my.bike, sets: 1, time: 5m, main: true}',
+      '{exercise: squat.barbell, sets: 3, reps: 10, main: true}',
+      '{exercise: row.dumbbell, sets: 1, reps: 8-12, main: true}',
+    ],
+    B: [
+      '{exercise: deadlift.barbell, sets: 1, reps: 5, main: true}',
+      '{exercise: plank, sets: 1, time: 60s, main: true}',
+    ],
+  };
+  const all = stats(body({ goal: 'strength', perWeek: 2, exercises: [BIKE], workouts }));
+  const none = stats(body({ goal: 'strength', perWeek: 2, exercises: [BIKE], workouts: unmarked(workouts) }));
+  assert.deepEqual(listed(none, 'strength.reps'), ['workouts[0].blocks[1].reps', 'workouts[0].blocks[2].reps']);
+  assert.deepEqual(listed(none, 'strength.exercise_sets'), [
+    'A my.bike',
+    'A row.dumbbell',
+    'B deadlift.barbell',
+    'B plank',
+  ]);
+  assert.deepEqual(all.findings, none.findings);
+});
+
+test('main blocks change no number, and corridors without the limit check unmarked blocks', () => {
+  const workouts = {
+    A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}', '{exercise: row.dumbbell, sets: 3, reps: 8}'],
+    B: ['{exercise: bench_press.barbell, sets: 3, reps: 5, main: true}', '{exercise: plank, sets: 1, time: 60s}'],
+  };
+  const marked = stats(body({ goal: 'strength', perWeek: 3, workouts }));
+  const plain = stats(body({ goal: 'strength', perWeek: 3, workouts: unmarked(workouts) }));
+  assert.deepEqual(marked.targets, plain.targets);
+  assert.deepEqual(marked.groups, plain.groups);
+  assert.deepEqual(marked.notCounted, plain.notCounted);
+  assert.deepEqual(value(marked, 'back', 'sets'), exactly(4.5));
+  // Coverage from assistance work: the back, trained only by the unmarked row, on two days a week.
+  const coverage = stats(
+    body({
+      goal: 'strength',
+      perWeek: 2,
+      workouts: {
+        A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}', '{exercise: row.dumbbell, sets: 3, reps: 8}'],
+      },
+    }),
+  );
+  assert.deepEqual(value(coverage, 'back', 'days'), exactly(2));
+  assert.ok(!listed(coverage, 'major_groups').includes('back'));
+  // The row's rear delts and biceps, secondary, involve shoulders and arms on both days too.
+  assert.deepEqual(listed(coverage, 'major_groups'), ['abdomen', 'chest']);
+  // Hypertrophy and power corridors have no limit.
+  const hypertrophy = stats(
+    body({
+      goal: 'hypertrophy',
+      workouts: {
+        A: [
+          '{exercise: squat.barbell, sets: 3, reps: 10, rest: 2m, main: true}',
+          '{exercise: curl.dumbbell, sets: 3, reps: 10, rest: 45s}',
+        ],
+      },
+    }),
+  );
+  assert.deepEqual(listed(hypertrophy, 'hypertrophy.rest'), ['workouts[0].blocks[1].rest']);
+  const power = stats(
+    body({
+      goal: 'power',
+      workouts: {
+        A: ['{exercise: squat.barbell, sets: 3, reps: 3, main: true}', '{exercise: pushup, sets: 3, reps: 30}'],
+      },
+    }),
+  );
+  assert.deepEqual(listed(power, 'power.reps'), ['workouts[0].blocks[1].reps']);
+});
+
+/**
  * The text of a program's report.
  * @param {Parameters<typeof body>[0]} parts
  * @param {Guidelines} [withGuidelines]
@@ -727,6 +927,90 @@ test('formatStats: days lines by band, a pair of bands between them, unknown day
 test('formatStats: a report whose bands are copies groups its findings as the original does', () => {
   const report = stats(body({ goal: 'hypertrophy', perWeek: 3, workouts: FULL_BODY }));
   assert.equal(formatStats(structuredClone(report)), formatStats(report));
+});
+
+test('formatStats: the main blocks line and the limits, right after the corridors line', () => {
+  const parts = {
+    goal: 'strength',
+    perWeek: 2,
+    workouts: {
+      A: [
+        '{exercise: squat.barbell, sets: 3, reps: 5, main: true}',
+        '{exercise: bench_press.barbell, sets: 3, reps: 5, main: true}',
+      ],
+      B: [
+        '{exercise: deadlift.barbell, sets: 1, reps: 5, main: true}',
+        '{exercise: overhead_press.barbell, sets: 3, reps: 5, main: true}',
+      ],
+    },
+  };
+  const { main } = stats(body(parts));
+  assert.deepEqual(
+    main?.corridors.map(({ id }) => id),
+    ['strength.reps', 'strength.exercise_sets'],
+  );
+  assert.deepEqual(main?.blocks, [
+    { workout: 'A', exercise: 'squat.barbell' },
+    { workout: 'A', exercise: 'bench_press.barbell' },
+    { workout: 'B', exercise: 'deadlift.barbell' },
+    { workout: 'B', exercise: 'overhead_press.barbell' },
+  ]);
+  const lines = text(parts).split('\n');
+  const at = lines.findIndex(line => line.startsWith('corridors: '));
+  assert.equal(
+    lines[at + 1],
+    'main blocks: A squat.barbell, A bench_press.barbell, B deadlift.barbell, B overhead_press.barbell',
+  );
+  assert.match(
+    lines[at + 2],
+    /^ {2}only these are checked by strength\.reps: The ACSM position stand counts strength, /,
+  );
+  assert.equal(
+    lines[at + 3],
+    '  Sources: acsm2026 p. 853; acsm2026 Table 6; schoenfeld2021 Section 2; androulakis2021 Table 12; androulakis2021 Conclusions',
+  );
+  assert.match(lines[at + 4], /^ {2}only these are checked by strength\.exercise_sets: The ACSM position stand lists /);
+  assert.equal(lines[at + 5], '  Sources: acsm2026 Table 6; acsm2026 Table 2; acsm2026 p. 853; acsm2026 p. 865');
+  assert.match(lines[at + 6], /^finding: major_groups: /);
+
+  // One exercise marked twice is listed twice.
+  const twice = text({
+    goal: 'strength',
+    workouts: {
+      A: [
+        '{exercise: deadlift.barbell, sets: 1, reps: 3, main: true}',
+        '{exercise: deadlift.barbell, sets: 2, reps: 5, main: true}',
+      ],
+    },
+  });
+  assert.deepEqual(linesStarting(twice, 'main blocks:'), ['main blocks: A deadlift.barbell, A deadlift.barbell']);
+  // A quoted workout id.
+  const quoted = text({
+    goal: 'strength',
+    workouts: {
+      'Day 1': ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}', '{exercise: pullup, sets: 3, reps: 8}'],
+    },
+  });
+  assert.deepEqual(linesStarting(quoted, 'main blocks:'), ['main blocks: "Day 1" squat.barbell']);
+  // The text comes from the report alone.
+  const report = stats(body(parts));
+  assert.equal(formatStats(structuredClone(report)), formatStats(report));
+});
+
+test('formatStats: the main blocks line without marks, and none where no limited corridor applies', () => {
+  const workouts = { A: ['{exercise: squat.barbell, sets: 3, reps: 5}', '{exercise: pullup, sets: 3, reps: 8}'] };
+  const lines = text({ goal: 'strength', workouts }).split('\n');
+  assert.deepEqual(lines.slice(2, 4), [
+    'corridors: major_groups, strength.reps, strength.exercise_sets',
+    'main blocks: none marked with main: true, every block checked by strength.reps, strength.exercise_sets',
+  ]);
+  assert.match(lines[4], /^finding: /);
+  const marked = { A: ['{exercise: squat.barbell, sets: 3, reps: 5, main: true}'] };
+  for (const goal of ['hypertrophy', undefined]) {
+    const report = stats(body({ goal, workouts: marked }));
+    assert.equal(report.main, undefined, goal);
+    assert.deepEqual(linesStarting(formatStats(report), 'main blocks:'), [], goal);
+  }
 });
 
 test('formatStats: the not counted line', () => {

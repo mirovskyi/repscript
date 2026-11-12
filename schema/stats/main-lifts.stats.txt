@@ -1,0 +1,35 @@
+goal: strength
+workouts: A, B; 2 a week
+corridors: major_groups, strength.reps, strength.exercise_sets
+main blocks: A squat.barbell, A bench_press.barbell, B deadlift.barbell, B overhead_press.barbell
+  only these are checked by strength.reps: The ACSM position stand counts strength, unless a review says otherwise, as a one-repetition maximum in the same mode as the training, and lists a load of at least 80% of that maximum among what enhances it. Another review, from 2021, finds that heavy loads lose most of their advantage when strength is measured on another kind of device, such as an isometric one, a result whose practical meaning it leaves open, and that lighter loads also raise a one-repetition maximum, though less. Powerlifters in one survey who had tried a minimum-dose approach reported about 9 repetitions per set on accessory exercises and about 3.5 to 4 on the powerlifts, and the authors sum up the accessory sets as about 6 to 10 repetitions. No source here says that assistance work may go unchecked. Limiting this corridor to main blocks is our reading: that such a load describes strength in the exercise trained, and says nothing about an exercise whose own strength the program does not aim to raise.
+  Sources: acsm2026 p. 853; acsm2026 Table 6; schoenfeld2021 Section 2; androulakis2021 Table 12; androulakis2021 Conclusions
+  only these are checked by strength.exercise_sets: The ACSM position stand lists 2 to 3 sets in a session among what enhances strength, with sets counted per exercise, and it counts strength, unless a review says otherwise, as a one-repetition maximum in the same mode as the training. It also advises at least two sets per exercise and names no exception, and no bound of this corridor rests on that advice, since its table of what enhances strength alone sets them. No source here says that assistance work may go unchecked. Limiting this corridor to main blocks is our reading: those sets say nothing about an exercise whose own strength the program does not aim to raise.
+  Sources: acsm2026 Table 6; acsm2026 Table 2; acsm2026 p. 853; acsm2026 p. 865
+finding: major_groups: less than twice a week, 0 to under 2 days involved a week
+  groups: abdomen 1, chest 1
+  The group is trained on fewer than two days a week. Guidelines for adults ask for at least two days a week of muscle-strengthening work for every major muscle group, at a moderate or greater effort, and the primary recommendation of the ACSM position stand also asks for training at least twice a week. A program cannot state effort yet, so every day that trains the group counts. For the back, only the lats, the rhomboids and the trapezius count, not the lower back.
+  Sources: who2020 p. 32; paga2018 p. 56; paga2018 p. 61; acsm2026 p. 862
+finding: strength.exercise_sets: fewer than two sets, 0 to under 2 sets of an exercise in a workout
+  B deadlift.barbell 1: workouts[1].blocks[0].sets (line 22)
+  Fewer than two sets of the exercise in this workout. The ACSM position stand lists 2 to 3 sets in a session among what enhances strength, finds two sets better than one, and advises healthy adults to do at least two sets of each exercise. A single set is not wasted: the US guidelines find that one set of 8 to 12 repetitions of each exercise already builds strength, and that 2 or 3 sets may build more, with each exercise taken to the point where another repetition would be hard, which a program cannot state yet. They do not speak of a single heavier set.
+  Sources: acsm2026 Table 6; acsm2026 Table 2; acsm2026 p. 865; paga2018 p. 61
+numbers (information, no action needed)
+targets: fractional sets and sessions a week
+  chest       3 sets; 1 session; per workout: A 3
+  back        6 sets; 2 sessions; per workout: A 3, B 3
+  front_delts 4.5 sets; 1.5 sessions; per workout: A 1.5, B 3
+  side_delts  1.5 sets; 0.5 sessions; per workout: B 1.5
+  rear_delts  3 sets; 1 session; per workout: A 1.5, B 1.5
+  biceps      3 sets; 1 session; per workout: A 1.5, B 1.5
+  triceps     3 sets; 1 session; per workout: A 1.5, B 1.5
+  quads       6.5 sets; 2 sessions; per workout: A 3, B 3.5
+  hamstrings  0.5 sets; 0.5 sessions; per workout: B 0.5
+  glutes      7 sets; 2 sessions; per workout: A 3, B 4
+  calves      0 sets; 0 sessions
+  abs         1 set; 1 session; per workout: A 1
+major groups: days involved a week
+  abdomen 1, chest 1: less than twice a week *
+  legs 2, hips 2, back 2, shoulders 2, arms 2: twice a week or more
+not counted: my.bike (no muscles)
+findings: 2

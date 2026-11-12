@@ -20,5 +20,5 @@ error: workouts[0].di (line 9)
   Hint: Did you mean id?
 error: workouts[0].blocks[1].type (line 13)
   Unknown field.
-  Hint: Allowed fields here: exercise, sets, reps, time, rest, load. Extension fields start with x-.
+  Hint: Allowed fields here: exercise, sets, reps, time, rest, load, main. Extension fields start with x-.
 errors: 7, warnings: 1

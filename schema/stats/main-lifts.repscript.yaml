@@ -1,0 +1,25 @@
+# A strength program with its main lifts marked: assistance work, a warm-up and a timed set are not
+# checked for load or sets per exercise, and the single set of deadlifts gets a finding.
+repscript: 0
+id: main-lifts
+revision: 1
+title: Main lifts and assistance
+goal: strength
+schedule: {per_week: 2}
+exercises:
+  - id: my.bike
+    names: {en: Stationary bike}
+workouts:
+  - id: A
+    blocks:
+      - {exercise: my.bike, sets: 1, time: 5m}
+      - {exercise: squat.barbell, sets: 3, reps: 5, main: true}
+      - {exercise: bench_press.barbell, sets: 3, reps: 5, main: true}
+      - {exercise: row.dumbbell, sets: 3, reps: 8-12}
+      - {exercise: plank, sets: 1, time: 60s}
+  - id: B
+    blocks:
+      - {exercise: deadlift.barbell, sets: 1, reps: 5, main: true}
+      - {exercise: overhead_press.barbell, sets: 3, reps: 5, main: true}
+      - {exercise: pullup, sets: 3, reps: 8-10}
+      - {exercise: lunge, sets: 3, reps: 10}

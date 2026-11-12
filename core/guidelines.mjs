@@ -40,6 +40,10 @@ export const UNITS = {
  *   exercise of a workout
  * @property {string[]} extrapolated the subjects its sources did not measure
  * @property {string | undefined} extrapolation
+ * @property {boolean} mainOnly whether the corridor checks only main blocks, once a program marks one; only
+ *   in a unit per block or per exercise of a workout
+ * @property {string | undefined} mainOnlyReason why, in our words; set exactly when mainOnly is
+ * @property {{ key: string, at: string }[]} mainOnlyCites the sources of that reason, none without mainOnly
  * @property {Band[]} bands
  */
 
@@ -67,6 +71,14 @@ function isStrings(value) {
 /** @param {unknown} value @returns {value is number} */
 function isNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
+}
+
+/** @param {unknown} value @returns {value is { key: string, at: string }[]} */
+function isCitations(value) {
+  return (
+    Array.isArray(value) &&
+    value.every(cite => isMapping(cite) && typeof cite.key === 'string' && typeof cite.at === 'string')
+  );
 }
 
 /**
@@ -170,6 +182,15 @@ function readCorridors(corridorsFile) {
     // The report marks an extrapolated subject only together with the reason it prints.
     if ('extrapolated' in item && !('extrapolation' in item))
       fail(file, `${where}: extrapolated without extrapolation.`);
+    // The report prints a limit's reason and sources, and a target or a group has no block to limit to.
+    const mainOnly = 'main_only' in item;
+    if (mainOnly) {
+      if (item.main_only !== true) fail(file, `${where}: main_only is not true.`);
+      if (kind === 'target' || kind === 'group') fail(file, `${where}: main_only for a unit per ${kind}.`);
+      if (typeof item.main_only_reason !== 'string') fail(file, `${where}: main_only_reason is not a string.`);
+      if (!isCitations(item.main_only_cites))
+        fail(file, `${where}: main_only_cites is not a list of citations with a string key and at.`);
+    }
     const list = item.bands;
     if (!Array.isArray(list) || list.length === 0) fail(file, `${where}: bands is not a list of at least one band.`);
     const bands = list.map((band, k) => readBand(band, `${where} bands[${k}]`, k === list.length - 1, file));
@@ -180,6 +201,9 @@ function readCorridors(corridorsFile) {
       subjects,
       extrapolated: /** @type {string[] | undefined} */ (item.extrapolated) ?? [],
       extrapolation: /** @type {string | undefined} */ (item.extrapolation),
+      mainOnly,
+      mainOnlyReason: mainOnly ? /** @type {string} */ (item.main_only_reason) : undefined,
+      mainOnlyCites: mainOnly ? copyCitations(/** @type {{ key: string, at: string }[]} */ (item.main_only_cites)) : [],
       bands,
     };
   });
@@ -200,11 +224,7 @@ function readBand(band, where, last, file) {
     if (typeof band[field] !== 'string') fail(file, `${where}: ${field} is not a string.`);
   if (typeof band.finding !== 'boolean') fail(file, `${where}: finding is not a boolean.`);
   const { cites } = band;
-  if (
-    !Array.isArray(cites) ||
-    !cites.every(cite => isMapping(cite) && typeof cite.key === 'string' && typeof cite.at === 'string')
-  )
-    fail(file, `${where}: cites is not a list of citations with a string key and at.`);
+  if (!isCitations(cites)) fail(file, `${where}: cites is not a list of citations with a string key and at.`);
   return {
     from: band.from,
     // The last band is open: whatever lies above its from falls in it.
@@ -212,8 +232,16 @@ function readBand(band, where, last, file) {
     label: /** @type {string} */ (band.label),
     finding: band.finding,
     description: /** @type {string} */ (band.description),
-    cites: cites.map(cite => ({ key: String(cite.key), at: String(cite.at) })),
+    cites: copyCitations(cites),
   };
+}
+
+/**
+ * The citations alone, without any other field a citation holds.
+ * @param {{ key: string, at: string }[]} cites
+ */
+function copyCitations(cites) {
+  return cites.map(({ key, at }) => ({ key, at }));
 }
 
 /**

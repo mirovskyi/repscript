@@ -220,6 +220,11 @@
                   },
                   "patternProperties": { "^x-": {} },
                   "additionalProperties": false
+                },
+                "main": {
+                  "description": "Marks a main lift, an exercise whose own result the program is built to raise: write main: true on the block that trains it for that result, such as its heavy sets, and leave the field out on assistance work and on lighter volume sets of the same lift. With goal: strength, the program report then checks the load only of marked blocks, and the sets per exercise only of exercises with a marked block in that workout. Example: {exercise: squat.barbell, sets: 3, reps: 5, main: true}",
+                  "type": "boolean",
+                  "enum": [true]
                 }
               },
               "patternProperties": { "^x-": {} },

@@ -210,14 +210,14 @@ function guidelineProblems(files, catalog, goals) {
   );
   /** @type {Set<unknown>} */
   const cited = new Set();
-  /** @type {(report: (item: string, problem: string) => void, item: string, value: unknown) => void} */
-  const cites = (report, item, value) => {
+  /** @type {(report: (item: string, problem: string) => void, item: string, value: unknown, field?: string) => void} */
+  const cites = (report, item, value, field = 'cites') => {
     if (!Array.isArray(value) || value.length === 0) {
-      report(item, 'no cites');
+      report(item, `no ${field}`);
       return;
     }
     for (const [i, citation] of value.entries()) {
-      const where = `${item} cites[${i}]`;
+      const where = `${item} ${field}[${i}]`;
       if (!isMapping(citation)) {
         report(where, 'not a mapping');
         citesLost = true;
@@ -356,7 +356,19 @@ function guidelineProblems(files, catalog, goals) {
       continue;
     }
     const id = typeof item.id === 'string' ? item.id : `[${i}]`;
-    closed(corridor, id, item, ['id', 'goal', 'unit', 'targets', 'groups', 'extrapolated', 'extrapolation', 'bands']);
+    closed(corridor, id, item, [
+      'id',
+      'goal',
+      'unit',
+      'targets',
+      'groups',
+      'extrapolated',
+      'extrapolation',
+      'main_only',
+      'main_only_reason',
+      'main_only_cites',
+      'bands',
+    ]);
     if (typeof item.id !== 'string') corridor(id, 'no id');
     else {
       if (!ID_FORM.test(item.id)) corridor(id, 'not in the id form');
@@ -421,6 +433,20 @@ function guidelineProblems(files, catalog, goals) {
       if (!('extrapolation' in item)) corridor(id, 'extrapolated without extrapolation');
     } else if ('extrapolation' in item) corridor(id, 'extrapolation without extrapolated');
     if ('extrapolation' in item && !isText(item.extrapolation)) corridor(id, 'extrapolation is not a string');
+
+    // A limit to main blocks comes with its reason and sources, in a unit per block or per exercise of a
+    // workout: a target or a group has no block to limit to.
+    if ('main_only' in item) {
+      if (item.main_only !== true) corridor(id, 'main_only is not true');
+      const per = known ? UNITS[unit] : undefined;
+      if (per === 'targets' || per === 'groups') corridor(id, `main_only for a unit per ${per.slice(0, -1)}`);
+      if (!('main_only_reason' in item)) corridor(id, 'main_only without main_only_reason');
+      else if (!isText(item.main_only_reason)) corridor(id, 'main_only_reason is not text');
+      cites(corridor, id, item.main_only_cites, 'main_only_cites');
+    } else {
+      for (const field of ['main_only_reason', 'main_only_cites'])
+        if (field in item) corridor(id, `${field} without main_only`);
+    }
 
     if ('bands' in item && !Array.isArray(item.bands)) citesLost = true;
     const bands = Array.isArray(item.bands) ? item.bands : [];
@@ -879,6 +905,24 @@ ${fields}  bands:
 `;
 }
 
+/** A limit to main blocks: the lines of its three fields in a corridor of the tests. */
+const LIMIT = `  main_only: true
+  main_only_reason: Our reading.
+  main_only_cites:
+    - {key: smith2020, at: Section 2}
+`;
+/** The lines of strength.reps in the valid corridors that a limit follows. */
+const REPS = 'goal: strength\n  unit: reps_per_set\n';
+
+/**
+ * The valid corridors with a limit added after some lines of a corridor.
+ * @param {string} after
+ * @param {string} [limit]
+ */
+function limitAfter(after, limit = LIMIT) {
+  return VALID.corridors.replace(after, `${after}${limit}`);
+}
+
 test('the guideline check: a corridor per exercise of a workout has no targets, and one applies to a program', () => {
   const one = VALID.corridors + exerciseSets('strength.exercise_sets', 'strength');
   assert.deepEqual(problemsWith({ corridors: one }), []);
@@ -889,6 +933,63 @@ test('the guideline check: a corridor per exercise of a workout has no targets, 
   assert.deepEqual(problemsWith({ corridors: one + exerciseSets('strength.exercise_sets_again', 'strength') }), [
     'catalog/corridors.yaml: strength.exercise_sets_again: measures exercise_sets_per_workout, as strength.exercise_sets does',
   ]);
+});
+
+test('the guideline check: a limit to main blocks in a unit per block or per exercise of a workout', () => {
+  assert.deepEqual(problemsWith({ corridors: limitAfter(REPS) }), []);
+  assert.deepEqual(
+    problemsWith({ corridors: VALID.corridors + exerciseSets('strength.exercise_sets', 'strength', LIMIT) }),
+    [],
+  );
+  assert.deepEqual(problemsWith({ corridors: limitAfter('  targets: [chest, delts]\n') }), [
+    'catalog/corridors.yaml: hypertrophy.weekly_sets: main_only for a unit per target',
+  ]);
+  assert.deepEqual(problemsWith({ corridors: limitAfter('  groups: [chest, upper]\n') }), [
+    'catalog/corridors.yaml: major_groups: main_only for a unit per group',
+  ]);
+});
+
+test('the guideline check: a limit to main blocks with its reason and citations, and neither without it', () => {
+  /** @param {string | RegExp} from @param {string} to */
+  const limit = (from, to) => problemsWith({ corridors: limitAfter(REPS, LIMIT.replace(from, to)) });
+  assert.deepEqual(limit('  main_only_reason: Our reading.\n', ''), [
+    'catalog/corridors.yaml: strength.reps: main_only without main_only_reason',
+  ]);
+  assert.deepEqual(limit(/ {2}main_only_cites:[\s\S]*/, ''), [
+    'catalog/corridors.yaml: strength.reps: no main_only_cites',
+  ]);
+  assert.deepEqual(limit(/ {2}main_only_cites:[\s\S]*/, '  main_only_cites: []\n'), [
+    'catalog/corridors.yaml: strength.reps: no main_only_cites',
+  ]);
+  assert.deepEqual(limit('main_only: true', 'main_only: false'), [
+    'catalog/corridors.yaml: strength.reps: main_only is not true',
+  ]);
+  assert.deepEqual(limit('Our reading.', "''"), [
+    'catalog/corridors.yaml: strength.reps: main_only_reason is not text',
+  ]);
+  assert.deepEqual(limit('Our reading.', '[Our reading.]'), [
+    'catalog/corridors.yaml: strength.reps: main_only_reason is not text',
+  ]);
+  assert.deepEqual(limit('  main_only: true\n', ''), [
+    'catalog/corridors.yaml: strength.reps: main_only_reason without main_only',
+    'catalog/corridors.yaml: strength.reps: main_only_cites without main_only',
+  ]);
+});
+
+test('the guideline check: the citations of a limit are checked, and a key they name counts as cited', () => {
+  assert.deepEqual(problemsWith({ corridors: limitAfter(REPS, LIMIT.replace('smith2020', 'schoenfeld2020')) }), [
+    'catalog/corridors.yaml: strength.reps main_only_cites[0]: unknown key schoenfeld2020',
+  ]);
+  const references = `- key: schoenfeld2021
+  citation: Schoenfeld BJ, et al. A re-examination. Sports. 2021;9(2):32.
+  doi: 10.1000/test.2
+  read: full
+${VALID.references}`;
+  assert.deepEqual(problemsWith({ references }), ['catalog/references.yaml: schoenfeld2021: cited nowhere']);
+  assert.deepEqual(
+    problemsWith({ references, corridors: limitAfter(REPS, LIMIT.replace('smith2020', 'schoenfeld2021')) }),
+    [],
+  );
 });
 
 test('the guideline check names a top level of the wrong kind and a file that is not valid YAML', () => {
@@ -1181,12 +1282,64 @@ test('buildGuidelines builds the project guideline files', () => {
     { key: 'acsm2026', at: 'p. 865' },
     { key: 'paga2018', at: 'p. 61' },
   ]);
+  // Only the two strength corridors are limited to main blocks, each with a reason that calls the limit
+  // our reading, and sources on load for the repetitions, ACSM alone for the sets.
+  const limited = guidelines.corridors.filter(({ mainOnly }) => mainOnly);
+  assert.deepEqual(
+    limited.map(({ id, mainOnlyCites }) => [id, mainOnlyCites.map(({ key, at }) => `${key} ${at}`)]),
+    [
+      [
+        'strength.reps',
+        [
+          'acsm2026 p. 853',
+          'acsm2026 Table 6',
+          'schoenfeld2021 Section 2',
+          'androulakis2021 Table 12',
+          'androulakis2021 Conclusions',
+        ],
+      ],
+      ['strength.exercise_sets', ['acsm2026 Table 6', 'acsm2026 Table 2', 'acsm2026 p. 853', 'acsm2026 p. 865']],
+    ],
+  );
+  for (const { id, mainOnlyReason } of limited) {
+    assert.match(mainOnlyReason ?? '', /No source here says that assistance work may go unchecked\./, id);
+    assert.match(mainOnlyReason ?? '', /Limiting this corridor to main blocks is our reading/, id);
+  }
+  const [reps, exerciseSets] = limited;
+  assert.match(reps.mainOnlyReason ?? '', /a one-repetition maximum\s+in the same mode as the training/);
+  assert.match(reps.mainOnlyReason ?? '', /our\s+reading: that such a load describes strength in the exercise trained/);
+  assert.match(reps.mainOnlyReason ?? '', /lists a load of at least 80% of that maximum among what enhances it/);
+  assert.match(
+    reps.mainOnlyReason ?? '',
+    /heavy loads lose most of their advantage when strength is measured on another kind of device/,
+  );
+  assert.match(
+    reps.mainOnlyReason ?? '',
+    /Powerlifters in one survey who had tried a minimum-dose approach reported about 9 repetitions per set on accessory exercises and about 3\.5 to 4 on the powerlifts/,
+  );
+  assert.match(exerciseSets.mainOnlyReason ?? '', /advises at least two sets per exercise and names\s+no exception/);
+  assert.match(exerciseSets.mainOnlyReason ?? '', /no bound of this corridor rests on that advice/);
+  for (const { mainOnlyReason } of guidelines.corridors.filter(({ mainOnly }) => !mainOnly))
+    assert.equal(mainOnlyReason, undefined);
 });
 
 test('buildGuidelines builds a corridor per exercise of a workout without subjects', () => {
   const { corridors } = buildWith({ corridors: VALID.corridors + exerciseSets('strength.exercise_sets', 'strength') });
   const built = corridors[corridors.length - 1];
   assert.deepEqual([built.id, built.unit, built.subjects], ['strength.exercise_sets', 'exercise_sets_per_workout', []]);
+});
+
+test('buildGuidelines builds a corridor limited to main blocks, and one without the limit', () => {
+  const { corridors } = buildWith({ corridors: limitAfter(REPS) });
+  const [, , coverage, reps] = corridors;
+  assert.deepEqual(
+    [reps.id, reps.mainOnly, reps.mainOnlyReason, reps.mainOnlyCites],
+    ['strength.reps', true, 'Our reading.', [{ key: 'smith2020', at: 'Section 2' }]],
+  );
+  assert.deepEqual(
+    [coverage.id, coverage.mainOnly, coverage.mainOnlyReason, coverage.mainOnlyCites],
+    ['major_groups', false, undefined, []],
+  );
 });
 
 test('the reach map: a group key, a muscle with bundles and a key in no target', () => {
@@ -1312,6 +1465,30 @@ test('buildGuidelines names the file and the place of a shape the count cannot u
     [
       corridors(bandCites, bandCites.replace('[{key: who_guide, at: p. 56}]', 'who_guide')),
       'catalog/corridors.yaml: corridor major_groups bands[0]: cites is not a list of citations with a string key and at.',
+    ],
+    [
+      error({ corridors: limitAfter(REPS, LIMIT.replace('main_only: true', 'main_only: false')) }),
+      'catalog/corridors.yaml: corridor strength.reps: main_only is not true.',
+    ],
+    [
+      error({ corridors: limitAfter('  targets: [chest, delts]\n') }),
+      'catalog/corridors.yaml: corridor hypertrophy.weekly_sets: main_only for a unit per target.',
+    ],
+    [
+      error({ corridors: limitAfter('  groups: [chest, upper]\n') }),
+      'catalog/corridors.yaml: corridor major_groups: main_only for a unit per group.',
+    ],
+    [
+      error({ corridors: limitAfter(REPS, LIMIT.replace('  main_only_reason: Our reading.\n', '')) }),
+      'catalog/corridors.yaml: corridor strength.reps: main_only_reason is not a string.',
+    ],
+    [
+      error({ corridors: limitAfter(REPS, LIMIT.replace(/ {2}main_only_cites:[\s\S]*/, '')) }),
+      'catalog/corridors.yaml: corridor strength.reps: main_only_cites is not a list of citations with a string key and at.',
+    ],
+    [
+      error({ corridors: limitAfter(REPS, LIMIT.replace(', at: Section 2', '')) }),
+      'catalog/corridors.yaml: corridor strength.reps: main_only_cites is not a list of citations with a string key and at.',
     ],
     [
       error({ corridors: '- id: [hypertrophy\n' }),

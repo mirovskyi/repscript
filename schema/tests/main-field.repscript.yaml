@@ -1,0 +1,15 @@
+# main: true on a block is valid; main with another value, a misspelled main and main on a workout are
+# not.
+repscript: 0
+id: main-field
+revision: 1
+title: Main field
+goal: strength
+workouts:
+  - id: A
+    main: true
+    blocks:
+      - {exercise: squat.goblet, sets: 3, reps: 5, main: true}
+      - {exercise: pullup, sets: 3, reps: 5, main: false}
+      - {exercise: row.dumbbell, sets: 3, reps: 8, main: yes}
+      - {exercise: pushup, sets: 3, reps: 10, mian: true}

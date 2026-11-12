@@ -1,8 +1,10 @@
 # Corridors: for one value of a program, ordered bands that place it against what the sources support
 # or recommend. A band covers from <= value < to, and the last band has no to. Only a band with
 # finding: true gives a finding in the program report; inside another band, the report names it. A
-# corridor without goal applies to every program. Targets and groups are those of targets.yaml, and
-# sources are keys of references.yaml. Licensed under CC BY-SA 4.0 (LICENSE).
+# corridor without goal applies to every program. A corridor per block or per exercise of a workout with
+# main_only: true checks only the blocks with main: true once a program marks one, and says why in
+# main_only_reason, with its sources in main_only_cites. Targets and groups are those of targets.yaml,
+# and sources are keys of references.yaml. Licensed under CC BY-SA 4.0 (LICENSE).
 - id: major_groups
   unit: days_involved_per_week
   groups: [legs, hips, back, abdomen, chest, shoulders, arms]
@@ -205,6 +207,25 @@
 - id: strength.reps
   goal: strength
   unit: reps_per_set
+  main_only: true
+  main_only_reason: >-
+    The ACSM position stand counts strength, unless a review says otherwise, as a one-repetition maximum
+    in the same mode as the training, and lists a load of at least 80% of that maximum among what
+    enhances it. Another review, from 2021, finds that heavy loads lose most of their advantage when
+    strength is measured on another kind of device, such as an isometric one, a result whose practical
+    meaning it leaves open, and that lighter loads also raise a one-repetition maximum, though less.
+    Powerlifters in one survey who had tried a minimum-dose approach reported about 9 repetitions per set
+    on accessory exercises and about 3.5 to 4 on the powerlifts, and the authors sum up the accessory
+    sets as about 6 to 10 repetitions. No source here says that assistance work may go unchecked.
+    Limiting this corridor to main blocks is our reading: that such a load describes strength in the
+    exercise trained, and says nothing about an exercise whose own strength the program does not aim to
+    raise.
+  main_only_cites:
+    - {key: acsm2026, at: p. 853}
+    - {key: acsm2026, at: Table 6}
+    - {key: schoenfeld2021, at: Section 2}
+    - {key: androulakis2021, at: Table 12}
+    - {key: androulakis2021, at: Conclusions}
   bands:
     - from: 0
       to: 9
@@ -230,6 +251,20 @@
 - id: strength.exercise_sets
   goal: strength
   unit: exercise_sets_per_workout
+  main_only: true
+  main_only_reason: >-
+    The ACSM position stand lists 2 to 3 sets in a session among what enhances strength, with sets
+    counted per exercise, and it counts strength, unless a review says otherwise, as a one-repetition
+    maximum in the same mode as the training. It also advises at least two sets per exercise and names
+    no exception, and no bound of this corridor rests on that advice, since its table of what enhances
+    strength alone sets them. No source here says that assistance work may go unchecked. Limiting this
+    corridor to main blocks is our reading: those sets say nothing about an exercise whose own strength
+    the program does not aim to raise.
+  main_only_cites:
+    - {key: acsm2026, at: Table 6}
+    - {key: acsm2026, at: Table 2}
+    - {key: acsm2026, at: p. 853}
+    - {key: acsm2026, at: p. 865}
   bands:
     - from: 0
       to: 2

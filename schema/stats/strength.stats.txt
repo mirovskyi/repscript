@@ -1,6 +1,7 @@
 goal: strength
 workouts: A, B; 3 a week
 corridors: major_groups, strength.reps, strength.exercise_sets
+main blocks: none marked with main: true, every block checked by strength.reps, strength.exercise_sets
 finding: major_groups: less than twice a week, 0 to under 2 days involved a week
   groups: back 0, abdomen 0, chest 1.5
   The group is trained on fewer than two days a week. Guidelines for adults ask for at least two days a week of muscle-strengthening work for every major muscle group, at a moderate or greater effort, and the primary recommendation of the ACSM position stand also asks for training at least twice a week. A program cannot state effort yet, so every day that trains the group counts. For the back, only the lats, the rhomboids and the trapezius count, not the lower back.
